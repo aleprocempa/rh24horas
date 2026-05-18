@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consignações — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Consignações</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999 &mdash; PMPA</p>
+    </div>
+
+    <!-- CARDS MARGEM -->
+    <div class="margem-cards">
+      <div class="margem-card">
+        <div class="margem-card-label">Margem disponível</div>
+        <div class="margem-card-value">R$ 2.491,26</div>
+        <div class="margem-card-sub">Margem total autorizada</div>
+      </div>
+      <div class="margem-card">
+        <div class="margem-card-label">Total consignado</div>
+        <div class="margem-card-value">R$ 1.712,21</div>
+        <div class="margem-card-sub">Parcelas ativas nesta competência</div>
+      </div>
+      <div class="margem-card saldo">
+        <div class="margem-card-label">Saldo da margem</div>
+        <div class="margem-card-value">R$ 779,05</div>
+        <div class="margem-card-sub">Disponível para novas consignações</div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros-bar">
+      <div class="filtro-group">
+        <span class="filtro-label">Tipo de margem</span>
+        <select class="filtro">
+          <option selected>Normal</option>
+          <option>Cartão de crédito</option>
+          <option>Cartão de benefícios</option>
+        </select>
+      </div>
+      <div class="filtro-group">
+        <span class="filtro-label">Competência inicial</span>
+        <input class="filtro" type="month" value="2026-03">
+      </div>
+      <span class="filtro-sep">até</span>
+      <div class="filtro-group">
+        <span class="filtro-label">Competência final</span>
+        <input class="filtro" type="month" value="2027-03">
+      </div>
+      <button class="btn-filtro">Consultar</button>
+    </div>
+
+    <!-- TABELA TOTAIS MENSAIS -->
+    <div class="section-title">Totais mensais do servidor</div>
+    <table class="consig">
+      <colgroup>
+        <col style="width:6rem">
+        <col style="width:7rem">
+        <col style="width:7rem">
+        <col style="width:6rem">
+        <col style="width:7rem">
+        <col style="width:7rem">
+        <col style="width:7rem">
+        <col style="width:7rem">
+        <col style="width:7.5rem">
+        <col style="width:5rem">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="left">(1)<br>Competência</th>
+          <th>(2)<br>Valor total<br>consignações</th>
+          <th>(3)<br>Parcelas da<br>competência</th>
+          <th>(4)<br>Atrasadas<br>não debitadas</th>
+          <th>(5)<br>Total na<br>competência<br>[3 + 4]</th>
+          <th>(6)<br>Saldo da<br>margem<br>[margem − 5]</th>
+          <th>(7)<br>Outras<br>atrasadas<br>(não af. saldo)</th>
+          <th>(8)<br>Pendentes<br>futuras</th>
+          <th>(9)<br>Valor total<br>pendente<br>[5 + 7 + 8]</th>
+          <th>(10)<br>Bloqueadas<br>(fora do<br>total)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="link-cell" onclick="openDetail('Mar/2026')">Mar/2026</td><td>130.977,60</td><td>1.712,21</td><td class="muted">0,00</td><td>1.712,21</td><td>779,05</td><td class="muted">0,00</td><td>65.998,80</td><td>67.711,01</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Abr/2026')">Abr/2026</td><td>130.977,60</td><td>1.712,21</td><td class="muted">0,00</td><td>1.712,21</td><td>779,05</td><td class="muted">0,00</td><td>64.286,59</td><td>65.998,80</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Mai/2026')">Mai/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>63.244,43</td><td>64.286,59</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Jun/2026')">Jun/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>62.202,27</td><td>63.244,43</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Jul/2026')">Jul/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>61.160,11</td><td>62.202,27</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Ago/2026')">Ago/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>60.117,95</td><td>61.160,11</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Set/2026')">Set/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>59.075,79</td><td>60.117,95</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Out/2026')">Out/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>58.033,63</td><td>59.075,79</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Nov/2026')">Nov/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>56.991,47</td><td>58.033,63</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Dez/2026')">Dez/2026</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>55.949,31</td><td>56.991,47</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Jan/2027')">Jan/2027</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>54.907,15</td><td>55.949,31</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Fev/2027')">Fev/2027</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>53.864,99</td><td>54.907,15</td><td class="muted">0,00</td></tr>
+        <tr><td class="link-cell" onclick="openDetail('Mar/2027')">Mar/2027</td><td>118.916,70</td><td>1.042,16</td><td class="muted">0,00</td><td>1.042,16</td><td>1.449,10</td><td class="muted">0,00</td><td>52.822,83</td><td>53.864,99</td><td class="muted">0,00</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DETALHE DA COMPETÊNCIA (overlay) -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel">
+
+    <div class="detail-header">
+      <div>
+        <div class="detail-header-title">Situação do servidor no mês — <span id="detail-competencia"></span></div>
+        <div class="detail-header-meta">
+          <span class="detail-meta-item"><strong>Empresa:</strong> PMPA</span>
+          <span class="detail-meta-item"><strong>Margem:</strong> 2.516,17</span>
+          <span class="detail-meta-item"><strong>Saldo da margem:</strong> 803,96</span>
+          <span class="detail-meta-item"><strong>Tipo de margem:</strong> Normal</span>
+        </div>
+      </div>
+      <button class="btn-close" onclick="closeDetail()">&#x2715;</button>
+    </div>
+
+    <div class="detail-body">
+
+      <!-- Consignações no mês -->
+      <div class="detail-section-title">Consignações no mês</div>
+      <table class="detail">
+        <colgroup>
+          <col style="width:6rem">
+          <col style="width:7rem">
+          <col style="width:6rem">
+          <col style="width:7rem">
+          <col style="width:6rem">
+          <col style="width:7rem">
+          <col style="width:6rem">
+          <col style="width:6rem">
+          <col style="width:6rem">
+          <col style="width:7rem">
+          <col style="width:6rem">
+          <col style="width:7rem">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="left">(1)<br>Data</th>
+            <th class="left">(2)<br>Consignatário</th>
+            <th class="left">(3)<br>Espécie</th>
+            <th class="left">(4)<br>Situação da<br>consignação</th>
+            <th class="left">(5)<br>Competência<br>final</th>
+            <th>(6)<br>Total<br>consignação</th>
+            <th>(7)<br>Parcela<br>no mês</th>
+            <th>(8)<br>Atrasadas<br>não debitadas</th>
+            <th>(9)<br>Total no mês<br>[7 + 8]</th>
+            <th>(10)<br>Outras atrasadas<br>(não af. saldo)</th>
+            <th>(11)<br>Pendentes<br>futuras</th>
+            <th>(12)<br>Valor total<br>pendente<br>[9 + 10 + 11]</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left">03/07/2020</td>
+            <td class="left">CEF</td>
+            <td class="left">Empréstimo</td>
+            <td class="left"><span class="badge-situacao badge-ativo">Em andamento</span></td>
+            <td class="left">Out/2031</td>
+            <td>104.718,90</td>
+            <td>805,53</td>
+            <td class="muted">0,00</td>
+            <td>805,53</td>
+            <td class="muted">0,00</td>
+            <td>53.164,98</td>
+            <td>53.970,51</td>
+          </tr>
+          <tr>
+            <td class="left">06/09/2024</td>
+            <td class="left">CEF</td>
+            <td class="left">Empréstimo</td>
+            <td class="left"><span class="badge-situacao badge-ativo">Em andamento</span></td>
+            <td class="left">Abr/2026</td>
+            <td>12.060,90</td>
+            <td>670,05</td>
+            <td class="muted">0,00</td>
+            <td>670,05</td>
+            <td class="muted">0,00</td>
+            <td class="muted">0,00</td>
+            <td>670,05</td>
+          </tr>
+          <tr>
+            <td class="left">06/02/2025</td>
+            <td class="left">CEF</td>
+            <td class="left">Empréstimo</td>
+            <td class="left"><span class="badge-situacao badge-ativo">Em andamento</span></td>
+            <td class="left">Mar/2030</td>
+            <td>14.197,80</td>
+            <td>236,63</td>
+            <td class="muted">0,00</td>
+            <td>236,63</td>
+            <td class="muted">0,00</td>
+            <td>11.121,61</td>
+            <td>11.358,24</td>
+          </tr>
+          <tr class="total-row">
+            <td class="left" colspan="5">Total</td>
+            <td>130.977,60</td>
+            <td>1.712,21</td>
+            <td class="muted">0,00</td>
+            <td>1.712,21</td>
+            <td class="muted">0,00</td>
+            <td>64.286,59</td>
+            <td>65.998,80</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Consignações bloqueadas -->
+      <div class="detail-section-title">Consignações bloqueadas ou canais bloqueados</div>
+      <div class="empty-state">A lista está vazia. Nenhum item foi encontrado.</div>
+
+    </div>
+
+    <div class="detail-footer">
+      <button class="btn-voltar" onclick="closeDetail()">&#8592; Voltar</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+
+  function openDetail(competencia) {
+    document.getElementById('detail-competencia').textContent = competencia;
+    document.getElementById('detail-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDetail() {
+    document.getElementById('detail-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('detail-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeDetail();
+  });
+</script>
+</body>
+</html>

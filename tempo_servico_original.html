@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tempo de Serviço — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Tempo de serviço</h1>
+        <p class="page-subtitle">Demonstrativo atualizado em 03/04/2026</p>
+      </div>
+      <button class="btn-action" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- DESTAQUE TEMPO TOTAL -->
+    <div class="tempo-total-card">
+      <div>
+        <div class="tempo-total-label">Tempo total de serviço</div>
+        <div class="tempo-total-valor">29 anos e 3 meses</div>
+        <div class="tempo-total-dias">10.674 dias na data da consulta</div>
+      </div>
+      <div class="tempo-total-meta">
+        <strong>Ativo</strong>
+        PMPA — Vínculo 1<br>
+        Admissão: 19/03/2012
+      </div>
+    </div>
+
+    <!-- DADOS DO SERVIDOR -->
+    <div class="doc-grid">
+      <div class="doc-row" style="grid-template-columns: 3fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Nome</span>
+          <span class="cell-value">José Antônio Pereira</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Matrícula</span>
+          <span class="cell-value">1110608</span>
+        </div>
+      </div>
+      <div class="doc-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Cargo</span>
+          <span class="cell-value">100170 — Assistente administrativo</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Lotação</span>
+          <span class="cell-value">50600005 — Unidade de Gestão da Informação</span>
+        </div>
+      </div>
+      <div class="doc-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Data de admissão</span>
+          <span class="cell-value">19/03/2012</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Início no cargo</span>
+          <span class="cell-value">19/03/2012</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Tempo municipal</span>
+          <span class="cell-value">5.129 dias</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVERBAÇÕES -->
+    <div class="secao">
+      <div class="secao-titulo">Averbações de tempo de contribuição (em dias)</div>
+      <div class="data-grid">
+        <div class="data-cell zero"><span class="data-label">Tempo estranho</span><span class="data-val">0</span></div>
+        <div class="data-cell"><span class="data-label">Forças Armadas</span><span class="data-val">300</span></div>
+        <div class="data-cell zero"><span class="data-label">Iniciativa privada</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Lei do Sexto</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Licença prêmio em dobro</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Economia mista / Lei Suely</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Tempo municipal não concomitante</span><span class="data-val">0</span></div>
+        <div class="data-cell"><span class="data-label">Outras averbações</span><span class="data-val">5.245</span></div>
+      </div>
+    </div>
+
+    <!-- FREQUÊNCIA -->
+    <div class="secao">
+      <div class="secao-titulo">Frequência (em dias)</div>
+      <div class="data-grid">
+        <div class="data-cell zero"><span class="data-label">Faltas</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">LTI / LAC / outras</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Repreensão</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Suspensões</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Prisão</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Suspensão convertida em multa</span><span class="data-val">0</span></div>
+        <div class="data-cell"><span class="data-label">LTS</span><span class="data-val">11</span></div>
+        <div class="data-cell zero"><span class="data-label">INSS</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">LTPF</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Cedência sem ônus</span><span class="data-val">0</span></div>
+        <div class="data-cell zero"><span class="data-label">Interrupção CMP</span><span class="data-val">0</span></div>
+        <div class="data-cell" style="background:var(--neutral-background);"></div>
+      </div>
+    </div>
+
+    <!-- AVANÇOS -->
+    <div class="secao">
+      <div class="secao-titulo">Avanços concedidos</div>
+      <div class="eventos-wrap">
+        <div class="evento-item">
+          <span class="evento-num">1</span>
+          <span class="evento-data">22/05/2014</span>
+        </div>
+        <div class="evento-item">
+          <span class="evento-num">2</span>
+          <span class="evento-data">23/05/2017</span>
+        </div>
+        <div class="evento-item">
+          <span class="evento-num">3</span>
+          <span class="evento-data">23/05/2020</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADICIONAIS -->
+    <div class="secao">
+      <div class="secao-titulo">Adicionais concedidos</div>
+      <div class="eventos-wrap">
+        <span class="eventos-vazio">Nenhum adicional registrado.</span>
+      </div>
+    </div>
+
+    <!-- LICENÇAS -->
+    <div class="secao">
+      <div class="secao-titulo">Licenças concedidas</div>
+      <div class="eventos-wrap">
+        <div class="evento-item">
+          <span class="evento-num">1</span>
+          <span class="evento-data">18/03/2017</span>
+        </div>
+        <div class="evento-item">
+          <span class="evento-num">2</span>
+          <span class="evento-data">22/10/2023</span>
+        </div>
+      </div>
+      <div class="nota">Referência: POA1207R &nbsp;·&nbsp; Sujeito a revisão dos registros funcionais.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

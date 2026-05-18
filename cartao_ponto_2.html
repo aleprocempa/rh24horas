@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartão Ponto — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header with-action">
+      <div>
+        <h1 class="page-title">Cartão ponto</h1>
+        <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+        <p class="page-subtitle italic">CH 30 horas</p>
+      </div>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir
+      </button>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar-with-label">
+      <div class="filtro-group">
+        <span class="filtro-label">Período — início</span>
+        <input class="filtro-date" type="date" value="2026-03-04">
+      </div>
+      <span class="filtro-sep">até</span>
+      <div class="filtro-group">
+        <span class="filtro-label">Fim</span>
+        <input class="filtro-date" type="date" value="2026-03-18">
+      </div>
+      <button class="btn-limpar" id="btn-limpar" onclick="limparPesquisa()">&#x2715; Limpar</button>
+      <button class="btn-pesquisar" id="btn-pesquisar" onclick="pesquisar()">Pesquisar</button>
+    </div>
+
+    <!-- INFO DO CARTÃO -->
+    <!-- <div class="cartao-info">
+      <div class="cartao-info-row" style="grid-template-columns: 2fr 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Servidor</span>
+          <span class="cell-value">111060801 — José Antônio Pereira</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Cargo</span>
+          <span class="cell-value">Assistente administrativo</span>
+        </div>
+      </div>
+      <div class="cartao-info-row" style="grid-template-columns: 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Lotação</span>
+          <span class="cell-value">Unidade de Gestão da Informação — Coordenadoria de Registro Funcional e Folha de Pagamento</span>
+        </div>
+      </div>
+      <div class="cartao-info-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Período</span>
+          <span class="cell-value">04/03/2026 a 18/03/2026</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Horário</span>
+          <span class="cell-value">17 — 08:30 12:00 13:30 18:00 S.Ext</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Carga horária</span>
+          <span class="cell-value">30 horas semanais</span>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- TABELA -->
+    <div class="tabela-wrap">
+      <table class="ponto">
+        <colgroup>
+          <col class="c-data"><col class="c-sem"><col class="c-marc">
+          <col class="c-ch"><col class="c-ocorr"><col class="c-contagem">
+          <col class="c-atraso"><col class="c-greve"><col class="c-hextra">
+          <col class="c-anot"><col class="c-bh"><col class="c-bhdeb">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="left">Data</th>
+            <th>Sem</th>
+            <th class="left">Marcações</th>
+            <th>C.H.</th>
+            <th>Ocorrências</th>
+            <th>Contagem<br>V.T.</th>
+            <th>Atraso ½<br>Falta / Saída<br>Antec.</th>
+            <th>Aus. Greve<br>Faltas<br>Falta Plantão</th>
+            <th>Horas<br>extras</th>
+            <th>Adic.<br>Noturno</th>
+            <th>B.H.<br>Crédito</th>
+            <th>B.H.<br>Débito</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="data-link" onclick="abrirModal('04/03/2026', 'Quarta-feira')">04/03/2026</td>
+            <td>Qua</td>
+            <td class="left">Férias</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 62 — ver legenda de ocorrências">62</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('05/03/2026', 'Quinta-feira')">05/03/2026</td>
+            <td>Qui</td>
+            <td class="left">Férias</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 62 — ver legenda de ocorrências">62</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('06/03/2026', 'Sexta-feira')">06/03/2026</td>
+            <td>Sex</td>
+            <td class="left">Férias</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 62 — ver legenda de ocorrências">62</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">07/03/2026</td><td>Sáb</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">08/03/2026</td><td>Dom</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('09/03/2026', 'Segunda-feira')">09/03/2026</td>
+            <td>Seg</td>
+            <td class="left">Férias</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 62 — ver legenda de ocorrências">62</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('10/03/2026', 'Terça-feira')">10/03/2026</td>
+            <td>Ter</td>
+            <td class="left">09:24 12:37 13:37 17:58</td>
+            <td>07:34</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 6 — ver legenda de ocorrências">6</span><span class="ocorr-code" data-tooltip="Código 47 — ver legenda de ocorrências">47</span><span class="ocorr-code" data-tooltip="Código 401 — ver legenda de ocorrências">401</span><span class="ocorr-code" data-tooltip="Código 406 — ver legenda de ocorrências">406</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('11/03/2026', 'Quarta-feira')">11/03/2026</td>
+            <td>Qua</td>
+            <td class="left">Júri e Outros Serv. Obrig. p/Lei</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 100 — ver legenda de ocorrências">100</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('12/03/2026', 'Quinta-feira')">12/03/2026</td>
+            <td>Qui</td>
+            <td class="left">Júri e Outros Serv. Obrig. p/Lei</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 100 — ver legenda de ocorrências">100</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('13/03/2026', 'Sexta-feira')">13/03/2026</td>
+            <td>Sex</td>
+            <td class="left">09:01 13:17 13:47 18:27</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 6 — ver legenda de ocorrências">6</span><span class="ocorr-code" data-tooltip="Código 47 — ver legenda de ocorrências">47</span><span class="ocorr-code" data-tooltip="Código 400 — ver legenda de ocorrências">400</span><span class="ocorr-code" data-tooltip="Código 406 — ver legenda de ocorrências">406</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">14/03/2026</td><td>Sáb</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">15/03/2026</td><td>Dom</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('16/03/2026', 'Segunda-feira')">16/03/2026</td>
+            <td>Seg</td>
+            <td class="left">Júri e Outros Serv. Obrig. p/Lei</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 100 — ver legenda de ocorrências">100</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('17/03/2026', 'Terça-feira')">17/03/2026</td>
+            <td>Ter</td>
+            <td class="left">08:55 11:51 12:23 17:40</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 6 — ver legenda de ocorrências">6</span><span class="ocorr-code" data-tooltip="Código 47 — ver legenda de ocorrências">47</span><span class="ocorr-code" data-tooltip="Código 400 — ver legenda de ocorrências">400</span><span class="ocorr-code" data-tooltip="Código 406 — ver legenda de ocorrências">406</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link" onclick="abrirModal('18/03/2026', 'Quarta-feira')">18/03/2026</td>
+            <td>Qua</td>
+            <td class="left">09:11 12:52 13:30</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code" data-tooltip="Código 406 — ver legenda de ocorrências">406</span><span class="ocorr-code" data-tooltip="Código 999 — ver legenda de ocorrências">999</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TOTALIZADORES -->
+    <div class="totais-grid">
+      <div class="totais-cell">
+        <span class="totais-label">Trabalho</span>
+        <span class="totais-valor">47:34</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Licenças / Afastamentos</span>
+        <span class="totais-valor">24:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Férias</span>
+        <span class="totais-valor">32:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Saldo inicial B.H.</span>
+        <span class="totais-valor positivo">98:06</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Extras não autorizadas</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">H. extras diurnas</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">H. extras noturnas</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Saldo final B.H.</span>
+        <span class="totais-valor positivo">98:06</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Atrasos / Meias faltas</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Faltas / Falta plantão</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Qtd. dias de faltas / Aus. Greve</span>
+        <span class="totais-valor">0</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Compensação mensal</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+    </div>
+
+    <div class="legenda-link">
+      * N/A: Não apurado &nbsp;&nbsp;·&nbsp;&nbsp;
+      <a href="#" onclick="alert('Legenda de ocorrências — em construção')">Ver legenda de ocorrências ↗</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DETALHE DO DIA -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-titulo" id="modal-titulo">Ocorrências — 10/03/2026</div>
+      <button class="modal-close" onclick="fecharModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+
+      <div>
+        <div class="modal-section-title">Ocorrências da marcação</div>
+        <table class="modal-t">
+          <thead>
+            <tr>
+              <th width="250">Ocorrência</th>
+              <th class="center" style="width:3rem">Qtde</th>
+              <th class="center" style="width:4rem">Motivo</th>
+              <th>Observação</th>
+              <th>Usuário da última alteração</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>6 - Trabalhando conforme legislação</td>
+              <td class="center mono">08:00</td>
+              <td class="center">0</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>47 - Intervalo refeição (tempo)</td>
+              <td class="center mono">00:30</td>
+              <td class="center">0</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>227 - Final ano 2025 compensação (+)</td>
+              <td class="center mono">01:23</td>
+              <td class="center">0</td>
+              <td>26.0.000016233-6 | Alt. por diego.garcia</td>
+              <td>Diego de Jesus Nazar Garcia</td>
+            </tr>
+            <tr>
+              <td>406 - Total de horas trabalhadas</td>
+              <td class="center mono">09:23</td>
+              <td class="center">0</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div class="modal-section-title">Registro de marcações web</div>
+        <table class="modal-t">
+          <thead>
+            <tr>
+              <th>Data / Hora da inclusão</th>
+              <th>IP</th>
+              <th>Computador</th>
+              <th class="center">Hora registrada</th>
+              <th>Usuário logado</th>
+              <th>Usuário do registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">20/03/2026 — 12:39</td>
+              <td class="mono">10.18.2.200</td>
+              <td class="mono">10.18.2.200</td>
+              <td class="center mono">12:39</td>
+              <td></td>
+              <td>1110608 — 01</td>
+            </tr>
+            <tr>
+              <td class="mono">20/03/2026 — 13:09</td>
+              <td class="mono">10.18.2.200</td>
+              <td class="mono">10.18.2.200</td>
+              <td class="center mono">13:09</td>
+              <td></td>
+              <td>1110608 — 01</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+
+  function abrirModal(data, diaSemana) {
+    document.getElementById('modal-titulo').textContent = 'Ocorrências — ' + data + ' (' + diaSemana + ')';
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+  function pesquisar() {
+    document.getElementById('btn-limpar').classList.add('visible');
+  }
+
+  function limparPesquisa() {
+    document.getElementById('btn-limpar').classList.remove('visible');
+  }
+
+  // Marca a linha de hoje
+  (function () {
+    var hoje = new Date();
+    var dd = String(hoje.getDate()).padStart(2, '0');
+    var mm = String(hoje.getMonth() + 1).padStart(2, '0');
+    var yyyy = hoje.getFullYear();
+    var dataHoje = dd + '/' + mm + '/' + yyyy;
+
+    document.querySelectorAll('table.ponto tbody tr td.data-link').forEach(function (td) {
+      if (td.textContent.trim() === dataHoje) {
+        td.closest('tr').classList.add('hoje');
+        td.innerHTML = dataHoje + ' <span class="hoje-badge">HOJE</span>';
+      }
+    });
+  })();
+</script>
+</body>
+</html>

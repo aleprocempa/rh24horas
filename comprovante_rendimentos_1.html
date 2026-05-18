@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprovante de Rendimentos — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Comprovante de rendimentos</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+    </div>
+
+    <div class="toolbar">
+      <span class="toolbar-label">Ano base</span>
+      <select class="ano">
+        <option selected>2025 — PMPA</option>
+        <option>2024 — PMPA</option>
+        <option>2023 — PMPA</option>
+      </select>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- documento -->
+    <div class="secao">
+      <div class="secao-header">1. Fonte pagadora — pessoa jurídica</div>
+      <div class="secao-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="secao-cell">
+          <span class="cell-label">Nome empresarial</span>
+          <span class="cell-value">Município de Porto Alegre</span>
+        </div>
+        <div class="secao-cell">
+          <span class="cell-label">CNPJ</span>
+          <span class="cell-value">92.963.560/0001-60</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. BENEFICIÁRIO -->
+    <div class="secao">
+      <div class="secao-header">2. Pessoa física beneficiária dos rendimentos</div>
+      <div class="secao-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="secao-cell">
+          <span class="cell-label">CPF</span>
+          <span class="cell-value">999.999.999-99</span>
+        </div>
+        <div class="secao-cell">
+          <span class="cell-label">Nome</span>
+          <span class="cell-value">José Antônio Pereira</span>
+        </div>
+        <div class="secao-cell">
+          <span class="cell-label">Natureza do rendimento</span>
+          <span class="cell-value">0561 — Rendimentos do trabalho assalariado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. RENDIMENTOS TRIBUTÁVEIS -->
+    <div class="secao">
+      <div class="secao-header">3. Rendimentos tributáveis, deduções e imposto sobre a renda retido na fonte</div>
+      <div class="item-row">
+        <span class="item-num">01</span>
+        <span class="item-desc">Total dos rendimentos (inclusive férias)</span>
+        <span class="item-valor">90.360,82</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">02</span>
+        <span class="item-desc">Contribuição previdenciária oficial</span>
+        <span class="item-valor">11.316,49</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">03</span>
+        <span class="item-desc">Contribuição à previdência privada e ao fundo de aposentadoria programada (FAPI)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">04</span>
+        <span class="item-desc">Pensão alimentícia (informar o beneficiário no quadro 7)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">05</span>
+        <span class="item-desc">Imposto de renda retido na fonte (IRRF)</span>
+        <span class="item-valor">10.278,60</span>
+      </div>
+    </div>
+
+    <!-- 4. RENDIMENTOS ISENTOS -->
+    <div class="secao">
+      <div class="secao-header">4. Rendimentos isentos e não tributáveis</div>
+      <div class="item-row">
+        <span class="item-num">01</span>
+        <span class="item-desc">Parcela isenta dos proventos de aposentadoria, reserva, reforma e pensão (65 anos ou mais)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">02</span>
+        <span class="item-desc">Parcela isenta do 13º salário de aposentadoria, reserva remunerada, reforma e pensão (65 anos ou mais)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">03</span>
+        <span class="item-desc">Diárias e ajudas de custo</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">04</span>
+        <span class="item-desc">Pensão, proventos de aposentadoria ou reforma por moléstia grave, aposentadoria ou reforma por acidente em serviço</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">05</span>
+        <span class="item-desc">Lucro e dividendo apurado a partir de 1996 pago por pessoa jurídica (lucro real, presumido ou arbitrado)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">06</span>
+        <span class="item-desc">Valores pagos ao titular ou sócio de microempresa ou empresa de pequeno porte, exceto pró-labore, aluguéis ou serviços prestados</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">07</span>
+        <span class="item-desc">Indenizações por rescisão de contrato de trabalho, inclusive a título de PDV e acidente de trabalho</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">08</span>
+        <span class="item-desc">Outros</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+    </div>
+
+    <!-- 5. RENDIMENTOS SUJEITOS À TRIBUTAÇÃO EXCLUSIVA -->
+    <div class="secao">
+      <div class="secao-header">5. Rendimentos sujeitos à tributação exclusiva (rendimento líquido)</div>
+      <div class="item-row">
+        <span class="item-num">01</span>
+        <span class="item-desc">Décimo terceiro salário</span>
+        <span class="item-valor">5.388,68</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">02</span>
+        <span class="item-desc">Imposto sobre a renda retido na fonte — 13º salário</span>
+        <span class="item-valor">714,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">03</span>
+        <span class="item-desc">Outros</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+    </div>
+
+    <!-- 6. RENDIMENTOS RECEBIDOS ACUMULADAMENTE -->
+    <div class="secao">
+      <div class="secao-header">6. Rendimentos recebidos acumuladamente — art. 12-A da Lei nº 7.713/1988 (sujeito à tributação exclusiva)</div>
+      <div class="secao-row" style="grid-template-columns: 2fr 1fr;">
+        <div class="secao-cell">
+          <span class="cell-label">6.1 Número do processo</span>
+          <span class="cell-value zero">—</span>
+        </div>
+        <div class="secao-cell">
+          <span class="cell-label">Quantidade de meses</span>
+          <span class="cell-value zero">—</span>
+        </div>
+      </div>
+      <div class="secao-natureza-titulo">
+        <span class="secao-natureza-label">Natureza do rendimento</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">01</span>
+        <span class="item-desc">Total dos rendimentos tributáveis (inclusive férias e décimo terceiro salário)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">02</span>
+        <span class="item-desc">Exclusão: despesas com a ação judicial</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">03</span>
+        <span class="item-desc">Dedução: contribuição previdenciária oficial</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">04</span>
+        <span class="item-desc">Dedução: pensão alimentícia (preencher também o quadro 7)</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">05</span>
+        <span class="item-desc">Imposto sobre a renda retido na fonte</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+      <div class="item-row">
+        <span class="item-num">06</span>
+        <span class="item-desc">Rendimentos isentos de pensão, proventos de aposentadoria ou reforma por moléstia grave ou aposentadoria ou reforma por acidente em serviço</span>
+        <span class="item-valor zero">0,00</span>
+      </div>
+    </div>
+
+    <!-- 7. INFORMAÇÕES COMPLEMENTARES -->
+    <div class="secao">
+      <div class="secao-header">7. Informações complementares</div>
+      <div class="secao-row" style="grid-template-columns: 1fr;">
+        <div class="secao-cell" style="min-height: 48px;">
+          <span class="cell-label">Observações</span>
+          <span class="cell-value zero">Nenhuma informação complementar registrada.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

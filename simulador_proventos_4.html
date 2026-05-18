@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Proventos — RH24Horas</title>
+<link rel="stylesheet" href="rh24horas.css">
+<script src="components.js"></script>
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Simulador de proventos</h1>
+        <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999 &mdash; Vínculo 1</p>
+      </div>
+      <button class="btn-outline" id="btn-outline" style="display:none" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="resultado-section">
+      <div class="resultado-titulo">Resultado da simulação</div>
+      <div id="resultado-placeholder" class="resultado-placeholder">
+        Clique em "Calcular" para ver a estimativa de proventos com base nas contribuições registradas.
+      </div>
+      <div id="resultado-cards" class="resultado-grid" style="display:none">
+        <div class="resultado-card">
+          <div class="resultado-card-eyebrow">Art. 40 CF</div>
+          <div class="resultado-card-valor" id="media-art40">—</div>
+          <div class="resultado-card-stats" id="meta-art40"></div>
+        </div>
+        <div class="resultado-card destaque">
+          <div class="resultado-card-eyebrow">Art. 43 LOM</div>
+          <div class="resultado-card-valor" id="media-art43">—</div>
+          <div class="resultado-card-stats" id="meta-art43"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA CALCULAR -->
+    <div class="calcular-bar">
+      <span class="calcular-info">Preencha os campos editáveis nas competências sem valor e clique em Calcular para atualizar a estimativa.</span>
+      <button class="btn-limpar" id="btn-limpar" onclick="limpar()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Limpar cálculo
+      </button>
+      <button class="btn-calcular" id="btn-calcular" onclick="calcular()">Calcular</button>
+    </div>
+
+    <!-- TABELA -->
+    <div class="tabela-section">
+      <div class="tabela-header">
+        <div class="section-title">Contribuições por competência</div>
+        <button class="btn-expandir" id="btn-expandir" onclick="toggleExpandir()">Ver todas as 244 competências ↓</button>
+      </div>
+
+      <table class="contrib" id="tabela-contrib">
+        <thead>
+          <tr>
+            <th class="left">Competência</th>
+            <th>Valor original (R$)</th>
+            <th>Índice de correção</th>
+            <th>Valor corrigido (R$)</th>
+            <th class="center">Art. 40 CF<br><span style="font-weight:400;font-size:9px">(80% maiores)</span></th>
+            <th class="center">Art. 43 LOM<br><span style="font-weight:400;font-size:9px">(90% maiores)</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-contrib">
+          <!-- preenchido por JS -->
+        </tbody>
+      </table>
+
+      <div class="nota-expandir" id="nota-expandir">
+        Exibindo os últimos 12 meses. <button class="btn-expandir" onclick="toggleExpandir()">Ver todas as 244 competências ↓</button>
+      </div>
+
+    
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Dados reais extraídos do sistema
+const DADOS_BRUTOS = [
+  {c:'03/2026', vo:7189.08, ic:0,        vc:0},
+  {c:'02/2026', vo:7189.08, ic:1.0056,   vc:7229.34},
+  {c:'01/2026', vo:7042.01, ic:1.009522, vc:7109.06},
+  {c:'12/2025', vo:7042.01, ic:1.011642, vc:7123.99},
+  {c:'11/2025', vo:6920.9,  ic:1.011945, vc:7003.57},
+  {c:'10/2025', vo:6920.9,  ic:1.012249, vc:7005.67},
+  {c:'09/2025', vo:6926.22, ic:1.017513, vc:7047.52},
+  {c:'08/2025', vo:6857.64, ic:1.015376, vc:6963.08},
+  {c:'07/2025', vo:6857.64, ic:1.017509, vc:6977.71},
+  {c:'06/2025', vo:6857.64, ic:1.019848, vc:6993.75},
+  {c:'05/2025', vo:6463.1,  ic:1.023416, vc:6614.44},
+  {c:'04/2025', vo:6435.89, ic:1.028331, vc:6618.23},
+  {c:'03/2025', vo:6435.89, ic:1.033574, vc:6651.97},
+  {c:'02/2025', vo:6435.89, ic:1.048871, vc:6750.42},
+  {c:'01/2025', vo:6435.89, ic:1.048871, vc:6750.42},
+  {c:'12/2024', vo:6435.89, ic:1.053904, vc:6782.81},
+  {c:'11/2024', vo:6208.99, ic:1.057383, vc:6565.28},
+  {c:'10/2024', vo:6201.17, ic:1.063833, vc:6597.01},
+  {c:'09/2024', vo:6201.17, ic:1.068942, vc:6628.69},
+  {c:'08/2024', vo:6201.17, ic:1.067443, vc:6619.40},
+  {c:'07/2024', vo:6201.17, ic:1.070220, vc:6636.57},
+  {c:'06/2024', vo:5844.64, ic:1.076082, vc:6288.91},
+  {c:'05/2024', vo:5844.64, ic:1.079861, vc:6310.99},
+  {c:'04/2024', vo:5844.64, ic:1.086427, vc:6349.37},
+  {c:'03/2024', vo:5844.64, ic:1.090289, vc:6372.01},
+  {c:'02/2024', vo:5844.64, ic:1.095615, vc:6403.15},
+  {c:'01/2024', vo:5844.64, ic:1.095615, vc:6403.15},
+  {c:'12/2023', vo:5844.64, ic:1.100993, vc:6434.58},
+  {c:'11/2023', vo:5629.50, ic:1.104619, vc:6218.44},
+  {c:'10/2023', vo:5629.50, ic:1.110232, vc:6249.99},
+  {c:'09/2023', vo:5629.50, ic:1.108803, vc:6241.95},
+  {c:'08/2023', vo:5629.50, ic:1.107402, vc:6234.08},
+  {c:'07/2023', vo:5629.50, ic:1.109965, vc:6248.49},
+  {c:'06/2023', vo:5629.50, ic:1.119393, vc:6301.55},
+  {c:'05/2023', vo:5629.50, ic:1.123312, vc:6323.61},
+  {c:'04/2023', vo:5629.50, ic:1.130882, vc:6366.23},
+  {c:'03/2023', vo:5629.50, ic:1.130882, vc:6366.23},
+  {c:'02/2023', vo:5629.50, ic:1.130882, vc:6366.23},
+  {c:'01/2023', vo:5629.50, ic:1.130882, vc:6366.23},
+  {c:'12/2022', vo:5629.50, ic:1.132721, vc:6376.58},
+  {c:'11/2022', vo:5328.12, ic:1.139820, vc:6073.27},
+  {c:'10/2022', vo:5328.12, ic:1.148065, vc:6117.21},
+  {c:'09/2022', vo:5328.12, ic:1.144760, vc:6099.58},
+  {c:'08/2022', vo:5328.12, ic:1.145621, vc:6104.17},
+  {c:'07/2022', vo:5328.12, ic:1.139820, vc:6073.27},
+  {c:'06/2022', vo:4881.94, ic:1.135073, vc:5541.52},
+  {c:'05/2022', vo:4881.94, ic:1.119700, vc:5466.46},
+  {c:'04/2022', vo:4881.94, ic:1.115073, vc:5443.86},
+  {c:'03/2022', vo:4881.94, ic:1.114280, vc:5439.99},
+  {c:'02/2022', vo:4881.94, ic:1.112100, vc:5429.35},
+  {c:'01/2022', vo:4881.94, ic:1.112100, vc:5429.35}
+];
+
+// Completa com competências sem valor (mais antigas)
+for (let i = 51; i < 244; i++) {
+  const ano = 2022 - Math.floor((i - 50) / 12);
+  const mes = 12 - ((i - 50) % 12);
+  DADOS_BRUTOS.push({
+    c: (mes < 10 ? '0' + mes : mes) + '/' + ano,
+    vo: 0, ic: 1.1 + (i * 0.005), vc: 0, editavel: true
+  });
+}
+
+// Estado
+let competencias = DADOS_BRUTOS.map((d, i) => ({
+  ...d,
+  editavel: d.editavel || d.vo === 0,
+  participa40: false,
+  participa43: false,
+  idx: i
+}));
+
+let expandido = false;
+let calculado = false;
+
+function fmt(v) {
+  return v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function renderTabela() {
+  const tbody = document.getElementById('tbody-contrib');
+  const lista = expandido ? competencias : competencias.slice(0, 12);
+  tbody.innerHTML = '';
+
+  lista.forEach((comp, i) => {
+    const tr = document.createElement('tr');
+    if (calculado && comp.participa40 && comp.participa43) tr.className = 'participa-art40 participa-art43';
+    else if (calculado && comp.participa40) tr.className = 'participa-art40';
+    else if (calculado && comp.participa43) tr.className = 'participa-art43';
+
+    const vcText = comp.vc > 0 ? fmt(comp.vc) : '—';
+
+    const art40 = calculado
+      ? (comp.participa40 ? '<span class="badge-sim">Sim</span>' : '<span class="badge-nao">Não</span>')
+      : '—';
+    const art43 = calculado
+      ? (comp.participa43 ? '<span class="badge-sim">Sim</span>' : '<span class="badge-nao">Não</span>')
+      : '—';
+
+    let valorOriginalCell;
+    if (comp.editavel) {
+      valorOriginalCell = `<td class="editavel"><input class="val-input" data-idx="${comp.idx}" value="${comp.vo > 0 ? comp.vo : ''}" placeholder="Informar" onchange="atualizarValor(${comp.idx}, this.value)"></td>`;
+    } else {
+      valorOriginalCell = `<td style="text-align:right">${fmt(comp.vo)}</td>`;
+    }
+
+    tr.innerHTML = `
+      <td class="left" style="font-weight:600">${comp.c}</td>
+      ${valorOriginalCell}
+      <td>${comp.ic > 0 ? comp.ic.toFixed(6) : '—'}</td>
+      <td>${vcText}</td>
+      <td class="center">${art40}</td>
+      <td class="center">${art43}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('nota-expandir').style.display = expandido ? 'none' : 'block';
+}
+
+function atualizarValor(idx, valorStr) {
+  let v = parseFloat(valorStr.replace('.', '').replace(',', '.')) || 0;
+  competencias[idx].vo = v;
+  competencias[idx].vc = v > 0 ? parseFloat((v * competencias[idx].ic).toFixed(2)) : 0;
+}
+
+function toggleExpandir() {
+  expandido = !expandido;
+  document.getElementById('btn-expandir').textContent = expandido
+    ? 'Ver apenas os últimos 12 meses ↑'
+    : 'Ver todas as 244 competências ↓';
+  renderTabela();
+  window.scrollTo({top: document.getElementById('tabela-contrib').offsetTop - 80, behavior: 'smooth'});
+}
+
+function calcular() {
+  // Filtra só quem tem valor corrigido
+  const comValor = competencias.filter(c => c.vc > 0);
+
+  // Ordena crescente por valor corrigido
+  const ordenadas = [...comValor].sort((a, b) => a.vc - b.vc);
+
+  const n40 = Math.trunc(ordenadas.length * 0.8);
+  const n43 = Math.trunc(ordenadas.length * 0.9);
+
+  const participantes40 = ordenadas.slice(ordenadas.length - n40).map(c => c.idx);
+  const participantes43 = ordenadas.slice(ordenadas.length - n43).map(c => c.idx);
+
+  competencias.forEach(c => {
+    c.participa40 = participantes40.includes(c.idx);
+    c.participa43 = participantes43.includes(c.idx);
+  });
+
+  const soma40 = participantes40.reduce((s, idx) => s + competencias[idx].vc, 0);
+  const soma43 = participantes43.reduce((s, idx) => s + competencias[idx].vc, 0);
+  const media40 = n40 > 0 ? soma40 / n40 : 0;
+  const media43 = n43 > 0 ? soma43 / n43 : 0;
+
+  document.getElementById('media-art40').textContent = 'R$ ' + fmt(media40);
+  document.getElementById('media-art43').textContent = 'R$ ' + fmt(media43);
+
+  const fmtVal = v => 'R$ ' + fmt(v);
+  document.getElementById('meta-art40').innerHTML =
+    `<div class="resultado-card-stat">Contribuições consideradas: <strong>${n40} de ${competencias.length}</strong></div>` +
+    `<div class="resultado-card-stat">Soma das contribuições: <strong>${fmtVal(soma40)}</strong></div>`;
+  document.getElementById('meta-art43').innerHTML =
+    `<div class="resultado-card-stat">Contribuições consideradas: <strong>${n43} de ${competencias.length}</strong></div>` +
+    `<div class="resultado-card-stat">Soma das contribuições: <strong>${fmtVal(soma43)}</strong></div>`;
+
+  document.getElementById('resultado-placeholder').style.display = 'none';
+  document.getElementById('resultado-cards').style.display = 'grid';
+  document.getElementById('btn-outline').style.display = 'flex';
+  document.getElementById('btn-limpar').classList.add('visible');
+
+  calculado = true;
+  renderTabela();
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function limpar() {
+  competencias.forEach(c => { c.art40 = false; c.art43 = false; });
+  document.getElementById('resultado-cards').style.display = 'none';
+  document.getElementById('resultado-placeholder').style.display = 'block';
+  document.getElementById('btn-outline').style.display = 'none';
+  document.getElementById('btn-limpar').classList.remove('visible');
+  document.getElementById('media-art40').textContent = '—';
+  document.getElementById('media-art43').textContent = '—';
+  document.getElementById('meta-art40').innerHTML = '';
+  document.getElementById('meta-art43').innerHTML = '';
+  calculado = false;
+  renderTabela();
+}
+
+// Init
+renderTabela();
+
+// Dropdown
+document.addEventListener('click', function() {
+  document.getElementById('user-dropdown').classList.remove('open');
+});
+</script>
+</body>
+</html>

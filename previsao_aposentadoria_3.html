@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Previsão de Aposentadoria — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Previsão de aposentadoria</h1>
+        <p class="page-subtitle">Estimativa atualizada em 03/04/2026 — Referência POA1225R</p>
+      </div>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- DATAS IMPORTANTES -->
+    <div class="datas-cards">
+      <div class="data-card destaque">
+        <div class="data-card-label">Abono permanência a partir de</div>
+        <div class="data-card-valor">25/05/2042</div>
+        <div class="data-card-sub">Quando atinge os requisitos mínimos</div>
+      </div>
+      <div class="data-card">
+        <div class="data-card-label">Aposentadoria compulsória em</div>
+        <div class="data-card-valor">25/05/2057</div>
+        <div class="data-card-sub">Limite de permanência no serviço</div>
+      </div>
+      <div class="data-card alerta">
+        <div class="data-card-label">Idade atual</div>
+        <div class="data-card-valor">43 anos</div>
+        <div class="data-card-sub">Nascimento em 99/99/9999</div>
+      </div>
+    </div>
+
+    <!-- DADOS DO SERVIDOR -->
+    <div class="doc-grid">
+      <div class="doc-row" style="grid-template-columns: 3fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Nome</span>
+          <span class="cell-value">José Antônio Pereira</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Matrícula</span>
+          <span class="cell-value">1110608</span>
+        </div>
+      </div>
+      <div class="doc-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Cargo</span>
+          <span class="cell-value">Assistente administrativo</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Lotação</span>
+          <span class="cell-value">Unidade de Gestão da Informação — SMAP</span>
+        </div>
+      </div>
+      <div class="doc-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="doc-cell">
+          <span class="cell-label">Ingresso no serviço público</span>
+          <span class="cell-value">19/03/2012</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Ingresso efetivo na PMPA</span>
+          <span class="cell-value">19/03/2012</span>
+        </div>
+        <div class="doc-cell">
+          <span class="cell-label">Início no cargo</span>
+          <span class="cell-value">19/03/2012</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OCORRÊNCIAS -->
+    <div class="secao">
+      <div class="secao-titulo">Ocorrências</div>
+      <div class="ocorr-grid">
+        <div class="ocorr-cell"><span class="ocorr-label">Faltas</span><span class="ocorr-val zero">0 dias</span></div>
+        <div class="ocorr-cell"><span class="ocorr-label">Afastamentos</span><span class="ocorr-val zero">0 dias</span></div>
+        <div class="ocorr-cell"><span class="ocorr-label">Interrupções</span><span class="ocorr-val zero">0 dias</span></div>
+        <div class="ocorr-cell"><span class="ocorr-label">Suspensões</span><span class="ocorr-val zero">0 dias</span></div>
+      </div>
+    </div>
+
+    <!-- TEMPOS DE CONTRIBUIÇÃO -->
+    <div class="secao">
+      <div class="secao-titulo">Tempos de serviço e contribuição</div>
+      <div class="tempo-grid">
+        <div class="tempo-cell">
+          <span class="tempo-label">Tempo de serviço público na PMPA</span>
+          <div class="tempo-vals"><span class="tempo-dias">5.129 dias</span><span class="tempo-ext">14A 19D</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Tempo de serviço público em outras entes</span>
+          <div class="tempo-vals"><span class="tempo-dias">300 dias</span><span class="tempo-ext">10M</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Tempo de carreira</span>
+          <div class="tempo-vals"><span class="tempo-dias">5.129 dias</span><span class="tempo-ext">14A 19D</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Tempo de cargo</span>
+          <div class="tempo-vals"><span class="tempo-dias">5.129 dias</span><span class="tempo-ext">14A 19D</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Contribuição — Regime Geral de Previdência Social</span>
+          <div class="tempo-vals"><span class="tempo-dias">5.245 dias</span><span class="tempo-ext">14A 4M</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Contribuição — Regime Próprio da PMPA</span>
+          <div class="tempo-vals"><span class="tempo-dias">5.129 dias</span><span class="tempo-ext">14A 19D</span></div>
+        </div>
+        <div class="tempo-cell">
+          <span class="tempo-label">Contribuição — Regime Próprio de outros entes</span>
+          <div class="tempo-vals"><span class="tempo-dias">300 dias</span><span class="tempo-ext">10M</span></div>
+        </div>
+        <div class="tempo-cell total">
+          <span class="tempo-label white">Tempo de contribuição total</span>
+          <div class="tempo-vals"><span class="tempo-dias">10.674 dias</span><span class="tempo-ext white">29A 3M</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALIDADES -->
+    <div class="secao modalidades-wrap">
+      <div class="secao-titulo">Modalidades de aposentadoria</div>
+      <table class="modal">
+        <thead>
+          <tr>
+            <th style="width:35%">Modalidade</th>
+            <th class="center" style="width:11%">Data prevista</th>
+            <th style="width:32%">Cálculo do provento</th>
+            <th style="width:22%">Base legal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- COM DIREITO -->
+          <tr>
+            <td>Aposentadoria voluntária por tempo de contribuição — Regra Geral</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2047</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>60% (+2pp por ano excedente a 20 anos) da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43 Inc. I da Lei Orgânica de Porto Alegre, alterada pela Emenda nº 47/2021. Cálculo pelo Art. 37-A da LC 478/2002</td>
+          </tr>
+          <tr>
+            <td>Aposentadoria voluntária por tempo de contribuição — Regra Especial (exposição a agentes nocivos)</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2042</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>60% (+2pp por ano excedente a 15 anos) da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43-A Inc. II da Lei Orgânica de Porto Alegre, alterada pela Emenda nº 47/2021. Cálculo pelo Art. 37-A da LC 478/2002</td>
+          </tr>
+          <tr>
+            <td>Regra de Transição — PONTOS (ingresso até 30/08/2021) — Integralidade</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2044</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>Integralidade da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43-B da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-B §8º Inc II c/c §10 Inc II</td>
+          </tr>
+          <tr>
+            <td>Regra de Transição — PONTOS (ingresso até 30/08/2021) — Proporcional</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2044</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>60% (+2pp por ano excedente a 20 anos) da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43-B da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-B §8º Inc III c/c §10 Inc II</td>
+          </tr>
+          <tr>
+            <td>Regra de Transição — PEDÁGIO (ingresso até 30/08/2021) — Integralidade</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2042</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>Integralidade da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43-C da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-C §2º Inc II c/c §6° Inc II</td>
+          </tr>
+          <tr>
+            <td>Regra de Transição — PEDÁGIO (ingresso até 30/08/2021) — Proporcional</td>
+            <td style="text-align:center"><span class="badge-data">25/05/2042</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>60% (+2pp por ano excedente a 20 anos) da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;color:var(--neutral-base)">Art. 43-C da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-C §2º Inc III c/c §6° Inc II</td>
+          </tr>
+
+          <!-- SEM DIREITO -->
+          <tr class="sem-direito">
+            <td>Aposentadoria voluntária da pessoa com deficiência — Por idade</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span></td>
+            <td>Conforme Lei Complementar Federal 142/2013</td>
+            <td style="font-size:11px;">Art. 43-A Inc. III da Lei Orgânica, Emenda nº 47/2021</td>
+          </tr>
+          <tr class="sem-direito">
+            <td>Aposentadoria voluntária da pessoa com deficiência — Por grau de deficiência</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span></td>
+            <td>Conforme Lei Complementar Federal 142/2013</td>
+            <td style="font-size:11px;">Art. 43-A Inc. III da Lei Orgânica, Emenda nº 47/2021</td>
+          </tr>
+          <tr class="sem-direito">
+            <td>Regra de Transição — PONTOS (ingresso até 31/12/2003)</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span><br><span class="badge-com">COM PARIDADE</span></td>
+            <td>Integralidade conforme vantagens incorporadas na forma da Lei</td>
+            <td style="font-size:11px;">Art. 43-B da Lei Orgânica, Emendas nº 47/2021 e nº 48/2022. Cálculo pelo Art. 43-B §8º Inc I c/c §10 Inc I</td>
+          </tr>
+          <tr class="sem-direito">
+            <td>Regra de Transição — PEDÁGIO (ingresso até 31/12/2003)</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span><br><span class="badge-com">COM PARIDADE</span></td>
+            <td>Integralidade conforme vantagens incorporadas na forma da Lei</td>
+            <td style="font-size:11px;">Art. 43-C da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-C §2º Inc I c/c §6° Inc I</td>
+          </tr>
+          <tr class="sem-direito">
+            <td>Regra de Transição — PEDÁGIO — Regra Especial com redução de idade (ingresso até 16/12/1998 no serviço público e até 31/12/2003 em cargo efetivo)</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span><br><span class="badge-com">COM PARIDADE</span></td>
+            <td>Integralidade conforme vantagens incorporadas na forma da Lei</td>
+            <td style="font-size:11px;">Art. 43-C §5° da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-C §2º Inc I c/c §6° Inc I</td>
+          </tr>
+          <tr class="sem-direito">
+            <td>Regra de Transição — PEDÁGIO — Regra Especial com redução de idade (ingresso até 16/12/1998 no serviço público e até 30/08/2021 em cargo efetivo)</td>
+            <td style="text-align:center"><span class="badge-sem-direito">Sem direito</span><br><span class="badge-sem">SEM PARIDADE</span></td>
+            <td>Integralidade da média das 90% melhores contribuições desde jul/1994</td>
+            <td style="font-size:11px;">Art. 43-C §5° da Lei Orgânica, Emenda nº 47/2021. Cálculo pelo Art. 43-C §2º Inc II c/c §6° Inc II</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- NOTA FINAL -->
+    <div style="font-size:11px;color:var(--neutral-base);line-height:1.6;margin-bottom:2rem;">
+      <strong>Esta consulta é uma estimativa</strong> conforme as regras constitucionais vigentes, não tendo validade como documento oficial. Além do tempo de contribuição e idade, existem outros requisitos a serem cumpridos concomitantemente para aquisição do benefício.<br>
+      Com paridade: correção dos proventos na mesma data e índices do reajuste dos servidores ativos, com eventuais vantagens posteriores.<br>
+      Sem paridade: assegurado apenas reajuste para preservar o valor real dos proventos, sem direito a eventuais vantagens concedidas aos servidores em atividade.<br>
+      Dúvidas: <a href="https://servicos-previmpa.portoalegre.rs.gov.br/" target="_blank">servicos-previmpa.portoalegre.rs.gov.br</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

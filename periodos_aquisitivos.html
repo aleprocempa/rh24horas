@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Períodos Aquisitivos — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Períodos aquisitivos</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+    </div>
+
+    <!-- FÉRIAS -->
+    <div>
+      <div class="secao-titulo">Férias</div>
+      <table class="aquisitivo">
+        <thead>
+          <tr>
+            <th class="left">Início</th>
+            <th class="left">Término</th>
+            <th>Dias de direito</th>
+            <th>Prescrição</th>
+            <th>Dias gozados</th>
+            <th>Abono (venda)</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left">19/03/2025 <span class="badge-atual">Período atual</span></td>
+            <td class="left">18/03/2026</td>
+            <td>30</td>
+            <td>—</td>
+            <td>0</td>
+            <td>0</td>
+            <td class="saldo">30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <br>
+
+    <!-- LICENÇA PRÊMIO -->
+    <div>
+      <div class="secao-titulo">Licença prêmio</div>
+      <table class="aquisitivo">
+        <thead>
+          <tr>
+            <th class="left">Início</th>
+            <th class="left">Término</th>
+            <th>Dias de direito</th>
+            <th>Dias gozados</th>
+            <th>Dias vendidos</th>
+            <th>Em dobro</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left">19/03/2012</td>
+            <td class="left">18/03/2017</td>
+            <td>90</td>
+            <td>45</td>
+            <td>0</td>
+            <td>0</td>
+            <td class="saldo">45</td>
+          </tr>
+          <tr>
+            <td class="left">19/03/2017</td>
+            <td class="left">22/10/2023</td>
+            <td>90</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td class="saldo">90</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

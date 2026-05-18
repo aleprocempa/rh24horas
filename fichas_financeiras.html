@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fichas Financeiras — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Fichas financeiras</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+    </div>
+
+    <div class="toolbar">
+      <span class="toolbar-label">Ano base</span>
+      <select class="ano">
+        <option selected>2025</option>
+        <option>2024</option>
+        <option>2023</option>
+        <option>2022</option>
+      </select>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- FICHA -->
+     <!-- não acho que precisa repetir esses dados -->
+    <!-- <div class="ficha-header">
+      <span class="ficha-meta-item"><strong>Empresa:</strong> Município de Porto Alegre</span>
+      <span class="ficha-meta-item"><strong>Matrícula:</strong> 9.999.999</span>
+      <span class="ficha-meta-item"><strong>Vínculo:</strong> 1</span>
+      <span class="ficha-meta-item"><strong>Nome:</strong> José Antônio Pereira</span>
+      <span class="ficha-meta-item"><strong>CPF:</strong> 999.999.999-99</span>
+      <span class="ficha-meta-item"><strong>Ano:</strong> 2025</span>
+    </div> -->
+
+    <div class="ficha-wrap">
+      <table class="ficha">
+        <colgroup>
+          <col class="c-cod">
+          <col class="c-desc">
+          <col class="c-mes"><col class="c-mes"><col class="c-mes"><col class="c-mes">
+          <col class="c-mes"><col class="c-mes"><col class="c-mes"><col class="c-mes">
+          <col class="c-mes"><col class="c-mes"><col class="c-mes"><col class="c-mes">
+          <col class="c-total">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="left">Cód.</th>
+            <th class="left">Descrição</th>
+            <th class="mes-header">Jan</th>
+            <th class="mes-header">Fev</th>
+            <th class="mes-header">Mar</th>
+            <th class="mes-header">Abr</th>
+            <th class="mes-header">Mai</th>
+            <th class="mes-header">Jun</th>
+            <th class="mes-header">Jul</th>
+            <th class="mes-header">Ago</th>
+            <th class="mes-header">Set</th>
+            <th class="mes-header">Out</th>
+            <th class="mes-header">Nov</th>
+            <th class="mes-header">Dez</th>
+            <th class="col-total">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- VANTAGENS -->
+          <tr class="vantagem">
+            <td class="cod">30</td>
+            <td class="desc">Vencimento</td>
+            <td class="valor">1.565,62</td><td class="valor">1.565,62</td><td class="valor">1.565,62</td><td class="valor">1.565,62</td>
+            <td class="valor">1.565,62</td><td class="valor">1.565,62</td><td class="valor">1.565,62</td><td class="valor">1.565,62</td>
+            <td class="valor">1.581,28</td><td class="valor">1.581,28</td><td class="valor">1.581,28</td><td class="valor">1.608,95</td>
+            <td class="valor col-total">18.877,75</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">44</td>
+            <td class="desc">Função gratificada</td>
+            <td class="valor">1.120,82</td><td class="valor">1.158,68</td><td class="valor">1.158,68</td><td class="valor">1.158,68</td>
+            <td class="valor">1.158,68</td><td class="valor">1.158,68</td><td class="valor">1.158,68</td><td class="valor">1.158,68</td>
+            <td class="valor">1.170,25</td><td class="valor">1.170,25</td><td class="valor">1.170,25</td><td class="valor">1.190,73</td>
+            <td class="valor col-total">13.933,06</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">47</td>
+            <td class="desc">Substituição função gratificada</td>
+            <td class="valor">280,40</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor col-total">280,40</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">58</td>
+            <td class="desc">Gratificação natal / Abono natal</td>
+            <td class="valor">234,72</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor">6.861,42</td>
+            <td class="valor col-total">7.096,14</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">62</td>
+            <td class="desc">Gratificação exercício atividade treinamento</td>
+            <td class="valor zero">—</td><td class="valor">664,50</td><td class="valor">664,50</td><td class="valor">664,50</td>
+            <td class="valor">664,50</td><td class="valor">664,50</td><td class="valor">664,50</td><td class="valor">664,50</td>
+            <td class="valor">664,50</td><td class="valor zero">—</td><td class="valor">1.342,32</td><td class="valor">671,16</td>
+            <td class="valor col-total">7.329,48</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">113</td>
+            <td class="desc">Gratificação atividades especiais</td>
+            <td class="valor">736,92</td><td class="valor">736,92</td><td class="valor">736,92</td><td class="valor">736,92</td>
+            <td class="valor">736,92</td><td class="valor">736,92</td><td class="valor">736,92</td><td class="valor">2.029,41</td>
+            <td class="valor">1.170,25</td><td class="valor">1.170,25</td><td class="valor">1.170,25</td><td class="valor">1.190,73</td>
+            <td class="valor col-total">11.889,33</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">124</td>
+            <td class="desc">Auxílio alimentação</td>
+            <td class="valor">727,25</td><td class="valor">727,25</td><td class="valor">727,25</td><td class="valor">763,50</td>
+            <td class="valor">763,50</td><td class="valor">763,50</td><td class="valor">800,00</td><td class="valor">800,00</td>
+            <td class="valor">800,00</td><td class="valor">800,00</td><td class="valor">800,00</td><td class="valor">800,00</td>
+            <td class="valor col-total">9.272,25</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">150</td>
+            <td class="desc">Parcela art. 10 LC 851/2019</td>
+            <td class="valor">78,28</td><td class="valor">78,28</td><td class="valor">78,28</td><td class="valor">78,28</td>
+            <td class="valor">78,28</td><td class="valor">78,28</td><td class="valor">78,28</td><td class="valor">78,28</td>
+            <td class="valor">79,06</td><td class="valor">79,06</td><td class="valor">79,06</td><td class="valor">80,45</td>
+            <td class="valor col-total">943,87</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">300</td>
+            <td class="desc">Avanços</td>
+            <td class="valor">234,84</td><td class="valor">234,84</td><td class="valor">234,84</td><td class="valor">234,84</td>
+            <td class="valor">234,84</td><td class="valor">234,84</td><td class="valor">234,84</td><td class="valor">234,84</td>
+            <td class="valor">237,19</td><td class="valor">237,19</td><td class="valor">237,19</td><td class="valor">241,34</td>
+            <td class="valor col-total">2.831,63</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">323</td>
+            <td class="desc">Regime de tempo integral</td>
+            <td class="valor">782,81</td><td class="valor">782,81</td><td class="valor">782,81</td><td class="valor">782,81</td>
+            <td class="valor">782,81</td><td class="valor">782,81</td><td class="valor">782,81</td><td class="valor">782,81</td>
+            <td class="valor">790,64</td><td class="valor">790,64</td><td class="valor">790,64</td><td class="valor">804,48</td>
+            <td class="valor col-total">9.438,88</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">342</td>
+            <td class="desc">Gratificação de incentivo ao desempenho (GID)</td>
+            <td class="valor">1.878,74</td><td class="valor">1.878,74</td><td class="valor">1.878,74</td><td class="valor">1.878,74</td>
+            <td class="valor">1.878,74</td><td class="valor">1.878,74</td><td class="valor">1.878,74</td><td class="valor">1.878,74</td>
+            <td class="valor">1.897,54</td><td class="valor">1.892,22</td><td class="valor">1.892,22</td><td class="valor">1.925,33</td>
+            <td class="valor col-total">22.637,23</td>
+          </tr>
+          <tr class="vantagem">
+            <td class="cod">352</td>
+            <td class="desc">1/3 constitucional férias</td>
+            <td class="valor zero">—</td><td class="valor">1.430,20</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor">768,99</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor col-total">2.199,19</td>
+          </tr>
+
+          <!-- TOTAL VANTAGENS -->
+          <tr class="totais-row">
+            <td class="cod"></td>
+            <td class="desc vantagem-total">Total vantagens</td>
+            <td class="vantagem-total valor">7.640,40</td><td class="vantagem-total valor">9.257,84</td><td class="vantagem-total valor">7.827,64</td><td class="vantagem-total valor">7.863,89</td>
+            <td class="vantagem-total valor">7.863,89</td><td class="vantagem-total valor">7.863,89</td><td class="vantagem-total valor">7.900,39</td><td class="vantagem-total valor">9.192,88</td>
+            <td class="vantagem-total valor">8.390,71</td><td class="vantagem-total valor">8.489,88</td><td class="vantagem-total valor">9.063,21</td><td class="vantagem-total valor">15.374,59</td>
+            <td class="vantagem-total valor col-total">106.729,21</td>
+          </tr>
+
+          <!-- DESCONTOS -->
+          <tr class="desconto">
+            <td class="cod">400</td>
+            <td class="desc">Contribuição previdenciária</td>
+            <td class="valor">934,98</td><td class="valor">901,02</td><td class="valor">901,02</td><td class="valor">901,02</td>
+            <td class="valor">901,02</td><td class="valor">901,02</td><td class="valor">901,02</td><td class="valor">1.081,98</td>
+            <td class="valor">969,67</td><td class="valor">968,93</td><td class="valor">968,93</td><td class="valor">985,88</td>
+            <td class="valor col-total">11.316,49</td>
+          </tr>
+          <tr class="desconto">
+            <td class="cod">487</td>
+            <td class="desc">Seguro obrigatório Seguros Sura</td>
+            <td class="valor">14,69</td><td class="valor">14,69</td><td class="valor">14,69</td><td class="valor">14,69</td>
+            <td class="valor">14,69</td><td class="valor">14,69</td><td class="valor">14,69</td><td class="valor">14,69</td>
+            <td class="valor">14,69</td><td class="valor">15,41</td><td class="valor">15,08</td><td class="valor">15,08</td>
+            <td class="valor col-total">177,78</td>
+          </tr>
+          <tr class="desconto">
+            <td class="cod">502</td>
+            <td class="desc">Contribuição previdenciária — Gratificação natal</td>
+            <td class="valor">32,86</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor">960,60</td>
+            <td class="valor col-total">993,46</td>
+          </tr>
+          <tr class="desconto">
+            <td class="cod">550</td>
+            <td class="desc">Imposto de renda retido na fonte (IRRF)</td>
+            <td class="valor">683,45</td><td class="valor">808,83</td><td class="valor">808,83</td><td class="valor">808,83</td>
+            <td class="valor">796,10</td><td class="valor">796,10</td><td class="valor">796,10</td><td class="valor">1.101,77</td>
+            <td class="valor">912,06</td><td class="valor">728,06</td><td class="valor">1.097,20</td><td class="valor">941,27</td>
+            <td class="valor col-total">10.278,60</td>
+          </tr>
+          <tr class="desconto">
+            <td class="cod">550</td>
+            <td class="desc">IRRF — 13º salário / Gratificação natal</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td>
+            <td class="valor zero">—</td><td class="valor zero">—</td><td class="valor zero">—</td><td class="valor">714,00</td>
+            <td class="valor col-total">714,00</td>
+          </tr>
+          <tr class="desconto">
+            <td class="cod">622</td>
+            <td class="desc">CEF Empréstimo</td>
+            <td class="valor">1.475,58</td><td class="valor">1.475,58</td><td class="valor">1.475,58</td><td class="valor">1.712,21</td>
+            <td class="valor">1.712,21</td><td class="valor">1.712,21</td><td class="valor">1.712,21</td><td class="valor">1.712,21</td>
+            <td class="valor">1.712,21</td><td class="valor">1.712,21</td><td class="valor">1.712,21</td><td class="valor">1.712,21</td>
+            <td class="valor col-total">19.836,63</td>
+          </tr>
+
+          <!-- TOTAL DESCONTOS -->
+          <tr class="totais-row">
+            <td class="cod"></td>
+            <td class="desc desconto-total">Total descontos</td>
+            <td class="desconto-total valor">3.141,56</td><td class="desconto-total valor">3.200,12</td><td class="desconto-total valor">3.200,12</td><td class="desconto-total valor">3.436,75</td>
+            <td class="desconto-total valor">3.424,02</td><td class="desconto-total valor">3.424,02</td><td class="desconto-total valor">3.424,02</td><td class="desconto-total valor">3.910,65</td>
+            <td class="desconto-total valor">3.608,63</td><td class="desconto-total valor">3.424,61</td><td class="desconto-total valor">3.793,42</td><td class="desconto-total valor">5.329,04</td>
+            <td class="desconto-total valor col-total">43.316,96</td>
+          </tr>
+
+          <!-- LÍQUIDO -->
+          <tr class="liquido-row">
+            <td class="cod"></td>
+            <td class="desc">Líquido</td>
+            <td class="valor">4.498,84</td>
+            <td class="valor">6.057,72</td>
+            <td class="valor">4.627,52</td>
+            <td class="valor">4.427,14</td>
+            <td class="valor">4.439,87</td>
+            <td class="valor">4.439,87</td>
+            <td class="valor">4.476,37</td>
+            <td class="valor">5.282,23</td>
+            <td class="valor">4.782,08</td>
+            <td class="valor">5.065,27</td>
+            <td class="valor">5.269,79</td>
+            <td class="valor">10.045,55</td>
+            <td class="col-tota valor">63.412,25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

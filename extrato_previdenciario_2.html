@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extrato Previdenciário — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Extrato previdenciário</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+    </div>
+
+    <div class="toolbar">
+      <span class="toolbar-label">Ano base</span>
+      <select class="ano">
+        <option selected>2025</option>
+        <option>2024</option>
+        <option>2023</option>
+        <option>2022</option>
+      </select>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+    </div>
+
+    <!-- DADOS DO SERVIDOR -->
+    <!-- <div style="border: 1px solid var(--neutral-light); margin-bottom: 0;">
+      <div style="display: grid; grid-template-columns: 3fr 1fr; border-bottom: 1px solid var(--neutral-light);">
+        <div class="doc-info-cell" style="border-right: 1px solid var(--neutral-light);">
+          <span class="cell-label">Nome do servidor</span>
+          <span class="cell-value">José Antônio Pereira</span>
+        </div>
+        <div class="doc-info-cell">
+          <span class="cell-label">Matrícula</span>
+          <span class="cell-value">001 1110608 01</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr;">
+        <div class="doc-info-cell" style="border-right: 1px solid var(--neutral-light);">
+          <span class="cell-label">Cargo ou função</span>
+          <span class="cell-value">Assistente administrativo</span>
+        </div>
+        <div class="doc-info-cell">
+          <span class="cell-label">Lotação</span>
+          <span class="cell-value">50600005 — Unidade de Gestão da Informação</span>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- TABELA -->
+    <table class="extrato">
+      <thead>
+        <tr>
+          <th class="left">Exercício<br>financeiro</th>
+          <th>Base de contribuição<br>(R$)</th>
+          <th>Contribuição<br>servidor (R$)</th>
+          <th>Contribuição<br>patronal (R$)</th>
+          <th>Total<br>(R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="left">01/2025</td><td>6.435,89</td><td>901,02</td><td>1.220,82</td><td>2.121,84</td></tr>
+        <tr><td class="left">02/2025</td><td>6.435,89</td><td>901,02</td><td>1.220,82</td><td>2.121,84</td></tr>
+        <tr><td class="left">03/2025</td><td>6.435,89</td><td>901,02</td><td>1.220,82</td><td>2.121,84</td></tr>
+        <tr><td class="left">04/2025</td><td>6.435,89</td><td>901,02</td><td>1.220,82</td><td>2.121,84</td></tr>
+        <tr><td class="left">05/2025</td><td>6.463,10</td><td>904,83</td><td>1.225,99</td><td>2.130,82</td></tr>
+        <tr><td class="left">06/2025</td><td>6.857,64</td><td>960,07</td><td>1.300,83</td><td>2.260,90</td></tr>
+        <tr><td class="left">07/2025</td><td>6.857,64</td><td>960,07</td><td>1.300,83</td><td>2.260,90</td></tr>
+        <tr><td class="left">08/2025</td><td>6.857,64</td><td>960,07</td><td>1.300,83</td><td>2.260,90</td></tr>
+        <tr><td class="left">09/2025</td><td>6.926,22</td><td>969,67</td><td>1.313,83</td><td>2.283,50</td></tr>
+        <tr><td class="left">10/2025</td><td>6.920,90</td><td>968,93</td><td>1.312,83</td><td>2.281,76</td></tr>
+        <tr><td class="left">11/2025</td><td>6.920,90</td><td>968,93</td><td>1.312,83</td><td>2.281,76</td></tr>
+        <tr><td class="left">12/2025</td><td>7.042,01</td><td>985,88</td><td>1.335,80</td><td>2.321,68</td></tr>
+        <tr class="decimo-terceiro">
+          <td class="left">13/2025 <span style="font-size:10px;font-weight:400;color:var(--neutral-muted)">13º salário</span></td>
+          <td>6.861,42</td><td>960,60</td><td>1.301,54</td><td>2.262,14</td>
+        </tr>
+        <tr class="total-row">
+          <td class="left">Total</td>
+          <td>87.451,03</td>
+          <td>12.243,13</td>
+          <td>16.588,59</td>
+          <td>28.831,72</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="nota-legal">
+      Extrato previdenciário anual em cumprimento à legislação federal e de acordo com o artigo 112 da LC 478/2002.
+      Alíquota prevista na legislação municipal (L.C. 505/04): 11% a partir de setembro/2005.
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>

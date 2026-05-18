@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartão Ponto — RH24Horas</title>
+<style>
+:root {
+  --primary-headings:         #1d3374;
+  --primary-dark:             #2d46a0;
+  --primary-interactive:      #4264cd;
+  --primary-interactive-area: #557cf2;
+  --primary-muted:            #8bb3f7;
+  --primary-background:       #ebf2ff;
+  --neutral-body:       #091e42;
+  --neutral-dark:       #44546f;
+  --neutral-base:       #626f86;
+  --neutral-muted:      #9da5b3;
+  --neutral-light:      #dcdee4;
+  --neutral-background: #f1f2f4;
+  --success-dark:       #315331;
+  --success-background: #eff5ef;
+  --success-base:       #4d824d;
+  --danger-base:        #dc143c;
+  --danger-background:  #fef1f3;
+  --danger-dark:        #970e29;
+  --font-sans:    "Noto Sans", system-ui, sans-serif;
+  --font-display: "Noto Sans Display", system-ui, sans-serif;
+  --font-mono:    "Noto Sans Mono", monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: var(--neutral-body); background: var(--neutral-background); }
+a { color: var(--primary-interactive); text-decoration: none; }
+
+/* ─── HEADER ─────────────────────────────────────────── */
+.app-header {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: 0 1.5rem; height: 52px;
+  background: #fff; border-bottom: 1px solid var(--neutral-light);
+}
+.app-logo { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--primary-headings); letter-spacing: -0.01em; white-space: nowrap; }
+.app-logo span { color: var(--primary-interactive-area); }
+.header-spacer { flex: 1; }
+
+/* ── Botão de ponto no header ── */
+.header-ponto-wrap { position: relative; }
+.header-ponto-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 12px; height: 34px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+  color: #fff; background: var(--primary-interactive-area);
+  border: none; cursor: pointer; white-space: nowrap;
+  letter-spacing: 0.02em;
+  transition: background 0.15s;
+}
+.header-ponto-btn:hover { background: var(--primary-dark); }
+.header-ponto-btn svg { flex-shrink: 0; }
+
+/* status pill no botão */
+.ponto-status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 7px; font-size: 10px; font-weight: 700;
+  background: rgba(255,255,255,0.2); border-radius: 0;
+  letter-spacing: 0.04em;
+}
+.ponto-status-pill::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: #6effa0; display: inline-block;
+  animation: blink 1.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── Painel dropdown de ponto ── */
+.ponto-panel {
+  display: none; position: absolute; top: calc(100% + 6px); right: 0;
+  width: 320px; background: #fff;
+  border: 1px solid var(--neutral-light);
+  box-shadow: 0 6px 24px rgba(9,30,66,0.13);
+  z-index: 300;
+}
+.ponto-panel.open { display: block; }
+
+.ponto-panel-header {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--neutral-light);
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.ponto-panel-title {
+  font-size: 12px; font-weight: 700; color: var(--primary-headings);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.ponto-panel-data {
+  font-size: 11px; color: var(--neutral-base);
+}
+
+/* marcações do dia */
+.ponto-marcacoes {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--neutral-light);
+}
+.ponto-marcacoes-label {
+  font-size: 10px; font-weight: 600; color: var(--neutral-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.ponto-chips {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  align-items: center;
+}
+.ponto-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  background: var(--primary-background);
+  border: 1px solid var(--primary-muted);
+  font-size: 13px; font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--primary-dark);
+}
+.ponto-chip-num {
+  font-size: 9px; font-weight: 600;
+  color: var(--primary-muted); margin-right: 2px;
+}
+.ponto-chip.entrada { border-left: 3px solid var(--success-base); }
+.ponto-chip.saida   { border-left: 3px solid var(--primary-muted); }
+
+/* resumo de horas */
+.ponto-resumo {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--neutral-light);
+}
+.ponto-resumo-item {
+  flex: 1; padding: 10px 16px; border-right: 1px solid var(--neutral-light);
+}
+.ponto-resumo-item:last-child { border-right: none; }
+.ponto-resumo-label {
+  font-size: 10px; color: var(--neutral-muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.07em; display: block;
+  margin-bottom: 2px;
+}
+.ponto-resumo-val {
+  font-size: 15px; font-weight: 700; font-family: var(--font-mono);
+  color: var(--neutral-body);
+}
+.ponto-resumo-val.ok  { color: var(--success-dark); }
+.ponto-resumo-val.warn { color: #996c0b; }
+
+/* área de novo registro */
+.ponto-novo {
+  padding: 12px 16px;
+}
+.ponto-novo-label {
+  font-size: 10px; font-weight: 600; color: var(--neutral-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.ponto-novo-row {
+  display: flex; gap: 8px; align-items: center;
+}
+.ponto-novo-row input[type="time"] {
+  font-family: var(--font-mono); font-size: 15px; font-weight: 600;
+  color: var(--neutral-body); background: #fff;
+  border: 1px solid var(--neutral-light);
+  padding: 7px 10px; height: 38px; width: 110px;
+  letter-spacing: 0.05em;
+}
+.ponto-novo-row input[type="time"]:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+.ponto-tipo {
+  display: flex; gap: 0; flex: 1;
+}
+.ponto-tipo label {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 5px; padding: 7px 6px; height: 38px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--neutral-light);
+  border-right: none;
+  color: var(--neutral-base);
+  transition: background 0.1s;
+}
+.ponto-tipo label:last-child { border-right: 1px solid var(--neutral-light); }
+.ponto-tipo input[type=radio] { display: none; }
+.ponto-tipo input[type=radio]:checked + label,
+.ponto-tipo label:has(input[type=radio]:checked) { /* fallback via JS */ }
+.ponto-tipo label.selected {
+  background: var(--primary-background);
+  color: var(--primary-interactive);
+  border-color: var(--primary-muted);
+}
+
+.btn-registrar {
+  width: 100%; margin-top: 10px; height: 40px;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 700;
+  color: #fff; background: var(--primary-interactive-area);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background 0.15s;
+}
+.btn-registrar:hover { background: var(--primary-dark); }
+.btn-registrar:disabled { background: var(--neutral-muted); cursor: not-allowed; }
+
+/* confirmação flash */
+.ponto-confirm {
+  display: none;
+  margin: 0 16px 12px;
+  padding: 10px 12px;
+  background: var(--success-background);
+  border: 1px solid var(--success-base);
+  font-size: 12px; color: var(--success-dark);
+  align-items: center; gap: 8px;
+}
+.ponto-confirm.show { display: flex; }
+
+/* nota no rodapé do painel */
+.ponto-panel-footer {
+  padding: 8px 16px;
+  background: var(--neutral-background);
+  border-top: 1px solid var(--neutral-light);
+  font-size: 10px; color: var(--neutral-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── outros itens do header ── */
+.header-notif {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; font-size: 12px; font-weight: 600;
+  color: var(--primary-interactive); background: var(--primary-background);
+  border: 1px solid var(--primary-muted); cursor: pointer;
+}
+.header-notif:hover { background: #d1e1ff; }
+.notif-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--primary-interactive-area); color: #fff;
+  font-size: 9px; font-weight: 700;
+}
+.header-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 10px; cursor: pointer; position: relative;
+  border: 1px solid transparent;
+}
+.header-user:hover { border-color: var(--neutral-light); background: var(--neutral-background); }
+.user-info { text-align: right; }
+.user-name  { font-size: 13px; font-weight: 600; color: var(--neutral-body); display: block; }
+.user-role  { font-size: 10px; color: var(--neutral-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--primary-interactive-area); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.user-dropdown { display: none; position: absolute; top: calc(100% + 4px); right: 0; min-width: 160px; background: #fff; border: 1px solid var(--neutral-light); z-index: 200; }
+.user-dropdown.open { display: block; }
+.dropdown-item { display: block; padding: 9px 14px; font-size: 13px; color: var(--neutral-dark); cursor: pointer; }
+.dropdown-item:hover { background: var(--neutral-background); }
+.dropdown-item.exit { color: var(--danger-base); border-top: 1px solid var(--neutral-light); }
+
+/* ─── LAYOUT ─────────────────────────────────────────── */
+.layout { display: flex; }
+.sidebar {
+  width: 210px; flex-shrink: 0; background: #fff;
+  border-right: 1px solid var(--neutral-light);
+  height: calc(100vh - 52px); position: sticky; top: 52px;
+  overflow-y: auto;
+}
+.nav-group-label {
+  padding: 8px 1rem 4px; font-size: 10px; font-weight: 600;
+  color: var(--neutral-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  border-top: 1px solid var(--neutral-light); margin-top: 4px;
+}
+.nav-group-label:first-child { border-top: none; margin-top: 0; }
+.nav-item {
+  display: block; padding: 6px 1rem 6px 1.5rem; font-size: 13px;
+  color: var(--neutral-dark); border-left: 3px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--neutral-background); color: var(--primary-interactive); }
+.nav-item.current { color: var(--primary-interactive); background: var(--primary-background); border-left-color: var(--primary-interactive-area); font-weight: 600; }
+.nav-item.muted { color: var(--neutral-muted); }
+
+/* ─── CONTENT ─────────────────────────────────────────── */
+.content { flex: 1; padding: 1.5rem 2rem; min-width: 0; }
+.page-header {
+  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--neutral-light);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+.page-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--primary-headings); margin-bottom: 0.25rem; }
+.page-subtitle { font-size: 13px; color: var(--neutral-base); }
+.btn-outline {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; font-family: var(--font-sans); font-size: 12px;
+  font-weight: 600; color: var(--neutral-dark); background: #fff;
+  border: 1px solid var(--neutral-light); cursor: pointer; white-space: nowrap;
+}
+.btn-outline:hover { background: var(--neutral-background); }
+
+/* ── Toolbar ── */
+.toolbar { display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.filtro-group { display: flex; flex-direction: column; gap: 4px; }
+.filtro-label { font-size: 11px; font-weight: 600; color: var(--neutral-base); text-transform: uppercase; letter-spacing: 0.07em; }
+input.filtro-date { font-family: var(--font-sans); font-size: 13px; color: var(--neutral-body); background: #fff; border: 1px solid var(--neutral-light); padding: 7px 10px; height: 36px; width: 150px; }
+input.filtro-date:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+.filtro-sep { font-size: 13px; color: var(--neutral-muted); padding-bottom: 8px; }
+.btn-pesquisar { height: 36px; padding: 0 1.25rem; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: #fff; background: var(--primary-interactive-area); border: none; cursor: pointer; }
+.btn-pesquisar:hover { background: var(--primary-dark); }
+
+/* ── Cartão info ── */
+.cartao-info { border: 1px solid var(--neutral-light); margin-bottom: 0; }
+.cartao-info-row { display: grid; border-bottom: 1px solid var(--neutral-light); }
+.cartao-info-row:last-child { border-bottom: none; }
+.cartao-info-cell {
+  padding: 8px 12px; border-right: 1px solid var(--neutral-light);
+  display: flex; flex-direction: column; gap: 1px;
+}
+.cartao-info-cell:last-child { border-right: none; }
+.cell-label { font-size: 10px; font-weight: 600; color: var(--neutral-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.cell-value { font-size: 13px; color: var(--neutral-body); font-weight: 500; }
+
+/* ── Tabela ── */
+.tabela-wrap { overflow-x: auto; margin-bottom: 0; }
+table.ponto { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+table.ponto col.c-data    { width: 7rem; }
+table.ponto col.c-sem     { width: 3rem; }
+table.ponto col.c-marc    { width: 14rem; }
+table.ponto col.c-ch      { width: 4.5rem; }
+table.ponto col.c-ocorr   { width: 8rem; }
+table.ponto col.c-contagem { width: 5rem; }
+table.ponto col.c-atraso  { width: 5rem; }
+table.ponto col.c-greve   { width: 5rem; }
+table.ponto col.c-hextra  { width: 5rem; }
+table.ponto col.c-anot    { width: 4.5rem; }
+table.ponto col.c-bh      { width: 5rem; }
+table.ponto col.c-bhdeb   { width: 5rem; }
+table.ponto thead tr th {
+  padding: 5px 6px; background: var(--neutral-background);
+  border: 1px solid var(--neutral-light);
+  font-size: 9px; font-weight: 600; color: var(--neutral-base);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  text-align: center; white-space: normal; line-height: 1.2; vertical-align: bottom;
+}
+table.ponto thead tr th.left { text-align: left; }
+table.ponto tbody tr td {
+  padding: 5px 6px; border: 1px solid var(--neutral-light);
+  background: #fff; text-align: center;
+  font-size: 12px; color: var(--neutral-body); white-space: nowrap;
+}
+table.ponto tbody tr td.left { text-align: left; }
+table.ponto tbody tr:hover td { background: var(--primary-background); }
+table.ponto tbody tr.fds td { background: var(--neutral-background); color: var(--neutral-muted); }
+table.ponto tbody tr.hoje td { background: #fff9e6; }
+table.ponto tbody tr.hoje:hover td { background: var(--primary-background); }
+table.ponto tbody tr td.data-link {
+  color: var(--primary-interactive); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+  text-align: left; font-weight: 600;
+}
+table.ponto tbody tr td.data-link:hover { color: var(--primary-dark); }
+.hoje-badge {
+  display: inline-block; font-size: 9px; font-weight: 700; padding: 0 5px;
+  background: #f5c000; color: var(--neutral-body);
+  vertical-align: middle; margin-left: 4px;
+}
+.ocorr-codes { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+.ocorr-code {
+  font-size: 10px; padding: 1px 4px;
+  background: var(--primary-background); color: var(--primary-dark);
+  border: 1px solid var(--primary-muted); font-weight: 600;
+}
+
+/* ── Totalizadores ── */
+.totais-grid {
+  display: flex; flex-wrap: wrap;
+  border: 1px solid var(--neutral-light); border-top: none;
+  background: #fff;
+}
+.totais-cell {
+  padding: 8px 14px; border-right: 1px solid var(--neutral-light);
+  border-top: 1px solid var(--neutral-light);
+  display: flex; flex-direction: column; gap: 1px; min-width: 0;
+}
+.totais-label { font-size: 10px; color: var(--neutral-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.totais-valor { font-size: 14px; font-weight: 700; font-family: var(--font-mono); color: var(--neutral-body); }
+.totais-valor.positivo { color: var(--success-dark); }
+.totais-valor.negativo { color: var(--danger-base); }
+
+/* ─── OVERLAY para fechar painéis ─────────────────────── */
+.overlay { display: none; position: fixed; inset: 0; z-index: 190; }
+.overlay.open { display: block; }
+</style>
+</head>
+<body>
+
+<!-- OVERLAY clicável para fechar painel -->
+<div class="overlay" id="overlay" onclick="fecharTudo()"></div>
+
+<!-- ─── HEADER ─────────────────────────────────────────── -->
+<header class="app-header">
+  <div class="app-logo">RH<span>24</span>Horas</div>
+  <div class="header-spacer"></div>
+
+  <!-- BOTÃO DE PONTO -->
+  <div class="header-ponto-wrap" id="ponto-wrap">
+    <button class="header-ponto-btn" id="ponto-btn" onclick="togglePonto(event)">
+      <!-- ícone relógio/ponto -->
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Registrar ponto
+      <span class="ponto-status-pill" id="ponto-status-pill">3 hoje</span>
+    </button>
+
+    <!-- PAINEL DROPDOWN -->
+    <div class="ponto-panel" id="ponto-panel">
+
+      <div class="ponto-panel-header">
+        <span class="ponto-panel-title">Marcações de ponto</span>
+        <span class="ponto-panel-data" id="panel-data-hoje"></span>
+      </div>
+
+      <div class="ponto-marcacoes">
+        <div class="ponto-marcacoes-label">Registros de hoje</div>
+        <div class="ponto-chips" id="chips-container">
+          <!-- gerado por JS -->
+        </div>
+      </div>
+
+      <div class="ponto-resumo">
+        <div class="ponto-resumo-item">
+          <span class="ponto-resumo-label">Trabalhado</span>
+          <span class="ponto-resumo-val ok" id="resumo-trabalhado">04:09</span>
+        </div>
+        <div class="ponto-resumo-item">
+          <span class="ponto-resumo-label">C.H. diária</span>
+          <span class="ponto-resumo-val">08:00</span>
+        </div>
+        <div class="ponto-resumo-item">
+          <span class="ponto-resumo-label">Saldo</span>
+          <span class="ponto-resumo-val warn" id="resumo-saldo">−03:51</span>
+        </div>
+      </div>
+
+      <div class="ponto-novo">
+        <div class="ponto-novo-label">Nova marcação</div>
+        <div class="ponto-novo-row">
+          <input type="time" id="input-hora" value="" />
+          <div class="ponto-tipo" id="ponto-tipo">
+            <label id="lbl-entrada" class="selected">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Entrada
+            </label>
+            <label id="lbl-saida">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                <path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Saída
+            </label>
+          </div>
+        </div>
+        <button class="btn-registrar" id="btn-registrar" onclick="registrar()">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Confirmar marcação
+        </button>
+      </div>
+
+      <div class="ponto-confirm" id="ponto-confirm">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="#4d824d" stroke-width="1.5"/>
+          <path d="M5 8l2 2 4-4" stroke="#4d824d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="confirm-msg">Marcação registrada com sucesso.</span>
+      </div>
+
+      <div class="ponto-panel-footer">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M8 7v5M8 5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Os registros são inseridos com a data e hora atual. O horário pode ser ajustado se necessário.
+      </div>
+    </div>
+  </div>
+  <!-- fim botão ponto -->
+
+  <div class="header-notif">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+      <path d="M8 2a4 4 0 0 1 4 4v3l1 2H3l1-2V6a4 4 0 0 1 4-4zm-1 11a1 1 0 0 0 2 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Mensagens <span class="notif-count">2</span>
+  </div>
+
+  <div class="header-user" id="user-menu-btn">
+    <div class="user-info">
+      <span class="user-name">José Antônio Pereira</span>
+      <span class="user-role">Assistente administrativo</span>
+    </div>
+    <div class="user-avatar">CR</div>
+    <div class="user-dropdown" id="user-dropdown">
+      <div class="dropdown-item exit">Encerrar sessão</div>
+    </div>
+  </div>
+</header>
+
+<!-- ─── LAYOUT ─────────────────────────────────────────── -->
+<div class="layout">
+  <nav class="sidebar">
+    <div class="nav-group-label">Dados funcionais</div>
+    <a class="nav-item" href="#">Ficha funcional</a>
+    <a class="nav-item" href="#">Outros vínculos</a>
+    <div class="nav-group-label">Financeiro</div>
+    <a class="nav-item" href="#">Contracheques</a>
+    <a class="nav-item" href="#">Fichas financeiras</a>
+    <a class="nav-item" href="#">Consignações</a>
+    <a class="nav-item" href="#">Comprovante de rendimentos</a>
+    <a class="nav-item" href="#">Simulador de proventos</a>
+    <div class="nav-group-label">Previdência e carreira</div>
+    <a class="nav-item" href="#">Extrato previdenciário</a>
+    <a class="nav-item" href="#">Tempo de serviço</a>
+    <a class="nav-item" href="#">Previsão de aposentadoria</a>
+    <a class="nav-item" href="#">Períodos aquisitivos</a>
+    <div class="nav-group-label">Frequência e ponto</div>
+    <a class="nav-item current" href="#">Cartão ponto</a>
+    <a class="nav-item" href="#">Frequência</a>
+    <div class="nav-group-label">Institucional</div>
+    <a class="nav-item" href="#">Eleições</a>
+    <a class="nav-item muted" href="#">Doações</a>
+  </nav>
+
+  <div class="content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Cartão ponto</h1>
+        <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+      </div>
+      <button class="btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="6" width="14" height="7" stroke="currentColor" stroke-width="1.4"/><path d="M4 10h8v5H4z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg>
+        Imprimir
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="filtro-group">
+        <span class="filtro-label">Período — início</span>
+        <input class="filtro-date" type="date" value="2026-04-01">
+      </div>
+      <span class="filtro-sep">até</span>
+      <div class="filtro-group">
+        <span class="filtro-label">Fim</span>
+        <input class="filtro-date" type="date" value="2026-04-09">
+      </div>
+      <button class="btn-pesquisar">Pesquisar</button>
+    </div>
+
+    <!-- CARTÃO INFO -->
+    <div class="cartao-info">
+      <div class="cartao-info-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Servidor</span>
+          <span class="cell-value">111060801 — José Antônio Pereira</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Cargo</span>
+          <span class="cell-value">Assistente administrativo</span>
+        </div>
+      </div>
+      <div class="cartao-info-row" style="grid-template-columns: 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Lotação</span>
+          <span class="cell-value">Unidade de Gestão da Informação — Coordenadoria de Registro Funcional e Folha de Pagamento</span>
+        </div>
+      </div>
+      <div class="cartao-info-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="cartao-info-cell">
+          <span class="cell-label">Período</span>
+          <span class="cell-value">01/04/2026 a 09/04/2026</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Horário</span>
+          <span class="cell-value">17 — 08:30 12:00 13:30 18:00 S.Ext</span>
+        </div>
+        <div class="cartao-info-cell">
+          <span class="cell-label">Carga horária</span>
+          <span class="cell-value">30 horas semanais</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="tabela-wrap">
+      <table class="ponto">
+        <colgroup>
+          <col class="c-data"><col class="c-sem"><col class="c-marc">
+          <col class="c-ch"><col class="c-ocorr"><col class="c-contagem">
+          <col class="c-atraso"><col class="c-greve"><col class="c-hextra">
+          <col class="c-anot"><col class="c-bh"><col class="c-bhdeb">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="left">Data</th>
+            <th>Sem</th>
+            <th class="left">Marcações</th>
+            <th>C.H.</th>
+            <th>Ocorrências</th>
+            <th>Contagem<br>V.T.</th>
+            <th>Atraso ½<br>Falta / Saída<br>Antec.</th>
+            <th>Aus.<br>Greve</th>
+            <th>H.<br>Extra</th>
+            <th>Anot.</th>
+            <th>B.H.<br>Créd.</th>
+            <th>B.H.<br>Déb.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="data-link">01/04/2026</td><td>Qua</td>
+            <td class="left">08:32 12:01 13:31 17:58</td>
+            <td>07:56</td><td></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link">02/04/2026</td><td>Qui</td>
+            <td class="left">08:45 12:00 13:35 18:02</td>
+            <td>07:42</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code">6</span><span class="ocorr-code">47</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link">03/04/2026</td><td>Sex</td>
+            <td class="left">09:01 12:54 13:45 18:10</td>
+            <td>08:00</td><td></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">04/04/2026</td><td>Sáb</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr class="fds">
+            <td class="left">05/04/2026</td><td>Dom</td><td class="left"></td>
+            <td></td><td></td><td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link">06/04/2026</td><td>Seg</td>
+            <td class="left">08:28 11:59 13:32 18:03</td>
+            <td>08:02</td><td></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link">07/04/2026</td><td>Ter</td>
+            <td class="left">Feriado Nacional</td>
+            <td>08:00</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code">100</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <tr>
+            <td class="data-link">08/04/2026</td><td>Qua</td>
+            <td class="left">08:55 12:05 13:40 17:50</td>
+            <td>07:40</td>
+            <td class="ocorr-cell"><div class="ocorr-codes"><span class="ocorr-code">47</span><span class="ocorr-code">406</span></div></td>
+            <td>N/A</td><td>00:00</td><td>00:00</td><td>00:00</td><td></td><td>00:00</td><td>00:00</td>
+          </tr>
+          <!-- HOJE — 09/04/2026 -->
+          <tr class="hoje" id="linha-hoje">
+            <td class="left" style="font-weight:700; color: var(--neutral-body);">
+              09/04/2026 <span class="hoje-badge">HOJE</span>
+            </td>
+            <td>Qui</td>
+            <td class="left" id="marcacoes-hoje-cell">07:55 11:55 13:04</td>
+            <td>—</td>
+            <td></td>
+            <td>N/A</td><td>—</td><td>—</td><td>—</td><td></td><td>—</td><td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TOTALIZADORES -->
+    <div class="totais-grid">
+      <div class="totais-cell">
+        <span class="totais-label">Trabalho</span>
+        <span class="totais-valor">39:20</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Feriados</span>
+        <span class="totais-valor">08:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Saldo inicial B.H.</span>
+        <span class="totais-valor positivo">98:06</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">H. extras diurnas</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Atraso / ½ falta</span>
+        <span class="totais-valor">00:00</span>
+      </div>
+      <div class="totais-cell">
+        <span class="totais-label">Saldo B.H. período</span>
+        <span class="totais-valor positivo">+00:22</span>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+// ─── estado das marcações do dia ──────────────────────────
+let marcacoes = ['07:55','11:55','13:04'];
+let tipoSelecionado = 'entrada'; // 'entrada' | 'saida'
+
+// ─── inicialização ────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // preenche hora atual no input
+  const agora = new Date();
+  const hh = String(agora.getHours()).padStart(2,'0');
+  const mm = String(agora.getMinutes()).padStart(2,'0');
+  document.getElementById('input-hora').value = `${hh}:${mm}`;
+
+  // data no painel
+  const opts = { weekday:'long', day:'2-digit', month:'long' };
+  document.getElementById('panel-data-hoje').textContent =
+    agora.toLocaleDateString('pt-BR', opts);
+
+  renderChips();
+  atualizarPill();
+
+  // toggle tipo entrada/saída
+  document.getElementById('lbl-entrada').addEventListener('click', () => setTipo('entrada'));
+  document.getElementById('lbl-saida').addEventListener('click',  () => setTipo('saida'));
+
+  // user dropdown
+  document.getElementById('user-menu-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('user-dropdown').classList.toggle('open');
+  });
+  document.addEventListener('click', () => {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+});
+
+function setTipo(tipo) {
+  tipoSelecionado = tipo;
+  document.getElementById('lbl-entrada').classList.toggle('selected', tipo === 'entrada');
+  document.getElementById('lbl-saida').classList.toggle('selected',  tipo === 'saida');
+}
+
+// ─── toggle painel ────────────────────────────────────────
+function togglePonto(e) {
+  e.stopPropagation();
+  const painel = document.getElementById('ponto-panel');
+  const overlay = document.getElementById('overlay');
+  const aberto = painel.classList.contains('open');
+  if (aberto) {
+    fecharTudo();
+  } else {
+    painel.classList.add('open');
+    overlay.classList.add('open');
+    // esconde confirmação anterior
+    document.getElementById('ponto-confirm').classList.remove('show');
+    // atualiza hora atual
+    const agora = new Date();
+    const hh = String(agora.getHours()).padStart(2,'0');
+    const mm = String(agora.getMinutes()).padStart(2,'0');
+    document.getElementById('input-hora').value = `${hh}:${mm}`;
+  }
+}
+
+function fecharTudo() {
+  document.getElementById('ponto-panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ─── registrar marcação ───────────────────────────────────
+function registrar() {
+  const hora = document.getElementById('input-hora').value;
+  if (!hora) return;
+
+  marcacoes.push(hora);
+  marcacoes.sort();
+
+  renderChips();
+  atualizarPill();
+  atualizarCelulaTabelaHoje();
+
+  const msg = `Marcação das ${hora} registrada como ${tipoSelecionado === 'entrada' ? 'entrada' : 'saída'}.`;
+  document.getElementById('confirm-msg').textContent = msg;
+  const confirm = document.getElementById('ponto-confirm');
+  confirm.classList.add('show');
+
+  // sugere tipo para próxima (alterna)
+  setTipo(tipoSelecionado === 'entrada' ? 'saida' : 'entrada');
+
+  // fecha após 2.5s
+  setTimeout(() => {
+    confirm.classList.remove('show');
+    fecharTudo();
+  }, 2500);
+}
+
+// ─── renderiza chips no painel ────────────────────────────
+function renderChips() {
+  const container = document.getElementById('chips-container');
+  if (marcacoes.length === 0) {
+    container.innerHTML = '<span style="font-size:12px;color:var(--neutral-muted);font-style:italic;">Nenhum registro hoje.</span>';
+    return;
+  }
+  container.innerHTML = marcacoes.map((h, i) => {
+    const tipo = i % 2 === 0 ? 'entrada' : 'saida';
+    return `<span class="ponto-chip ${tipo}">
+      <span class="ponto-chip-num">${i+1}</span>${h}
+    </span>`;
+  }).join('');
+
+  // recalcula resumo
+  calcularResumo();
+}
+
+function calcularResumo() {
+  // calcula tempo trabalhado com pares entrada/saída
+  let totalMin = 0;
+  for (let i = 0; i + 1 < marcacoes.length; i += 2) {
+    const [eh, em] = marcacoes[i].split(':').map(Number);
+    const [sh, sm] = marcacoes[i+1].split(':').map(Number);
+    totalMin += (sh * 60 + sm) - (eh * 60 + em);
+  }
+  const hh = Math.floor(Math.abs(totalMin) / 60);
+  const mm = Math.abs(totalMin) % 60;
+  const fmt = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+  document.getElementById('resumo-trabalhado').textContent = fmt;
+
+  const chMin = 8 * 60;
+  const saldoMin = totalMin - chMin;
+  const shh = Math.floor(Math.abs(saldoMin) / 60);
+  const smm = Math.abs(saldoMin) % 60;
+  const sinal = saldoMin >= 0 ? '+' : '−';
+  document.getElementById('resumo-saldo').textContent =
+    `${sinal}${String(shh).padStart(2,'0')}:${String(smm).padStart(2,'0')}`;
+  document.getElementById('resumo-saldo').className =
+    'ponto-resumo-val ' + (saldoMin >= 0 ? 'ok' : 'warn');
+}
+
+function atualizarPill() {
+  document.getElementById('ponto-status-pill').textContent =
+    `${marcacoes.length} hoje`;
+}
+
+function atualizarCelulaTabelaHoje() {
+  document.getElementById('marcacoes-hoje-cell').textContent = marcacoes.join('  ');
+}
+</script>
+</body>
+</html>

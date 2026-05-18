@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensagens — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+  <div class="content">
+
+    <!-- ── LISTA ─────────────────────────────── -->
+    <div class="msg-lista-view" id="lista-view">
+      <div class="page-header">
+        <h1 class="page-title">Mensagens</h1>
+        <p class="page-subtitle" id="subtitulo-lista">2 mensagens não lidas</p>
+      </div>
+
+      <div class="msg-list" id="msg-list">
+
+        <div class="msg-item nao-lida" id="msg-0" onclick="abrirMensagem(0)">
+          <input type="checkbox" class="msg-check" onclick="event.stopPropagation()" onchange="atualizarSelecao()">
+          <div class="msg-body">
+            <div class="msg-remetente">Portal RH24Horas</div>
+            <div class="msg-assunto">Serviços da SMAP disponíveis através do WhatsApp</div>
+            <div class="msg-preview">Os serviços da Secretaria Municipal de Administração e Patrimônio (SMAP) também estão disponíveis através do WhatsApp…</div>
+          </div>
+          <div class="msg-meta">
+            <span class="msg-data">18/08/2024</span>
+            <span class="badge-nao-lida" id="badge-0"></span>
+          </div>
+        </div>
+
+        <div class="msg-item nao-lida" id="msg-1" onclick="abrirMensagem(1)">
+          <input type="checkbox" class="msg-check" onclick="event.stopPropagation()" onchange="atualizarSelecao()">
+          <div class="msg-body">
+            <div class="msg-remetente">Portal RH24Horas</div>
+            <div class="msg-assunto">Habilitados, Novo Prazo e Entrega Documentos Progressão Funcional Biênio 2014/2016</div>
+            <div class="msg-preview">Informações sobre habilitados, novo prazo e entrega de documentos para progressão funcional…</div>
+          </div>
+          <div class="msg-meta">
+            <span class="msg-data">03/09/2023</span>
+            <span class="badge-nao-lida" id="badge-1"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="msg-actions" id="msg-actions" style="display:none">
+        <span class="msg-actions-hint" id="actions-hint"></span>
+        <button class="btn-remover" onclick="removerSelecionadas()">Remover selecionadas</button>
+      </div>
+    </div>
+
+    <!-- ── DETALHE ────────────────────────────── -->
+    <div class="msg-detalhe" id="detalhe-view">
+      <button class="detalhe-voltar" onclick="voltarLista()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Voltar para mensagens
+      </button>
+
+      <div class="detalhe-card">
+        <div class="detalhe-header">
+          <div class="detalhe-assunto" id="detalhe-assunto"></div>
+          <div class="detalhe-meta">
+            <span class="detalhe-meta-item"><strong>De:</strong> <span id="detalhe-remetente"></span></span>
+            <span class="detalhe-meta-item"><strong>Data:</strong> <span id="detalhe-data"></span></span>
+          </div>
+        </div>
+        <div class="detalhe-corpo" id="detalhe-corpo"></div>
+        <div class="detalhe-footer">
+          <button class="btn-remover-detalhe" onclick="removerAtual()">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 9h8l1-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Remover mensagem
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const mensagens = [
+    {
+      id: 0,
+      remetente: 'Portal RH24Horas',
+      assunto: 'Serviços da SMAP disponíveis através do WhatsApp',
+      data: '18/08/2024',
+      corpo: 'Os serviços da Secretaria Municipal de Administração e Patrimônio (SMAP) também estão disponíveis através do WhatsApp. Salve o número na agenda e inicie a conversa: (51) 3433-0156 — opção SMAP - Administração e Patrimônio.\n\nAcesse informações sobre Recursos Humanos, Concursos, Diário Oficial, Licitações, Arquivo e Patrimônio Público na palma de sua mão.',
+      lida: false
+    },
+    {
+      id: 1,
+      remetente: 'Portal RH24Horas',
+      assunto: 'Habilitados, Novo Prazo e Entrega Documentos Progressão Funcional Biênio 2014/2016',
+      data: '03/09/2023',
+      corpo: 'Informamos que estão disponíveis os habilitados para a Progressão Funcional do Biênio 2014/2016, bem como o novo prazo e as instruções para entrega de documentos. Acesse o portal para verificar sua situação e os procedimentos necessários.',
+      lida: false
+    }
+  ];
+
+  var msgAtual = null;
+
+  function abrirMensagem(id) {
+    var msg = mensagens[id];
+    msgAtual = id;
+
+    if (!msg.lida) {
+      msg.lida = true;
+      var item = document.getElementById('msg-' + id);
+      item.classList.remove('nao-lida');
+      item.classList.add('lida');
+      var badge = document.getElementById('badge-' + id);
+      if (badge) badge.style.display = 'none';
+      atualizarBadgeHeader();
+    }
+
+    document.getElementById('detalhe-assunto').textContent = msg.assunto;
+    document.getElementById('detalhe-remetente').textContent = msg.remetente;
+    document.getElementById('detalhe-data').textContent = msg.data;
+    document.getElementById('detalhe-corpo').innerHTML = msg.corpo.replace(/\n\n/g, '<br><br>');
+
+    document.getElementById('lista-view').classList.add('oculto');
+    document.getElementById('detalhe-view').classList.add('ativo');
+  }
+
+  function voltarLista() {
+    document.getElementById('lista-view').classList.remove('oculto');
+    document.getElementById('detalhe-view').classList.remove('ativo');
+    msgAtual = null;
+  }
+
+  function removerAtual() {
+    if (msgAtual === null) return;
+    var item = document.getElementById('msg-' + msgAtual);
+    if (item) item.remove();
+    mensagens[msgAtual] = null;
+    atualizarBadgeHeader();
+    atualizarSubtitulo();
+    voltarLista();
+  }
+
+  function atualizarSelecao() {
+    var checks = document.querySelectorAll('.msg-check:checked');
+    var actions = document.getElementById('msg-actions');
+    var hint = document.getElementById('actions-hint');
+    if (checks.length > 0) {
+      actions.style.display = 'flex';
+      hint.textContent = checks.length === 1 ? '1 mensagem selecionada' : checks.length + ' mensagens selecionadas';
+    } else {
+      actions.style.display = 'none';
+    }
+  }
+
+  function removerSelecionadas() {
+    document.querySelectorAll('.msg-item').forEach(function(item) {
+      var check = item.querySelector('.msg-check');
+      if (check && check.checked) item.remove();
+    });
+    document.getElementById('msg-actions').style.display = 'none';
+    atualizarBadgeHeader();
+    atualizarSubtitulo();
+  }
+
+  function atualizarBadgeHeader() {
+    var naoLidas = document.querySelectorAll('.msg-item.nao-lida').length;
+    var badge = document.querySelector('.notif-count');
+    if (badge) {
+      badge.textContent = naoLidas;
+      badge.style.display = naoLidas > 0 ? '' : 'none';
+    }
+  }
+
+  function atualizarSubtitulo() {
+    var total = document.querySelectorAll('.msg-item').length;
+    var naoLidas = document.querySelectorAll('.msg-item.nao-lida').length;
+    var sub = document.getElementById('subtitulo-lista');
+    if (total === 0) {
+      sub.textContent = 'Nenhuma mensagem';
+    } else if (naoLidas === 0) {
+      sub.textContent = total === 1 ? '1 mensagem' : total + ' mensagens';
+    } else {
+      sub.textContent = naoLidas === 1 ? '1 mensagem não lida' : naoLidas + ' mensagens não lidas';
+    }
+  }
+</script>
+</body>
+</html>
