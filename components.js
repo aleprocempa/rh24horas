@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var NAV = [
     { group: 'Dados funcionais' },
     { label: 'Ficha funcional',           href: 'ficha_funcional_readonly_1.html' },
-    { label: 'Outros vínculos',           href: '#' },
     { group: 'Financeiro' },
     { label: 'Contracheques',             href: 'contracheque_3.html' },
     { label: 'Fichas financeiras',        href: 'fichas_financeiras.html' },
@@ -47,6 +46,11 @@ document.addEventListener('DOMContentLoaded', function () {
   if (headerEl) {
     headerEl.outerHTML =
       '<header class="app-header">' +
+        '<button class="header-hamburger" id="rh-hamburger" aria-label="Menu">' +
+          '<svg width="18" height="18" viewBox="0 0 18 18" fill="none">' +
+            '<path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+          '</svg>' +
+        '</button>' +
         '<div class="app-logo"><span class="logo-rh">RH</span><span class="logo-rest">24Horas</span></div>' +
         '<div class="header-spacer"></div>' +
 
@@ -57,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
               '<circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>' +
               '<path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
             '</svg>' +
-            ' Registrar ponto ' +
+            '<span class="ponto-btn-label"> Registrar ponto </span>' +
             '<span class="ponto-status-pill" id="rh-ponto-pill">0 hoje</span>' +
           '</button>' +
           '<div class="ponto-panel" id="rh-ponto-panel">' +
@@ -114,18 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
             '<path d="M8 2a4 4 0 0 1 4 4v3l1 2H3l1-2V6a4 4 0 0 1 4-4zm-1 11a1 1 0 0 0 2 0"' +
             ' stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>' +
           '</svg>' +
-          ' Mensagens <span class="notif-count">2</span>' +
+          '<span class="notif-label"> Mensagens </span><span class="notif-count">2</span>' +
         '</a>' +
 
         // Usuário
         '<div class="header-user" id="rh-user-btn">' +
           '<div class="user-info">' +
             '<span class="user-name">José Antônio Pereira</span>' +
-            '<span class="user-role">Assistente administrativo</span>' +
+            '<span class="user-role">' +
+              '<span id="rh-user-cargo">Assistente administrativo</span>' +
+              '<button class="vinculo-switch" id="rh-vinculo-switch" aria-haspopup="true" aria-expanded="false">' +
+                '<span id="rh-vinculo-switch-label">• Vínculo 3 (Efetivo)</span>' +
+                '<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+              '</button>' +
+            '</span>' +
           '</div>' +
           '<div class="user-avatar">CR</div>' +
           '<div class="user-dropdown" id="rh-user-dropdown">' +
             '<div class="dropdown-item exit">Encerrar sessão</div>' +
+          '</div>' +
+          '<div class="vinculo-dropdown" id="rh-vinculo-dropdown">' +
+            '<div class="vinculo-dropdown-head">Navegar com o vínculo</div>' +
           '</div>' +
         '</div>' +
       '</header>';
@@ -145,6 +158,38 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
     sidebarEl.innerHTML = html;
+
+    // Fechar sidebar ao clicar em um link (mobile)
+    sidebarEl.addEventListener('click', function (e) {
+      if (e.target.classList.contains('nav-item')) {
+        sidebarEl.classList.remove('open');
+        var ov = document.getElementById('rh-sidebar-overlay');
+        if (ov) ov.classList.remove('open');
+      }
+    });
+  }
+
+  // ── Overlay da sidebar (mobile) ───────────────────────────────────────────
+  var overlayEl = document.createElement('div');
+  overlayEl.id = 'rh-sidebar-overlay';
+  overlayEl.className = 'sidebar-overlay';
+  document.body.appendChild(overlayEl);
+  overlayEl.addEventListener('click', function () {
+    var sidebar = document.getElementById('rh-sidebar');
+    if (sidebar) sidebar.classList.remove('open');
+    overlayEl.classList.remove('open');
+  });
+
+  // ── Hamburger ─────────────────────────────────────────────────────────────
+  var hamburger = document.getElementById('rh-hamburger');
+  if (hamburger) {
+    hamburger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var sidebar = document.getElementById('rh-sidebar');
+      var ov = document.getElementById('rh-sidebar-overlay');
+      if (sidebar) sidebar.classList.toggle('open');
+      if (ov) ov.classList.toggle('open');
+    });
   }
 
   // ── Dropdown usuário ──────────────────────────────────────────────────────
@@ -153,12 +198,104 @@ document.addEventListener('DOMContentLoaded', function () {
   if (userBtn && userDropdown) {
     userBtn.addEventListener('click', function (e) {
       e.stopPropagation();
+      fecharVinculoDropdown();
       userDropdown.classList.toggle('open');
     });
     document.addEventListener('click', function () {
       userDropdown.classList.remove('open');
     });
   }
+
+  // ── Seletor de vínculo ────────────────────────────────────────────────────
+  // Resumo dos vínculos, compartilhado no cabeçalho de todas as páginas.
+  // O detalhamento completo fica na própria ficha funcional.
+  var VINCULOS = [
+    { num: 3, tipo: 'Efetivo', situacao: 'Ativo',      exercicio: '11/02/2015', cargo: 'Assistente administrativo' },
+    { num: 4, tipo: 'Estágio', situacao: 'Encerrado',  exercicio: '27/09/2021', cargo: 'Estagiário' },
+    { num: 2, tipo: 'Estágio', situacao: 'Encerrado',  exercicio: '30/03/2010', cargo: 'Estagiário' },
+    { num: 1, tipo: 'Estágio', situacao: 'Encerrado',  exercicio: '24/03/2008', cargo: 'Estagiário' }
+  ];
+  var STORAGE_KEY = 'rh-vinculo-ativo';
+
+  function getVinculoAtivo() {
+    var saved = null;
+    try { saved = window.localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    var num = saved ? parseInt(saved, 10) : 3;
+    return VINCULOS.some(function (v) { return v.num === num; }) ? num : 3;
+  }
+
+  var switchBtn      = document.getElementById('rh-vinculo-switch');
+  var switchLabel    = document.getElementById('rh-vinculo-switch-label');
+  var cargoEl        = document.getElementById('rh-user-cargo');
+  var vincDropdown   = document.getElementById('rh-vinculo-dropdown');
+
+  function fecharVinculoDropdown() {
+    if (vincDropdown) vincDropdown.classList.remove('open');
+    if (switchBtn) {
+      switchBtn.classList.remove('open');
+      switchBtn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function renderVinculoHeader() {
+    var ativo = getVinculoAtivo();
+    var atual = VINCULOS.filter(function (v) { return v.num === ativo; })[0];
+    if (switchLabel && atual) switchLabel.textContent = '• Vínculo ' + atual.num + ' (' + atual.tipo + ')';
+    if (cargoEl && atual) cargoEl.textContent = atual.cargo;
+
+    if (vincDropdown) {
+      var html = '<div class="vinculo-dropdown-head">Navegar com o vínculo</div>';
+      VINCULOS.forEach(function (v) {
+        var isAtivo = v.num === ativo;
+        var encerrado = v.situacao !== 'Ativo';
+        html +=
+          '<button type="button" class="vinculo-option' +
+            (isAtivo ? ' active' : '') + (encerrado ? ' encerrado' : '') +
+            '" data-vinculo="' + v.num + '">' +
+            '<span class="vinculo-option-num">' + v.num + '</span>' +
+            '<span class="vinculo-option-info">' +
+              '<span class="vinculo-option-tipo">' + v.tipo + '</span>' +
+              '<span class="vinculo-option-meta">' + v.situacao + ' · Exercício ' + v.exercicio + '</span>' +
+            '</span>' +
+            '<svg class="vinculo-option-check" width="15" height="15" viewBox="0 0 16 16" fill="none">' +
+              '<path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>' +
+          '</button>';
+      });
+      vincDropdown.innerHTML = html;
+
+      vincDropdown.querySelectorAll('.vinculo-option').forEach(function (opt) {
+        opt.addEventListener('click', function (e) {
+          e.stopPropagation();
+          selecionarVinculo(parseInt(opt.getAttribute('data-vinculo'), 10));
+          fecharVinculoDropdown();
+        });
+      });
+    }
+  }
+
+  function selecionarVinculo(num) {
+    try { window.localStorage.setItem(STORAGE_KEY, String(num)); } catch (e) {}
+    renderVinculoHeader();
+    // Permite que a página (ex.: ficha funcional) reaja à troca de vínculo.
+    if (typeof window.rhOnVinculoChange === 'function') window.rhOnVinculoChange(num);
+  }
+
+  if (switchBtn && vincDropdown) {
+    switchBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (userDropdown) userDropdown.classList.remove('open');
+      var open = vincDropdown.classList.toggle('open');
+      switchBtn.classList.toggle('open', open);
+      switchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', fecharVinculoDropdown);
+  }
+
+  renderVinculoHeader();
+  // Expõe o vínculo ativo e o seletor para a página (ficha funcional) usar.
+  window.rhVinculoAtivo = getVinculoAtivo;
+  window.rhSelecionarVinculo = selecionarVinculo;
 
   // ── Ponto ─────────────────────────────────────────────────────────────────
   var marcacoes = [];
