@@ -11,62 +11,141 @@
 //   • simulador_proventos
 // =============================================================================
 
+// Fontes do DS Procempa (Noto Sans / Display / Mono) — arquivos locais em fonts/
+// url() faz o dart-sass emitir @import de CSS puro (mantém os caminhos relativos)
+@import url("fonts/noto-sans/noto-sans.css");
+@import url("fonts/noto-sans-display/noto-sans-display.css");
+@import url("fonts/noto-sans-mono/noto-sans-mono.css");
+
 
 // -----------------------------------------------------------------------------
 // 1. TOKENS — Variáveis CSS (custom properties)
 // -----------------------------------------------------------------------------
 
 :root {
-  // Paleta primária (azul institucional)
-  --primary-headings:         #1d3374;
-  --primary-dark:             #2d46a0;
-  // --primary-interactive:      #4264cd;
-  --primary-interactive:      #6495ED;
-  --primary-interactive-area: #557cf2;
-  --primary-muted:            #8bb3f7;
-  --primary-background:       #ebf2ff;
+  // ===========================================================================
+  // PRIMITIVAS — espectro cromático do Design System Procempa.
+  // NÃO usar diretamente nos componentes; servem de base para os tokens
+  // semânticos logo abaixo (use sempre a paleta semântica no código).
+  // ===========================================================================
+  // Azul
+  --blue-5:  #ebf2ff;  --blue-10: #d1e1ff;  --blue-15: #bfd5fd;  --blue-20: #a2c2fc;
+  --blue-30: #8bb3f7;  --blue-40: #6495ed;  --blue-50: #557cf2;  --blue-60: #4264cd;
+  --blue-70: #2d46a0;  --blue-80: #1d3374;  --blue-90: #07193a;
+  // Cinza
+  --gray-5:  #f1f2f4;  --gray-10: #e6e7eb;  --gray-15: #dcdee4;  --gray-20: #b3b9c4;
+  --gray-30: #9da5b3;  --gray-40: #8590a2;  --gray-50: #626f86;  --gray-60: #44546f;
+  --gray-70: #2c3e5d;  --gray-80: #172b4d;  --gray-90: #091e42;
+  // Vermelho
+  --red-5:  #fef1f3;  --red-10: #fbd8df;  --red-15: #f9bcc8;  --red-20: #f7a5b6;
+  --red-30: #f8879d;  --red-40: #f05c6d;  --red-50: #dc143c;  --red-60: #c11235;
+  --red-70: #970e29;  --red-80: #65091c;  --red-90: #3d0511;
+  // Laranja
+  --orange-5:  #ffefea;  --orange-10: #ffd9cc;  --orange-15: #ffbca3;  --orange-20: #ffa685;
+  --orange-30: #ff7f50;  --orange-40: #f06a40;  --orange-50: #ce4920;  --orange-60: #b1360d;
+  --orange-70: #8b2812;  --orange-80: #56200c;  --orange-90: #2f1107;
+  // Amarelo
+  --yellow-5:  #fff8d1;  --yellow-10: #ffe975;  --yellow-15: #ffd700;  --yellow-20: #f5c000;
+  --yellow-30: #daa520;  --yellow-40: #b88619;  --yellow-50: #996c0b;  --yellow-60: #7f580b;
+  --yellow-70: #5e4108;  --yellow-80: #402e06;  --yellow-90: #221b04;
+  // Verde
+  --green-5:  #eff5ef;  --green-10: #d4e5d4;  --green-15: #b5d3b5;  --green-20: #9ec69e;
+  --green-30: #8ebc8e;  --green-40: #64a364;  --green-50: #4d824d;  --green-60: #406b40;
+  --green-70: #315331;  --green-80: #203620;  --green-90: #111d11;
+  // Roxo
+  --purple-5:  #f5f2fc;  --purple-10: #e5ddf6;  --purple-15: #d3c5f0;  --purple-20: #c5b3ec;
+  --purple-30: #b69ee7;  --purple-40: #9370db;  --purple-50: #845cd6;  --purple-60: #7143cf;
+  --purple-70: #572cb1;  --purple-80: #3a1d74;  --purple-90: #201040;
+  // Rosa
+  --pink-5:  #fbf1f4;  --pink-10: #f6dae3;  --pink-15: #efbfcf;  --pink-20: #eaaabf;
+  --pink-30: #e493ad;  --pink-40: #db7093;  --pink-50: #cf3f6f;  --pink-60: #b22d58;
+  --pink-70: #8a2345;  --pink-80: #5b172d;  --pink-90: #320d19;
+  // Ciano
+  --cyan-5:  #e2f8f7;  --cyan-10: #b2ece9;  --cyan-15: #74dcd8;  --cyan-20: #48d1cc;
+  --cyan-30: #2fbcb7;  --cyan-40: #2aa5a1;  --cyan-50: #148380;  --cyan-60: #0f6d69;
+  --cyan-70: #0a5451;  --cyan-80: #0e3735;  --cyan-90: #081e1d;
+  // Puros
+  --pure-0: #ffffff;  --pure-100: #000000;
+  --white:  var(--pure-0);
 
-  // Paleta neutra
-  --neutral-body:             #091e42;
-  --neutral-dark:             #44546f;
-  --neutral-base:             #626f86;
-  --neutral-muted:            #9da5b3;
-  --neutral-light:            #dbdde5;
-  --neutral-lighter:          #f2f3f5;
-  --neutral-background:       #f1f2f4;
+  // ===========================================================================
+  // TOKENS SEMÂNTICOS — usar SEMPRE estes nos componentes.
+  // ===========================================================================
+  // Primária (interação, seleção, marca)
+  --primary-headings:         var(--blue-80);
+  --primary-dark:             var(--blue-70);
+  --primary-interactive:      var(--blue-60);   // DS: era #6495ed → agora #4264cd
+  --primary-interactive-area: var(--blue-50);
+  --primary-surfaces:         var(--blue-40);   // #6495ed (novo token do DS)
+  --primary-muted:            var(--blue-30);
+  --primary-background:       var(--blue-5);
+
+  // Neutros
+  --neutral-body:             var(--gray-90);
+  --neutral-dark:             var(--gray-60);
+  --neutral-base:             var(--gray-50);
+  --neutral-muted:            #6B7280;           // acessibilidade: AA sobre branco (era gray-30 #9da5b3 ~2.3:1)
+  --neutral-light:            var(--gray-15);   // DS: era #dbdde5 → agora #dcdee4
+  --neutral-background:       var(--gray-5);
+  --neutral-lighter:          #f2f3f5;          // legado (não-DS) — usado em sombras
 
   // Destaque
-  --highlight-dark:          #B1360D;
-  --highlight-focus:          #FF7F50;
-  --highlight-muted:          #FFBCA3;
+  --highlight-dark:           var(--orange-60);
+  --highlight-focus:          var(--orange-30);
+  --highlight-muted:          var(--orange-15);
 
-  // Semântica: sucesso
-  --success-dark:             #315331;
-  --success-base:             #4d824d;
-  --success-background:       #eff5ef;
+  // Perigo e erro
+  --danger-dark:              var(--red-70);
+  --danger-base:              var(--red-50);
+  --danger-muted:             var(--red-20);    // novo token do DS
+  --danger-background:        var(--red-5);
 
-  // Semântica: perigo
-  --danger-base:              #dc143c;
-  --danger-dark:              #970e29;
-  --danger-background:        #fef1f3;
+  // Sucesso
+  --success-dark:             var(--green-70);
+  --success-base:             var(--green-50);
+  --success-muted:            var(--green-20);   // novo token do DS
+  --success-background:       var(--green-5);
 
-  // Semântica: alerta
-  --warning-background:       #fff8d1;
-  --warning-dark:             #7f5808;
+  // Alerta
+  --warning-dark:             var(--yellow-50);  // DS: era #7f5808 → agora #996c0b
+  --warning-base:             var(--yellow-20);  // novo token do DS
+  --warning-muted:            var(--yellow-10);  // novo token do DS
+  --warning-background:       var(--yellow-5);
 
-  // Tipografia
+  // Informação
+  --info-dark:                var(--blue-70);    // novo token do DS
+  --info-base:                var(--blue-40);    // novo token do DS
+  --info-background:          var(--blue-5);     // novo token do DS
+
+  // Foco (acessibilidade) — DS: laranja coral (highlight-focus #ff7f50)
+  --focus-ring:               var(--highlight-focus);
+
+  // ===========================================================================
+  // TIPOGRAFIA
+  // ===========================================================================
   --font-sans:                "Noto Sans", system-ui, sans-serif;
   --font-display:             "Noto Sans Display", system-ui, sans-serif;
+  --font-mono:                "Noto Sans Mono", ui-monospace, monospace;
 
-  // Dimensões do shell
+  // ===========================================================================
+  // ESPAÇAMENTO — escala do DS (módulo base 8px)
+  // ===========================================================================
+  // Escala layout (múltiplos de 8)
+  --spacing-scale-base: 8px;   --spacing-scale-2x: 16px;  --spacing-scale-3x: 24px;
+  --spacing-scale-4x:  32px;   --spacing-scale-5x: 40px;  --spacing-scale-6x: 48px;
+  --spacing-scale-7x:  56px;   --spacing-scale-8x: 64px;  --spacing-scale-9x: 72px;
+  --spacing-scale-10x: 80px;
+  // Escala ajuste (incrementos de 4)
+  --spacing-scale-half:  4px;  --spacing-scale-baseh: 12px;  --spacing-scale-2xh: 20px;
+  --spacing-scale-3xh:  28px;  --spacing-scale-4xh:  36px;   --spacing-scale-5xh: 44px;
+
+  // ===========================================================================
+  // DIMENSÕES / BORDAS / SOMBRAS (nível aplicação)
+  // ===========================================================================
   --header-height:            52px;
   --sidebar-width:            210px;
-
-  // Bordas padrão
-  --borda-padrao: 1px solid var(--neutral-light);
+  --borda-padrao:  1px solid var(--neutral-light);
   --sombra-padrao: 0 3px 0px var(--neutral-lighter);
-
-
 }
 
 
@@ -93,6 +172,24 @@ body {
 a {
   color: var(--primary-interactive);
   text-decoration: none;
+}
+
+// DS: foco laranja consistente para botões e links — substitui o foco padrão
+// do navegador (que aparecia amarelo e com cantos arredondados). Cantos retos.
+button,
+[role="button"] {
+  &:focus { outline: none; }   // remove o foco padrão amarelo do navegador
+  &:focus-visible {            // foco por teclado: anel laranja do DS, cantos retos
+    border-radius: 0;
+    border-color: var(--focus-ring);   // borda também laranja (foco "apenas laranja")
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
+}
+
+a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 0;
 }
 
 
@@ -273,7 +370,7 @@ a {
   color: var(--neutral-body);
 
   &.ok   { color: var(--success-dark); }
-  &.warn { color: #996c0b; }
+  &.warn { color: var(--warning-dark); }
 }
 
 // relógio em tempo real
@@ -624,6 +721,8 @@ a {
   background: #fff;
   border: 1px solid var(--neutral-light);
   padding: 7px 2rem 7px 0.75rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239da5b3' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -631,7 +730,15 @@ a {
   cursor: pointer;
   height: 36px;
 
-  &:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+  &:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
 }
 
 select.ano {
@@ -683,7 +790,15 @@ input.filtro {
   height: 36px;
   width: 140px;
 
-  &:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+  &:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
 }
 
 .filtro-sep {
@@ -1416,7 +1531,7 @@ table.ponto {
     font-size: 9px;
     font-weight: 700;
     padding: 1px 5px;
-    background: #f5c000;
+    background: var(--warning-base);
     color: var(--neutral-body);
     vertical-align: middle;
     margin-left: 6px;
@@ -1649,7 +1764,15 @@ input.filtro-date {
   height: 36px;
   width: 150px;
 
-  &:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+  &:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
 }
 
 .btn-pesquisar {
@@ -1681,7 +1804,12 @@ input.filtro-date {
   cursor: pointer;
   margin-left: auto;
 
-  &:hover { background: var(--primary-background); }
+  &:hover {
+    // largura da borda constante (sem dança): engrossa via box-shadow inset
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 1px var(--primary-interactive-area);
+    background: transparent;
+  }
 }
 
 .cartao-info {
@@ -1940,6 +2068,8 @@ select.competencia {
   background: #fff;
   border: 1px solid var(--neutral-light);
   padding: 7px 2rem 7px 0.75rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239da5b3' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1947,7 +2077,15 @@ select.competencia {
   cursor: pointer;
   min-width: 200px;
 
-  &:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+  &:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
 }
 
 .cheque-header {
@@ -2504,7 +2642,7 @@ table.modal {
 
 // ── Ficha Funcional (readonly) ────────────────────────────────────────────────
 
-// Nota: --primary-surfaces (#6495ed) é declarada no :root inline deste módulo.
+// Nota: --primary-surfaces (var(--blue-40) = #6495ed) está definida no :root global.
 
 .sidebar-logo {
   padding: 1rem;
@@ -2915,7 +3053,15 @@ input.val-input {
   width: 100%;
   text-align: right;
 
-  &:focus { outline: 2px solid #f5c000; outline-offset: 0; }
+  &:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
 }
 
 .badge-sim {
@@ -3019,8 +3165,9 @@ input.val-input {
   border: 1px solid var(--neutral-light);
   background: #fff;
   cursor: pointer;
-  appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 
   &:checked {
     background: var(--primary-interactive-area);
