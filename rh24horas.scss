@@ -2253,6 +2253,17 @@ select.competencia {
   align-items: center;
 }
 
+// Só aparece no mobile (≤600px), onde o .cols-header some — dá contexto
+// às colunas de valor sem repetir o cabeçalho.
+.totais-suffix {
+  display: none;
+  margin-left: 4px;
+  text-transform: lowercase;
+  font-weight: 400;
+  letter-spacing: normal;
+  font-size: 0.9em;
+}
+
 .cheque-totais-vantagem {
   font-size: 14px;
   font-weight: 700;
@@ -3501,7 +3512,7 @@ input.val-input {
     flex-wrap: wrap;
 
     .item-num  { width: 2rem; flex-shrink: 0; }
-    .item-desc { flex: 1; min-width: 0; }
+    .item-desc { flex: 1; min-width: 0; padding-bottom: 2px; }
     .item-valor { width: 100%; text-align: right; padding-left: 2rem; }
   }
 
@@ -3521,6 +3532,86 @@ input.val-input {
     border-left: none;
     border-right: none;
     box-shadow: 0 8px 32px rgba(9, 30, 66, 0.2);
+  }
+}
+
+// ── Botões de ação — full-width em telas muito pequenas ( ≤ 420px ) ─────────
+@media (max-width: 420px) {
+  .btn-pesquisar,
+  .btn-filtro,
+  .btn-action,
+  .btn-outline {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+}
+
+// ── Contracheque — linhas em cartão no mobile ( ≤ 600px ) ───────────────────
+// A grade de 5 colunas fixas (3rem 1fr 5rem 8rem 8rem = 24rem) não cabe em
+// telas de celular: a coluna flexível colapsa e o texto da descrição passa
+// a sobrepor a coluna "Info". Solução: reflow para flex-wrap em 2 linhas.
+@media (max-width: 600px) {
+
+  .cols-header { display: none; }
+
+  .item-row,
+  .section-divider {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .item-cod {
+    order: 1;
+    flex-shrink: 0;
+    width: 1.75rem;
+  }
+
+  .item-desc {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .item-vantagem,
+  .item-desconto {
+    order: 3;
+    flex-shrink: 0;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .item-vazio { display: none; }
+
+  .item-info {
+    order: 4;
+    flex-basis: 100%;
+    padding-left: 2.25rem;
+    margin-top: 0;
+
+    &:empty { display: none; }
+  }
+
+  .section-divider-label { flex-basis: 100%; }
+
+  .cheque-totais-row {
+    display: flex;
+    align-items: baseline;
+    padding: 0.625rem 1rem;
+  }
+
+  .cheque-totais-label { flex: 1 1 auto; }
+
+  .totais-suffix { display: inline; }
+
+  .cheque-totais-vantagem,
+  .cheque-totais-desconto {
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    white-space: nowrap;
   }
 }
 
