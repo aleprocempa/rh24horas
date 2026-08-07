@@ -4,33 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cartão Ponto — RH24Horas</title>
+<!-- Fontes do DS Procempa (Noto Sans / Display / Mono) -->
+<link rel="stylesheet" href="fonts/noto-sans/noto-sans.css">
+<link rel="stylesheet" href="fonts/noto-sans-display/noto-sans-display.css">
+<link rel="stylesheet" href="fonts/noto-sans-mono/noto-sans-mono.css">
 <style>
 :root {
-  --primary-headings:         #1d3374;
-  --primary-dark:             #2d46a0;
-  --primary-interactive:      #4264cd;
-  --primary-interactive-area: #557cf2;
-  --primary-muted:            #8bb3f7;
-  --primary-background:       #ebf2ff;
-  --neutral-body:       #091e42;
-  --neutral-dark:       #44546f;
-  --neutral-base:       #626f86;
-  --neutral-muted:      #9da5b3;
-  --neutral-light:      #dcdee4;
-  --neutral-background: #f1f2f4;
-  --success-dark:       #315331;
-  --success-background: #eff5ef;
-  --success-base:       #4d824d;
-  --danger-base:        #dc143c;
-  --danger-background:  #fef1f3;
-  --danger-dark:        #970e29;
+  /* ===== PRIMITIVAS — espectro cromático do DS Procempa (base dos tokens) ===== */
+  --blue-5:  #ebf2ff;  --blue-10: #d1e1ff;  --blue-15: #bfd5fd;  --blue-20: #a2c2fc;
+  --blue-30: #8bb3f7;  --blue-40: #6495ed;  --blue-50: #557cf2;  --blue-60: #4264cd;
+  --blue-70: #2d46a0;  --blue-80: #1d3374;  --blue-90: #07193a;
+  --gray-5:  #f1f2f4;  --gray-10: #e6e7eb;  --gray-15: #dcdee4;  --gray-20: #b3b9c4;
+  --gray-30: #9da5b3;  --gray-40: #8590a2;  --gray-50: #626f86;  --gray-60: #44546f;
+  --gray-70: #2c3e5d;  --gray-80: #172b4d;  --gray-90: #091e42;
+  --red-5:  #fef1f3;  --red-10: #fbd8df;  --red-15: #f9bcc8;  --red-20: #f7a5b6;
+  --red-30: #f8879d;  --red-40: #f05c6d;  --red-50: #dc143c;  --red-60: #c11235;
+  --red-70: #970e29;  --red-80: #65091c;  --red-90: #3d0511;
+  --orange-5:  #ffefea;  --orange-10: #ffd9cc;  --orange-15: #ffbca3;  --orange-20: #ffa685;
+  --orange-30: #ff7f50;  --orange-40: #f06a40;  --orange-50: #ce4920;  --orange-60: #b1360d;
+  --orange-70: #8b2812;  --orange-80: #56200c;  --orange-90: #2f1107;
+  --yellow-5:  #fff8d1;  --yellow-10: #ffe975;  --yellow-15: #ffd700;  --yellow-20: #f5c000;
+  --yellow-30: #daa520;  --yellow-40: #b88619;  --yellow-50: #996c0b;  --yellow-60: #7f580b;
+  --yellow-70: #5e4108;  --yellow-80: #402e06;  --yellow-90: #221b04;
+  --green-5:  #eff5ef;  --green-10: #d4e5d4;  --green-15: #b5d3b5;  --green-20: #9ec69e;
+  --green-30: #8ebc8e;  --green-40: #64a364;  --green-50: #4d824d;  --green-60: #406b40;
+  --green-70: #315331;  --green-80: #203620;  --green-90: #111d11;
+  --purple-5:  #f5f2fc;  --purple-10: #e5ddf6;  --purple-15: #d3c5f0;  --purple-20: #c5b3ec;
+  --purple-30: #b69ee7;  --purple-40: #9370db;  --purple-50: #845cd6;  --purple-60: #7143cf;
+  --purple-70: #572cb1;  --purple-80: #3a1d74;  --purple-90: #201040;
+  --pink-5:  #fbf1f4;  --pink-10: #f6dae3;  --pink-15: #efbfcf;  --pink-20: #eaaabf;
+  --pink-30: #e493ad;  --pink-40: #db7093;  --pink-50: #cf3f6f;  --pink-60: #b22d58;
+  --pink-70: #8a2345;  --pink-80: #5b172d;  --pink-90: #320d19;
+  --cyan-5:  #e2f8f7;  --cyan-10: #b2ece9;  --cyan-15: #74dcd8;  --cyan-20: #48d1cc;
+  --cyan-30: #2fbcb7;  --cyan-40: #2aa5a1;  --cyan-50: #148380;  --cyan-60: #0f6d69;
+  --cyan-70: #0a5451;  --cyan-80: #0e3735;  --cyan-90: #081e1d;
+  --pure-0: #ffffff;  --pure-100: #000000;  --white: var(--pure-0);
+
+  /* ===== TOKENS SEMÂNTICOS — usar SEMPRE estes nos componentes ===== */
+  --primary-headings:         var(--blue-80);
+  --primary-dark:             var(--blue-70);
+  --primary-interactive:      var(--blue-60);
+  --primary-interactive-area: var(--blue-50);
+  --primary-surfaces:         var(--blue-40);
+  --primary-muted:            var(--blue-30);
+  --primary-background:       var(--blue-5);
+  --neutral-body:             var(--gray-90);
+  --neutral-dark:             var(--gray-60);
+  --neutral-base:             var(--gray-50);
+  --neutral-muted:            #6B7280; /* acessibilidade: AA sobre branco (era gray-30 #9da5b3 ~2.3:1) */
+  --neutral-light:            var(--gray-15);
+  --neutral-background:       var(--gray-5);
+  --neutral-lighter:          #f2f3f5;
+  --highlight-dark:           var(--orange-60);
+  --highlight-focus:          var(--orange-30);
+  --highlight-muted:          var(--orange-15);
+  --danger-dark:              var(--red-70);
+  --danger-base:              var(--red-50);
+  --danger-muted:             var(--red-20);
+  --danger-background:        var(--red-5);
+  --success-dark:             var(--green-70);
+  --success-base:             var(--green-50);
+  --success-muted:            var(--green-20);
+  --success-background:       var(--green-5);
+  --warning-dark:             var(--yellow-50);
+  --warning-base:             var(--yellow-20);
+  --warning-muted:            var(--yellow-10);
+  --warning-background:       var(--yellow-5);
+  --info-dark:                var(--blue-70);
+  --info-base:                var(--blue-40);
+  --info-background:          var(--blue-5);
+  --focus-ring:               var(--highlight-focus);
+
+  /* ===== TIPOGRAFIA ===== */
   --font-sans:    "Noto Sans", system-ui, sans-serif;
   --font-display: "Noto Sans Display", system-ui, sans-serif;
-  --font-mono:    "Noto Sans Mono", monospace;
+  --font-mono:    "Noto Sans Mono", ui-monospace, monospace;
+
+  /* ===== ESPAÇAMENTO — escala do DS (base 8px) ===== */
+  --spacing-scale-base: 8px;   --spacing-scale-2x: 16px;  --spacing-scale-3x: 24px;
+  --spacing-scale-4x:  32px;   --spacing-scale-5x: 40px;  --spacing-scale-6x: 48px;
+  --spacing-scale-7x:  56px;   --spacing-scale-8x: 64px;  --spacing-scale-9x: 72px;
+  --spacing-scale-10x: 80px;
+  --spacing-scale-half:  4px;  --spacing-scale-baseh: 12px;  --spacing-scale-2xh: 20px;
+  --spacing-scale-3xh:  28px;  --spacing-scale-4xh:  36px;   --spacing-scale-5xh: 44px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: var(--neutral-body); background: var(--neutral-background); }
 a { color: var(--primary-interactive); text-decoration: none; }
+/* DS: foco laranja para botões e links (substitui o foco padrão amarelo/arredondado do navegador) */
+button:focus, [role="button"]:focus { outline: none; }
+button:focus-visible, [role="button"]:focus-visible { border-radius: 0; border-color: var(--focus-ring); box-shadow: inset 0 0 0 3px var(--focus-ring); }
+a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-radius: 0; }
 
 /* ─── HEADER ─────────────────────────────────────────── */
 .app-header {
@@ -164,7 +228,8 @@ a { color: var(--primary-interactive); text-decoration: none; }
   padding: 7px 10px; height: 38px; width: 110px;
   letter-spacing: 0.05em;
 }
-.ponto-novo-row input[type="time"]:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+.ponto-novo-row input[type="time"]:hover:not(:focus) { border-color: var(--primary-interactive-area); box-shadow: inset 0 0 0 2px var(--primary-interactive-area); }
+.ponto-novo-row input[type="time"]:focus { outline: none; border-color: var(--highlight-focus); box-shadow: inset 0 0 0 3px var(--highlight-focus); }
 .ponto-tipo {
   display: flex; gap: 0; flex: 1;
 }
@@ -299,7 +364,8 @@ a { color: var(--primary-interactive); text-decoration: none; }
 .filtro-group { display: flex; flex-direction: column; gap: 4px; }
 .filtro-label { font-size: 11px; font-weight: 600; color: var(--neutral-base); text-transform: uppercase; letter-spacing: 0.07em; }
 input.filtro-date { font-family: var(--font-sans); font-size: 13px; color: var(--neutral-body); background: #fff; border: 1px solid var(--neutral-light); padding: 7px 10px; height: 36px; width: 150px; }
-input.filtro-date:focus { outline: 2px solid #f5c000; outline-offset: 1px; }
+input.filtro-date:hover:not(:focus) { border-color: var(--primary-interactive-area); box-shadow: inset 0 0 0 2px var(--primary-interactive-area); }
+input.filtro-date:focus { outline: none; border-color: var(--highlight-focus); box-shadow: inset 0 0 0 3px var(--highlight-focus); }
 .filtro-sep { font-size: 13px; color: var(--neutral-muted); padding-bottom: 8px; }
 .btn-pesquisar { height: 36px; padding: 0 1.25rem; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: #fff; background: var(--primary-interactive-area); border: none; cursor: pointer; }
 .btn-pesquisar:hover { background: var(--primary-dark); }
