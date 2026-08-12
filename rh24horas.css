@@ -2460,6 +2460,15 @@ select.competencia:focus {
   align-items: center;
 }
 
+.totais-suffix {
+  display: none;
+  margin-left: 4px;
+  text-transform: lowercase;
+  font-weight: 400;
+  letter-spacing: normal;
+  font-size: 0.9em;
+}
+
 .cheque-totais-vantagem {
   font-size: 14px;
   font-weight: 700;
@@ -2584,14 +2593,24 @@ table.aquisitivo tbody tr td.left {
 }
 table.aquisitivo tbody tr td.saldo {
   font-weight: 700;
-  color: var(--success-dark);
+  font-size: 15px;
+  text-align: center;
+  color: #fff;
+  background: var(--highlight-focus);
 }
 table.aquisitivo tbody tr td.saldo.zero {
   color: var(--neutral-muted);
   font-weight: 400;
+  background: var(--neutral-background);
 }
 table.aquisitivo tbody tr:hover td {
   background: var(--primary-background);
+}
+table.aquisitivo tbody tr:hover td.saldo {
+  background: var(--highlight-focus);
+}
+table.aquisitivo tbody tr:hover td.saldo.zero {
+  background: var(--neutral-background);
 }
 
 .badge-atual {
@@ -3882,6 +3901,10 @@ input.val-input:focus {
   .data-grid-4 {
     grid-template-columns: 1fr !important;
   }
+  .datas-cards,
+  .sim-cards {
+    grid-template-columns: 1fr !important;
+  }
   .totais-grid {
     grid-template-columns: 1fr !important;
   }
@@ -3904,6 +3927,7 @@ input.val-input:focus {
   .item-row .item-desc {
     flex: 1;
     min-width: 0;
+    padding-bottom: 2px;
   }
   .item-row .item-valor {
     width: 100%;
@@ -3927,6 +3951,78 @@ input.val-input:focus {
     border-left: none;
     border-right: none;
     box-shadow: 0 8px 32px rgba(9, 30, 66, 0.2);
+  }
+}
+@media (max-width: 420px) {
+  .btn-pesquisar,
+  .btn-filtro,
+  .btn-action,
+  .btn-outline {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+}
+@media (max-width: 600px) {
+  .cols-header {
+    display: none;
+  }
+  .item-row,
+  .section-divider {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+  .item-cod {
+    order: 1;
+    flex-shrink: 0;
+    width: 1.75rem;
+  }
+  .item-desc {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .item-vantagem,
+  .item-desconto {
+    order: 3;
+    flex-shrink: 0;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .item-vazio {
+    display: none;
+  }
+  .item-info {
+    order: 4;
+    flex-basis: 100%;
+    padding-left: 2.25rem;
+    margin-top: 0;
+  }
+  .item-info:empty {
+    display: none;
+  }
+  .section-divider-label {
+    flex-basis: 100%;
+  }
+  .cheque-totais-row {
+    display: flex;
+    align-items: baseline;
+    padding: 0.625rem 1rem;
+  }
+  .cheque-totais-label {
+    flex: 1 1 auto;
+  }
+  .totais-suffix {
+    display: inline;
+  }
+  .cheque-totais-vantagem,
+  .cheque-totais-desconto {
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    white-space: nowrap;
   }
 }
 /* =============================================================================
@@ -4347,3 +4443,51 @@ input.val-input:focus {
 }
 
 /*# sourceMappingURL=rh24horas.css.map */
+
+.data-card-lista {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.data-card-lista-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.data-card-lista-dias {
+  font-weight: 700;
+  color: var(--primary-headings);
+  font-family: var(--font-display);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.data-card-lista-periodo {
+  text-align: right;
+  color: var(--neutral-body);
+}
+
+.data-card-vazio {
+  font-size: 12px;
+  color: var(--neutral-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.data-card-grupo-titulo {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--neutral-base);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.75rem;
+}
+
+.data-card-valor-comp {
+  font-weight: 400;
+}

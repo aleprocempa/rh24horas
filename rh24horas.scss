@@ -3498,6 +3498,9 @@ input.val-input {
   .data-grid-3,
   .data-grid-4  { grid-template-columns: 1fr !important; }
 
+  .datas-cards,
+  .sim-cards    { grid-template-columns: 1fr !important; }
+
   .totais-grid  { grid-template-columns: 1fr !important; }
 
   .cheque-info-row  { grid-template-columns: 1fr !important; }
@@ -3981,4 +3984,52 @@ input.val-input {
   .vinc-table {
     min-width: 560px;
   }
+}
+
+.data-card-lista {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.data-card-lista-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.data-card-lista-dias {
+  font-weight: 700;
+  color: var(--primary-headings);
+  font-family: var(--font-display);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.data-card-lista-periodo {
+  text-align: right;
+  color: var(--neutral-body);
+}
+
+.data-card-vazio {
+  font-size: 12px;
+  color: var(--neutral-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.data-card-grupo-titulo {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--neutral-base);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.75rem;
+}
+
+.data-card-valor-comp {
+  font-weight: 400;
 }

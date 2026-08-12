@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Férias e liçencas — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+  <div class="content">
+    <div class="page-header">
+      <h1 class="page-title">Férias e liçencas</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+    </div>
+  
+    <!-- FÉRIAS -->
+    <div>
+      <div class="secao-titulo">Férias</div>
+      <div class="datas-cards">
+        <div class="data-card">
+          <div class="data-card-label">Período aquisitivo atual</div>
+          <div class="data-card-valor">19/03/2025 a 18/03/2026</div>
+          <div class="data-card-sub">Vencimento em 18/03/2027</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-label">Férias disponíveis</div>
+          <div class="data-card-valor">20 dias <span class="data-card-valor-comp">(de 30)</span></div>
+          <div class="data-card-sub">0 dias vendidos (abono)</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-label">Férias marcadas</div>
+          <div class="data-card-lista">
+            <div class="data-card-lista-item">
+              <span class="data-card-lista-dias">10 dias</span>
+              <span class="data-card-lista-periodo">05/01/2027 a 14/01/2027</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- LICENÇA PRÊMIO -->
+    <div>
+      <div class="secao-titulo">Licença prêmio</div>
+
+      <div class="data-card-grupo-titulo">Período A</div>
+      <div class="datas-cards">
+        <div class="data-card alerta">
+          <div class="data-card-label">Período aquisitivo atual</div>
+          <div class="data-card-valor">19/03/2017 a 22/10/2023</div>
+          <div class="data-card-sub">Vencimento em 22/10/2028</div>
+        </div>
+        <div class="data-card alerta">
+          <div class="data-card-label">Licença disponível</div>
+          <div class="data-card-valor">45 dias <span class="data-card-valor-comp">(de 90)</span></div>
+          <div class="data-card-sub">0 dias vendidos (abono)</div>
+        </div>
+        <div class="data-card alerta">
+          <div class="data-card-label">Licença marcada</div>
+          <div class="data-card-lista">
+            <div class="data-card-lista-item">
+              <span class="data-card-lista-dias">30 dias</span>
+              <span class="data-card-lista-periodo">15/08/2026 a 13/09/2026</span>
+            </div>
+            <div class="data-card-lista-item">
+              <span class="data-card-lista-dias">15 dias</span>
+              <span class="data-card-lista-periodo">20/11/2026 a 04/12/2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-card-grupo-titulo">Período B</div>
+      <div class="datas-cards">
+        <div class="data-card alerta">
+          <div class="data-card-label">Próximo período aquisitivo</div>
+          <div class="data-card-valor">23/10/2023 a 22/10/2029</div>
+          <div class="data-card-sub">Em curso</div>
+        </div>
+        <div class="data-card alerta">
+          <div class="data-card-label">Licença disponível</div>
+          <div class="data-card-valor">0 dias</div>
+          <div class="data-card-sub">Direito ainda não adquirido</div>
+        </div>
+        <div class="data-card alerta">
+          <div class="data-card-label">Licença marcada</div>
+          <div class="data-card-vazio">Nenhum período marcado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function() {
+    document.getElementById('user-dropdown').classList.remove('open');
+  });
+</script>
+</body>
+</html>
