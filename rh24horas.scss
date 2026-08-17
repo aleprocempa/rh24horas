@@ -788,7 +788,7 @@ input.filtro {
   border: 1px solid var(--neutral-light);
   padding: 7px 10px;
   height: 36px;
-  width: 140px;
+  width: 220px;
 
   &:hover:not(:focus) {
     border-color: var(--primary-interactive-area);
@@ -3371,8 +3371,11 @@ input.val-input {
   &.open { display: block; }
 }
 
-// ── Tablet / Mobile ( ≤ 768px ) ──────────────────────────────────────────────
-@media (max-width: 768px) {
+// ── Tablet / Mobile ( ≤ 1024px ) ─────────────────────────────────────────────
+// Limite subiu de 768 para 1024: em 768 o header ainda quebrava em telas de
+// tablet como iPad Air (820px) — nome+cargo do usuário e labels não cabiam
+// ao lado do logo, ponto e mensagens, e o texto quebrava por cima do conteúdo.
+@media (max-width: 1024px) {
 
   // Header
   .app-header {
@@ -3547,6 +3550,10 @@ input.val-input {
     width: 100%;
     justify-content: center;
     margin-top: 1.5rem;
+  }
+
+  .app-header {
+    padding: 0;
   }
 }
 
