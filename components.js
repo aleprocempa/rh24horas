@@ -121,23 +121,25 @@ document.addEventListener('DOMContentLoaded', function () {
         '</a>' +
 
         // Usuário
-        '<div class="header-user" id="rh-user-btn">' +
+        '<div class="header-user" id="rh-user-btn" aria-haspopup="true" aria-expanded="false">' +
           '<div class="user-info">' +
             '<span class="user-name">José Antônio Pereira</span>' +
             '<span class="user-role">' +
               '<span id="rh-user-cargo">Assistente administrativo</span>' +
-              '<button class="vinculo-switch" id="rh-vinculo-switch" aria-haspopup="true" aria-expanded="false">' +
-                '<span id="rh-vinculo-switch-label">• Vínculo 3 (Efetivo)</span>' +
-                '<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-              '</button>' +
+              '<span class="vinculo-current" id="rh-vinculo-switch-label">• Vínculo 3 (Efetivo)</span>' +
             '</span>' +
           '</div>' +
           '<div class="user-avatar">CR</div>' +
+          '<svg class="header-user-caret" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
           '<div class="user-dropdown" id="rh-user-dropdown">' +
-            '<div class="dropdown-item exit">Encerrar sessão</div>' +
-          '</div>' +
-          '<div class="vinculo-dropdown" id="rh-vinculo-dropdown">' +
             '<div class="vinculo-dropdown-head">Navegar com o vínculo</div>' +
+            '<div id="rh-vinculo-list"></div>' +
+            '<div class="dropdown-item exit" id="rh-exit-item">' +
+              '<span>Sair</span>' +
+              '<svg width="13" height="13" viewBox="0 0 16 16" fill="none">' +
+                '<path d="M6 3H3.5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1H6M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '</svg>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</header>';
@@ -191,18 +193,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ── Dropdown usuário ──────────────────────────────────────────────────────
+  // ── Dropdown usuário (vínculo + sair) ─────────────────────────────────────
   var userBtn = document.getElementById('rh-user-btn');
   var userDropdown = document.getElementById('rh-user-dropdown');
+
+  function fecharUserDropdown() {
+    if (userDropdown) userDropdown.classList.remove('open');
+    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
+  }
+
   if (userBtn && userDropdown) {
     userBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      fecharVinculoDropdown();
-      userDropdown.classList.toggle('open');
+      var open = userDropdown.classList.toggle('open');
+      userBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
-    document.addEventListener('click', function () {
-      userDropdown.classList.remove('open');
-    });
+    document.addEventListener('click', fecharUserDropdown);
   }
 
   // ── Seletor de vínculo ────────────────────────────────────────────────────
@@ -223,18 +229,9 @@ document.addEventListener('DOMContentLoaded', function () {
     return VINCULOS.some(function (v) { return v.num === num; }) ? num : 3;
   }
 
-  var switchBtn      = document.getElementById('rh-vinculo-switch');
-  var switchLabel    = document.getElementById('rh-vinculo-switch-label');
-  var cargoEl        = document.getElementById('rh-user-cargo');
-  var vincDropdown   = document.getElementById('rh-vinculo-dropdown');
-
-  function fecharVinculoDropdown() {
-    if (vincDropdown) vincDropdown.classList.remove('open');
-    if (switchBtn) {
-      switchBtn.classList.remove('open');
-      switchBtn.setAttribute('aria-expanded', 'false');
-    }
-  }
+  var switchLabel  = document.getElementById('rh-vinculo-switch-label');
+  var cargoEl      = document.getElementById('rh-user-cargo');
+  var vincList     = document.getElementById('rh-vinculo-list');
 
   function renderVinculoHeader() {
     var ativo = getVinculoAtivo();
@@ -242,8 +239,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (switchLabel && atual) switchLabel.textContent = '• Vínculo ' + atual.num + ' (' + atual.tipo + ')';
     if (cargoEl && atual) cargoEl.textContent = atual.cargo;
 
-    if (vincDropdown) {
-      var html = '<div class="vinculo-dropdown-head">Navegar com o vínculo</div>';
+    if (vincList) {
+      var html = '';
       VINCULOS.forEach(function (v) {
         var isAtivo = v.num === ativo;
         var encerrado = v.situacao !== 'Ativo';
@@ -261,13 +258,13 @@ document.addEventListener('DOMContentLoaded', function () {
             '</svg>' +
           '</button>';
       });
-      vincDropdown.innerHTML = html;
+      vincList.innerHTML = html;
 
-      vincDropdown.querySelectorAll('.vinculo-option').forEach(function (opt) {
+      vincList.querySelectorAll('.vinculo-option').forEach(function (opt) {
         opt.addEventListener('click', function (e) {
           e.stopPropagation();
           selecionarVinculo(parseInt(opt.getAttribute('data-vinculo'), 10));
-          fecharVinculoDropdown();
+          fecharUserDropdown();
         });
       });
     }
@@ -278,17 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderVinculoHeader();
     // Permite que a página (ex.: ficha funcional) reaja à troca de vínculo.
     if (typeof window.rhOnVinculoChange === 'function') window.rhOnVinculoChange(num);
-  }
-
-  if (switchBtn && vincDropdown) {
-    switchBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (userDropdown) userDropdown.classList.remove('open');
-      var open = vincDropdown.classList.toggle('open');
-      switchBtn.classList.toggle('open', open);
-      switchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-    document.addEventListener('click', fecharVinculoDropdown);
   }
 
   renderVinculoHeader();

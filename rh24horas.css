@@ -606,27 +606,32 @@ a:focus-visible {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  min-width: 160px;
+  min-width: 290px;
   background: #fff;
   border: 1px solid var(--neutral-light);
   z-index: 200;
+  box-shadow: 0 8px 24px rgba(9, 30, 66, 0.14);
 }
 .user-dropdown.open {
   display: block;
 }
 
 .dropdown-item {
-  display: block;
-  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
   font-size: 13px;
+  font-weight: 600;
   color: var(--neutral-dark);
   cursor: pointer;
 }
 .dropdown-item:hover {
-  background: var(--neutral-background);
+  background: var(--primary-background);
 }
 .dropdown-item.exit {
-  color: var(--danger-base);
+  color: var(--primary-interactive);
   border-top: 1px solid var(--neutral-light);
 }
 
@@ -4037,52 +4042,22 @@ input.val-input:focus {
   flex-wrap: wrap;
 }
 
-.vinculo-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
+.vinculo-current {
   font-size: 10px;
   letter-spacing: 0.06em;
   font-weight: 600;
   color: var(--primary-interactive);
-  text-transform: none;
-  cursor: pointer;
   line-height: 1.2;
 }
 
-.vinculo-switch:hover {
-  color: var(--primary-dark);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.vinculo-switch svg {
+.header-user-caret {
+  color: var(--neutral-muted);
+  flex-shrink: 0;
   transition: transform 0.15s ease;
 }
 
-.vinculo-switch.open svg {
+.header-user[aria-expanded="true"] .header-user-caret {
   transform: rotate(180deg);
-}
-
-.vinculo-dropdown {
-  display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  min-width: 290px;
-  background: #fff;
-  border: 1px solid var(--neutral-light);
-  z-index: 210;
-  box-shadow: 0 8px 24px rgba(9, 30, 66, 0.14);
-}
-
-.vinculo-dropdown.open {
-  display: block;
 }
 
 .vinculo-dropdown-head {
