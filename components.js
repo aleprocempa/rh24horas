@@ -105,8 +105,23 @@ document.addEventListener('DOMContentLoaded', function () {
               '<div class="ponto-confirm-sub" id="rh-confirm-sub"></div>' +
             '</div>' +
             '<div class="ponto-panel-footer">' +
-              '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v5M8 5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' +
-              ' Os registros são inseridos com a data e hora atual. O horário pode ser ajustado.' +
+              '<div class="ponto-panel-footer-nota">Os registros são inseridos com a data e hora atual.</div>' +
+              '<div class="ponto-termo" id="rh-ponto-termo">' +
+                '<label class="ponto-termo-check" id="rh-ponto-termo-form">' +
+                  '<span class="termo-check-wrap">' +
+                    '<input type="checkbox" id="rh-termo-checkbox">' +
+                    '<span class="termo-check-box" aria-hidden="true"></span>' +
+                  '</span>' +
+                  '<span class="ponto-termo-content">' +
+                    '<span class="ponto-termo-texto">Aceito o termo de responsabilidade para o registro de efetividade web.</span>' +
+                    '<a href="#" id="rh-termo-link" class="ponto-termo-link">Ver conteúdo completo</a>' +
+                  '</span>' +
+                '</label>' +
+                '<div class="ponto-panel-footer-nota ponto-termo-aceito" id="rh-ponto-termo-aceito">' +
+                  'Termo de responsabilidade aceito. ' +
+                  '<a href="#" id="rh-termo-link-aceito" class="ponto-termo-link">Ver conteúdo</a>' +
+                '</div>' +
+              '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -142,7 +157,30 @@ document.addEventListener('DOMContentLoaded', function () {
             '</div>' +
           '</div>' +
         '</div>' +
-      '</header>';
+      '</header>' +
+
+      // Modal do termo de responsabilidade (ponto)
+      '<div class="modal-overlay" id="rh-termo-overlay">' +
+        '<div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="rh-termo-titulo">' +
+          '<div class="modal-header">' +
+            '<span class="modal-titulo" id="rh-termo-titulo">Termo de responsabilidade para o registro de efetividade web</span>' +
+            '<button class="modal-close" id="rh-termo-close" aria-label="Fechar">&times;</button>' +
+          '</div>' +
+          '<div class="modal-body">' +
+            '<div class="termo-conteudo">' +
+              '<p>Declaro estar ciente e de acordo com as condições de uso do sistema de registro de efetividade WEB, através do Portal do RH 24 Horas.</p>' +
+              '<p>Declaro-me ciente, também, que o RH 24 Horas é monitorado e permite identificar e rastrear o uso e o mau uso do mesmo, em caráter de segurança e sigilo do sistema.</p>' +
+              '<p>Afirmo estar plenamente consciente de que a minha senha é personalíssima e intransferível, o que acarreta minha responsabilidade pessoal por todo e qualquer prejuízo decorrente de sua cessão proposital a terceiros, ainda que em caráter emergencial ou por necessidade de serviço.</p>' +
+              '<p>Declaro estar ciente que poderei responder civil, criminal e administrativamente pelo empréstimo e uso indevido da senha, conforme previsto no art. 299 do Código Penal Brasileiro.</p>' +
+              '<p>O uso indevido do sistema de ponto eletrônico web, bem como o descumprimento das obrigações aplicáveis neste termo, poderá resultar em medidas disciplinares em conformidade com a legislação vigente.</p>' +
+              '<p>Estou CIENTE dos direitos e obrigações decorrentes da utilização do sistema, bem como das possíveis penalidades em casos de inobservância da legislação vigente.</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="modal-footer">' +
+            '<button class="btn-fechar" id="rh-termo-fechar-btn">Fechar</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
   }
 
   // ── Sidebar ───────────────────────────────────────────────────────────────
@@ -295,6 +333,72 @@ document.addEventListener('DOMContentLoaded', function () {
   renderChips();
   atualizarPill();
 
+  // ── Termo de responsabilidade (aceite único, até o texto mudar) ────────────
+  var TERMO_VERSION = 'v1';
+  var TERMO_STORAGE_KEY = 'rh_termo_efetividade_aceito';
+
+  function termoAceito() {
+    return localStorage.getItem(TERMO_STORAGE_KEY) === TERMO_VERSION;
+  }
+
+  function atualizarTermoUI() {
+    var formEl   = document.getElementById('rh-ponto-termo-form');
+    var aceitoEl = document.getElementById('rh-ponto-termo-aceito');
+    var checkbox = document.getElementById('rh-termo-checkbox');
+    var btn      = document.getElementById('rh-btn-registrar');
+    var aceito   = termoAceito();
+    if (formEl)   formEl.style.display   = aceito ? 'none' : '';
+    if (aceitoEl) aceitoEl.style.display = aceito ? 'block' : 'none';
+    if (btn)      btn.disabled = !aceito;
+    if (checkbox) checkbox.checked = aceito;
+  }
+
+  atualizarTermoUI();
+
+  var termoCheckbox = document.getElementById('rh-termo-checkbox');
+  if (termoCheckbox) {
+    termoCheckbox.addEventListener('change', function () {
+      if (termoCheckbox.checked) {
+        localStorage.setItem(TERMO_STORAGE_KEY, TERMO_VERSION);
+      } else {
+        localStorage.removeItem(TERMO_STORAGE_KEY);
+      }
+      atualizarTermoUI();
+    });
+  }
+
+  var termoOverlay    = document.getElementById('rh-termo-overlay');
+  var termoLink        = document.getElementById('rh-termo-link');
+  var termoLinkAceito  = document.getElementById('rh-termo-link-aceito');
+  var termoClose       = document.getElementById('rh-termo-close');
+  var termoFechar      = document.getElementById('rh-termo-fechar-btn');
+
+  function abrirTermoModal(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (termoOverlay) termoOverlay.classList.add('open');
+    if (termoClose) termoClose.focus();
+  }
+
+  function fecharTermoModal() {
+    if (termoOverlay) termoOverlay.classList.remove('open');
+    if (termoLink) termoLink.focus();
+  }
+
+  if (termoLink)       termoLink.addEventListener('click', abrirTermoModal);
+  if (termoLinkAceito) termoLinkAceito.addEventListener('click', abrirTermoModal);
+  if (termoClose)  termoClose.addEventListener('click', fecharTermoModal);
+  if (termoFechar) termoFechar.addEventListener('click', fecharTermoModal);
+  if (termoOverlay) {
+    termoOverlay.addEventListener('click', function (e) {
+      if (e.target === termoOverlay) fecharTermoModal();
+    });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && termoOverlay && termoOverlay.classList.contains('open')) {
+      fecharTermoModal();
+    }
+  });
+
   // botão registrar
   var btnRegistrar = document.getElementById('rh-btn-registrar');
   if (btnRegistrar) btnRegistrar.addEventListener('click', registrar);
@@ -310,6 +414,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         document.getElementById('rh-ponto-confirm').classList.remove('show');
         document.querySelector('.ponto-acao').style.display = '';
+        atualizarTermoUI();
         painel.classList.add('open');
         iniciarRelogio();
       }
@@ -344,6 +449,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function registrar() {
+    if (!termoAceito()) return;
+
     var agora = new Date();
     var hh = String(agora.getHours()).padStart(2, '0');
     var mm = String(agora.getMinutes()).padStart(2, '0');
