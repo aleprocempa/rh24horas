@@ -93,10 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
               '</div>' +
             '</div>' +
             '<div class="ponto-acao">' +
-              '<button class="btn-registrar-agora" id="rh-btn-registrar">' +
-                '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-                ' Registrar agora' +
-              '</button>' +
+              '<div class="btn-registrar-wrap">' +
+                '<div class="registrar-tooltip" id="rh-registrar-tooltip" role="alert">Aceite o termo de responsabilidade para registrar o ponto.</div>' +
+                '<button class="btn-registrar-agora" id="rh-btn-registrar" aria-disabled="true">' +
+                  '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                  ' Registrar agora' +
+                '</button>' +
+              '</div>' +
             '</div>' +
             '<div class="ponto-confirm" id="rh-ponto-confirm">' +
               '<svg width="28" height="28" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#4d824d" stroke-width="2"/><path d="M10 16l4 4 8-8" stroke="#4d824d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
@@ -349,8 +352,28 @@ document.addEventListener('DOMContentLoaded', function () {
     var aceito   = termoAceito();
     if (formEl)   formEl.style.display   = aceito ? 'none' : '';
     if (aceitoEl) aceitoEl.style.display = aceito ? 'block' : 'none';
-    if (btn)      btn.disabled = !aceito;
+    if (btn) {
+      btn.classList.toggle('is-disabled', !aceito);
+      btn.setAttribute('aria-disabled', String(!aceito));
+    }
     if (checkbox) checkbox.checked = aceito;
+    if (aceito) escondeRegistrarTooltip();
+  }
+
+  var registrarTooltipTimer = null;
+
+  function mostraRegistrarTooltip() {
+    var tooltip = document.getElementById('rh-registrar-tooltip');
+    if (!tooltip) return;
+    tooltip.classList.add('show');
+    clearTimeout(registrarTooltipTimer);
+    registrarTooltipTimer = setTimeout(escondeRegistrarTooltip, 2500);
+  }
+
+  function escondeRegistrarTooltip() {
+    var tooltip = document.getElementById('rh-registrar-tooltip');
+    if (tooltip) tooltip.classList.remove('show');
+    clearTimeout(registrarTooltipTimer);
   }
 
   atualizarTermoUI();
@@ -401,7 +424,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // botão registrar
   var btnRegistrar = document.getElementById('rh-btn-registrar');
-  if (btnRegistrar) btnRegistrar.addEventListener('click', registrar);
+  if (btnRegistrar) {
+    btnRegistrar.addEventListener('click', function () {
+      if (!termoAceito()) {
+        mostraRegistrarTooltip();
+        return;
+      }
+      registrar();
+    });
+  }
 
   // botão ponto (toggle painel)
   var pontoBtn = document.getElementById('rh-ponto-btn');
@@ -425,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var painel = document.getElementById('rh-ponto-panel');
     if (painel) painel.classList.remove('open');
     pararRelogio();
+    escondeRegistrarTooltip();
   }
 
   function iniciarRelogio() {

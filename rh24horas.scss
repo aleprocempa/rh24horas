@@ -495,6 +495,10 @@ a:focus-visible {
 // botão principal de registro
 .ponto-acao { padding: 12px 16px; }
 
+.btn-registrar-wrap {
+  position: relative;
+}
+
 .btn-registrar-agora {
   width: 100%;
   height: 44px;
@@ -514,10 +518,46 @@ a:focus-visible {
 
   &:hover    { background: var(--success-dark); }
   &:active   { transform: scale(0.99); }
-  &:disabled {
+
+  // botão fica clicável (não usamos o atributo disabled nativo, que bloquearia o
+  // clique) para poder avisar por que a ação está bloqueada — ver .registrar-tooltip
+  &.is-disabled {
     background: var(--neutral-muted);
     cursor: not-allowed;
+
+    &:hover, &:active { background: var(--neutral-muted); transform: none; }
   }
+}
+
+.registrar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 230px;
+  padding: 8px 12px;
+  background: var(--primary-headings);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast, 120ms) var(--ease-standard, linear);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--primary-headings);
+  }
+
+  &.show { opacity: 1; }
 }
 
 // modal do termo de responsabilidade (reusa .modal-overlay/.modal-panel/.modal-header/.modal-body/.modal-footer)
