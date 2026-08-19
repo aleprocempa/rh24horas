@@ -440,6 +440,88 @@ a:focus-visible {
   margin-top: 4px;
 }
 
+.ponto-termo {
+  padding-top: 10px;
+  border-top: 1px solid var(--neutral-light);
+}
+
+.ponto-termo-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.termo-check-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+}
+.termo-check-wrap input {
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.termo-check-box {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--neutral-light);
+  background: #fff;
+  pointer-events: none;
+}
+
+.termo-check-wrap input:checked + .termo-check-box {
+  background: var(--primary-interactive-area);
+  border-color: var(--primary-interactive-area);
+}
+.termo-check-wrap input:checked + .termo-check-box::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.termo-check-wrap input:focus-visible + .termo-check-box {
+  box-shadow: inset 0 0 0 2px var(--highlight-focus);
+  border-color: var(--highlight-focus);
+}
+
+.ponto-termo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ponto-termo-texto {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--neutral-body);
+}
+
+.ponto-termo-link {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-interactive);
+  text-decoration: underline;
+}
+.ponto-termo-link:hover {
+  color: var(--primary-interactive-area);
+}
+
 .ponto-acao {
   padding: 12px 16px;
 }
@@ -466,6 +548,22 @@ a:focus-visible {
 }
 .btn-registrar-agora:active {
   transform: scale(0.99);
+}
+.btn-registrar-agora:disabled {
+  background: var(--neutral-muted);
+  cursor: not-allowed;
+}
+
+.termo-conteudo {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--neutral-body);
+}
+.termo-conteudo p {
+  margin: 0 0 12px;
+}
+.termo-conteudo p:last-child {
+  margin-bottom: 0;
 }
 
 .ponto-confirm {
@@ -504,14 +602,24 @@ a:focus-visible {
 }
 
 .ponto-panel-footer {
-  padding: 8px 16px;
+  padding: 10px 16px 12px;
   background: var(--neutral-background);
   border-top: 1px solid var(--neutral-light);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ponto-panel-footer-nota {
   font-size: 10px;
   color: var(--neutral-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+}
+
+.ponto-termo-aceito {
+  display: none;
+}
+.ponto-termo-aceito .ponto-termo-link {
+  font-size: 10px;
 }
 
 .overlay {
@@ -606,32 +714,27 @@ a:focus-visible {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  min-width: 290px;
+  min-width: 160px;
   background: #fff;
   border: 1px solid var(--neutral-light);
   z-index: 200;
-  box-shadow: 0 8px 24px rgba(9, 30, 66, 0.14);
 }
 .user-dropdown.open {
   display: block;
 }
 
 .dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 11px 14px;
+  display: block;
+  padding: 9px 14px;
   font-size: 13px;
-  font-weight: 600;
   color: var(--neutral-dark);
   cursor: pointer;
 }
 .dropdown-item:hover {
-  background: var(--primary-background);
+  background: var(--neutral-background);
 }
 .dropdown-item.exit {
-  color: var(--primary-interactive);
+  color: var(--danger-base);
   border-top: 1px solid var(--neutral-light);
 }
 
@@ -823,7 +926,7 @@ input.filtro {
   border: 1px solid var(--neutral-light);
   padding: 7px 10px;
   height: 36px;
-  width: 140px;
+  width: 220px;
 }
 input.filtro:hover:not(:focus) {
   border-color: var(--primary-interactive-area);
@@ -2598,24 +2701,14 @@ table.aquisitivo tbody tr td.left {
 }
 table.aquisitivo tbody tr td.saldo {
   font-weight: 700;
-  font-size: 15px;
-  text-align: center;
-  color: #fff;
-  background: var(--highlight-focus);
+  color: var(--success-dark);
 }
 table.aquisitivo tbody tr td.saldo.zero {
   color: var(--neutral-muted);
   font-weight: 400;
-  background: var(--neutral-background);
 }
 table.aquisitivo tbody tr:hover td {
   background: var(--primary-background);
-}
-table.aquisitivo tbody tr:hover td.saldo {
-  background: var(--highlight-focus);
-}
-table.aquisitivo tbody tr:hover td.saldo.zero {
-  background: var(--neutral-background);
 }
 
 .badge-atual {
@@ -3778,7 +3871,7 @@ input.val-input:focus {
   display: block;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .app-header {
     padding: 0 1rem;
     gap: 0.75rem;
@@ -3967,6 +4060,9 @@ input.val-input:focus {
     justify-content: center;
     margin-top: 1.5rem;
   }
+  .app-header {
+    padding: 0;
+  }
 }
 @media (max-width: 600px) {
   .cols-header {
@@ -4042,22 +4138,52 @@ input.val-input:focus {
   flex-wrap: wrap;
 }
 
-.vinculo-current {
+.vinculo-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
   font-size: 10px;
   letter-spacing: 0.06em;
   font-weight: 600;
   color: var(--primary-interactive);
+  text-transform: none;
+  cursor: pointer;
   line-height: 1.2;
 }
 
-.header-user-caret {
-  color: var(--neutral-muted);
-  flex-shrink: 0;
+.vinculo-switch:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.vinculo-switch svg {
   transition: transform 0.15s ease;
 }
 
-.header-user[aria-expanded="true"] .header-user-caret {
+.vinculo-switch.open svg {
   transform: rotate(180deg);
+}
+
+.vinculo-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 290px;
+  background: #fff;
+  border: 1px solid var(--neutral-light);
+  z-index: 210;
+  box-shadow: 0 8px 24px rgba(9, 30, 66, 0.14);
+}
+
+.vinculo-dropdown.open {
+  display: block;
 }
 
 .vinculo-dropdown-head {
@@ -4416,9 +4542,6 @@ input.val-input:focus {
     min-width: 560px;
   }
 }
-
-/*# sourceMappingURL=rh24horas.css.map */
-
 .data-card-lista {
   margin-top: 4px;
   display: flex;
@@ -4466,3 +4589,5 @@ input.val-input:focus {
 .data-card-valor-comp {
   font-weight: 400;
 }
+
+/*# sourceMappingURL=rh24horas.css.map */
