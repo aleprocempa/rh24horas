@@ -4102,6 +4102,23 @@ input.val-input:focus {
   .app-header {
     padding: 0;
   }
+  .cheque-info-row {
+    display: none;
+  }
+  .filtro-group:nth-child(1) {
+    width: 100%;
+  }
+  .filtro-group:nth-child(1) select.filtro {
+    width: 100%;
+  }
+  .filtro-group:nth-child(2),
+  .filtro-group:nth-child(4) {
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+  .filtro-group:nth-child(2) input.filtro,
+  .filtro-group:nth-child(4) input.filtro {
+    width: 100%;
+  }
 }
 @media (max-width: 600px) {
   .cols-header {
