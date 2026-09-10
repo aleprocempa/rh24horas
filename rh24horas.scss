@@ -1235,7 +1235,7 @@ button{
 }
 
 // Cards de datas (Previsão de Aposentadoria)
-.datas-cards { @include metric-card-grid(3); }
+.datas-cards { @include metric-card-grid(3); gap: 0.5rem 1rem; }
 
 .data-card {
   background: #fff;
@@ -2641,7 +2641,6 @@ table.aquisitivo {
   display: grid;
   grid-template-columns: 1fr;
   border: 1px solid var(--neutral-light);
-  border-top: none;
 }
 
 .tempo-row { display: contents; }
@@ -2659,10 +2658,10 @@ table.aquisitivo {
   &.full  { border-right: none; }
 
   &.total {
-    background: var(--primary-headings);
+    background: var(--highlight-focus);
     color: #fff;
     font-weight: 700;
-    border-color: var(--primary-dark);
+    border-color: var(--highlight-focus);
     border-right: none;
   }
 }
@@ -2672,7 +2671,7 @@ table.aquisitivo {
   font-size: 13px;
   flex: 1;
 
-  &.white { color: rgba(255, 255, 255, 0.85); font-size: 12px; flex: 1; }
+  &.white { color: #fff; font-size: 13px; flex: 1; }
 }
 
 .tempo-vals {
@@ -2702,7 +2701,6 @@ table.aquisitivo {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--neutral-light);
-  border-top: none;
 }
 
 .ocorr-cell {
@@ -2776,12 +2774,57 @@ table.modal {
   border-radius: 4px;
   white-space: nowrap;
   margin-top: 4px;
+  position: relative;
+  cursor: help;
+
+  &[data-tooltip]:hover {
+    z-index: 10;
+
+    &::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--neutral-body);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 400;
+      white-space: normal;
+      width: 220px;
+      text-align: left;
+      line-height: 1.4;
+      padding: 6px 8px;
+      border-radius: 4px;
+      z-index: 100;
+      pointer-events: none;
+      font-family: var(--font-sans);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 2px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top-color: var(--neutral-body);
+      z-index: 100;
+    }
+  }
 }
 
 .badge-com { background: var(--success-base); color: #fff; }
 .badge-sem { background: var(--neutral-base);  color: #fff; }
 
-.nota-final strong { color: var(--warning-dark); font-weight: 600; }
+.nota-final {
+  font-size: 11px;
+  color: var(--neutral-base);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+
+  strong { color: var(--warning-dark); font-weight: 600; }
+}
 
 
 // ── Tempo de Serviço ──────────────────────────────────────────────────────────
@@ -2951,7 +2994,7 @@ table.modal {
   background: currentColor;
 }
 
-.identity-bar { display: flex; flex-wrap: wrap; }
+.identity-bar { display: flex; flex-wrap: wrap; margin-top: 14px; }
 
 .identity-item {
   display: flex;
@@ -4299,6 +4342,15 @@ table.doacoes {
   .limite-stats  { gap: 0.5rem 1.5rem; }
 }
 
+// ── Page header com botão — full-width em telas pequenas ( ≤ 576px ) ────────
+@media (max-width: 576px) {
+  .page-header.with-action .btn-outline {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+}
+
 // ── Mobile estrito ( ≤ 480px ) ───────────────────────────────────────────────
 @media (max-width: 480px) {
 
@@ -5045,11 +5097,20 @@ table.doacoes {
     color: var(--neutral-body);
   }
 
+  .limite-explicacao {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--neutral-base);
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--neutral-light);
+  }
+
   .limite-acoes {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   .limite-aviso-irreversivel {
@@ -5154,4 +5215,25 @@ table.doacoes {
       align-items: flex-start;
     }
   }
+}
+
+// Campo "Valor a destinar" no modal de registro (fora de .doacoes-v2 porque os
+// modais ficam fora de .content no DOM)
+.campo-valor-registrar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-dark);
+  }
+
+  input.val-input { width: 100%; }
+}
+
+.campo-valor-registrar-ref {
+  font-size: 12px;
+  color: var(--neutral-muted);
 }

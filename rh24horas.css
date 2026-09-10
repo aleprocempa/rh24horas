@@ -1216,6 +1216,7 @@ button {
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
+  gap: 0.5rem 1rem;
 }
 
 .data-card {
@@ -2813,7 +2814,6 @@ table.aquisitivo tbody tr:hover td {
   display: grid;
   grid-template-columns: 1fr;
   border: 1px solid var(--neutral-light);
-  border-top: none;
 }
 
 .tempo-row {
@@ -2834,10 +2834,10 @@ table.aquisitivo tbody tr:hover td {
   border-right: none;
 }
 .tempo-cell.total {
-  background: var(--primary-headings);
+  background: var(--highlight-focus);
   color: #fff;
   font-weight: 700;
-  border-color: var(--primary-dark);
+  border-color: var(--highlight-focus);
   border-right: none;
 }
 
@@ -2847,8 +2847,8 @@ table.aquisitivo tbody tr:hover td {
   flex: 1;
 }
 .tempo-label.white {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 12px;
+  color: #fff;
+  font-size: 13px;
   flex: 1;
 }
 
@@ -2880,7 +2880,6 @@ table.aquisitivo tbody tr:hover td {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--neutral-light);
-  border-top: none;
 }
 
 .ocorr-cell {
@@ -2970,6 +2969,41 @@ table.modal tbody tr:hover td {
   border-radius: 4px;
   white-space: nowrap;
   margin-top: 4px;
+  position: relative;
+  cursor: help;
+}
+.badge-paridade[data-tooltip]:hover {
+  z-index: 10;
+}
+.badge-paridade[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--neutral-body);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: normal;
+  width: 220px;
+  text-align: left;
+  line-height: 1.4;
+  padding: 6px 8px;
+  border-radius: 4px;
+  z-index: 100;
+  pointer-events: none;
+  font-family: var(--font-sans);
+}
+.badge-paridade[data-tooltip]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--neutral-body);
+  z-index: 100;
 }
 
 .badge-com {
@@ -2982,6 +3016,12 @@ table.modal tbody tr:hover td {
   color: #fff;
 }
 
+.nota-final {
+  font-size: 11px;
+  color: var(--neutral-base);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
 .nota-final strong {
   color: var(--warning-dark);
   font-weight: 600;
@@ -3185,6 +3225,7 @@ table.modal tbody tr:hover td {
 .identity-bar {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 14px;
 }
 
 .identity-item {
@@ -4131,7 +4172,6 @@ table.doacoes tbody tr.destaque td {
   margin-top: var(--spacing-scale-3x);
   padding: 0.75rem 0;
   background: #fff;
-  border-top: var(--borda-padrao);
 }
 
 .modal-card {
@@ -4681,6 +4721,13 @@ table.doacoes tbody tr.destaque td {
   }
   .limite-stats {
     gap: 0.5rem 1.5rem;
+  }
+}
+@media (max-width: 576px) {
+  .page-header.with-action .btn-outline {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1.5rem;
   }
 }
 @media (max-width: 480px) {
@@ -5463,11 +5510,19 @@ table.doacoes tbody tr.destaque td {
   font-weight: 700;
   color: var(--neutral-body);
 }
+.doacoes-v2 .limite-explicacao {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--neutral-base);
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--neutral-light);
+}
 .doacoes-v2 .limite-acoes {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 .doacoes-v2 .limite-aviso-irreversivel {
   font-size: 12px;
@@ -5577,6 +5632,25 @@ table.doacoes tbody tr.destaque td {
     flex-wrap: wrap;
     align-items: flex-start;
   }
+}
+
+.campo-valor-registrar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.campo-valor-registrar label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--neutral-dark);
+}
+.campo-valor-registrar input.val-input {
+  width: 100%;
+}
+
+.campo-valor-registrar-ref {
+  font-size: 12px;
+  color: var(--neutral-muted);
 }
 
 /*# sourceMappingURL=rh24horas.css.map */
