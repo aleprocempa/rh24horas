@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eleições — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+  <div class="content">
+
+    <div class="page-header">
+      <h1 class="page-title">
+        Eleição teste 2026
+        <span class="badge badge-andamento" id="eleicao-status"><span class="badge-dot"></span>Em andamento</span>
+      </h1>
+      <p class="page-subtitle">Período de votação: 17/08/2026 <small>(06:00)</small> a 19/08/2026 <small>(12:00)</small></p>
+    </div>
+
+    <!-- ── VOTAÇÃO ─────────────────────────────── -->
+    <div id="votacao-view">
+
+      <div class="chapas-grid">
+
+        <div class="chapas-head">
+          <h2 class="h2" id="chapas-titulo">Escolha uma chapa</h2>
+          <p class="chapas-subtitulo">Selecione uma opção para consultar seus integrantes.</p>
+        </div>
+
+        <div class="chapas-body">
+          <div class="candidatos-list" role="group" aria-labelledby="chapas-titulo" id="candidatos-list"></div>
+        </div>
+
+        <div class="membros-body" id="membros-body">
+          <div class="membros-card">
+            <h3 class="h3" id="membros-titulo">Membros<span id="membros-chapa-nome"></span></h3>
+            <div id="membros-conteudo" aria-live="polite">
+              <p class="membros-vazio">Selecione uma chapa para ver os integrantes.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="votacao-acao">
+        <button type="button" class="btn-action" id="btn-confirmar" hidden>Confirmar voto</button>
+      </div>
+    </div>
+
+    <!-- ── PERÍODO ENCERRADO ──────────────────────── -->
+    <div id="encerrado-view" hidden>
+      <div class="aviso warning" role="status">O período de votação está encerrado.</div>
+    </div>
+
+    <!-- ── COMPROVANTE ────────────────────────────── -->
+    <div id="comprovante-view" hidden>
+      <div class="aviso success" role="status">Seu voto foi computado! Obrigado por participar!</div>
+
+      <section class="comprovante-card" aria-labelledby="comprovante-titulo">
+        <h2 class="h2" id="comprovante-titulo">Comprovante de votação</h2>
+        <dl class="comprovante-lista">
+          <div class="comprovante-item">
+            <dt>Eleição</dt>
+            <dd id="comp-eleicao"></dd>
+          </div>
+          <div class="comprovante-item">
+            <dt>Voto</dt>
+            <dd id="comp-voto"></dd>
+          </div>
+          <div class="comprovante-item">
+            <dt>CPF do eleitor</dt>
+            <dd id="comp-cpf"></dd>
+          </div>
+          <div class="comprovante-item">
+            <dt>Data da votação</dt>
+            <dd id="comp-data"></dd>
+          </div>
+        </dl>
+        <button type="button" class="btn-outline" id="btn-imprimir">Imprimir comprovante</button>
+      </section>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: confirmar voto -->
+<div class="modal-overlay" id="modal-confirmar-voto">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-voto-titulo">
+    <h2 class="modal-card-titulo" id="modal-voto-titulo">Confirmar seu voto?</h2>
+    <div class="modal-card-corpo">
+      <p class="modal-card-texto">Você selecionou: <strong id="modal-voto-chapa"></strong></p>
+      <p class="modal-card-texto-secundario">Confira sua escolha antes de continuar.</p>
+    </div>
+    <div class="modal-card-acoes">
+      <button type="button" class="btn-texto" id="btn-voltar-voto">Voltar</button>
+      <button type="button" class="btn-solido" id="btn-confirmar-voto">Confirmar voto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ELEICAO_NOME = 'Eleição teste 2026';
+const CPF_ELEITOR = '810.488.580-49';
+
+// Estado de demonstração: acrescente ?encerrada=1 na URL para simular o
+// período de votação já encerrado.
+const PERIODO_ENCERRADO = new URLSearchParams(location.search).get('encerrada') === '1';
+
+const CHAPAS = [
+  {
+    id: 'unidos',
+    nome: 'Unidos da Previdência',
+    membros: [
+      { nome: 'Carla Simão da Silva',        apelido: 'Carla', lotacao: 'Previmpa', conselho: 'Deliberativo', tipo: 'Titular'  },
+      { nome: 'Julio Cesar Portella Sortica', apelido: '',      lotacao: 'SMF',      conselho: 'Deliberativo', tipo: 'Titular'  },
+      { nome: 'Dalvin Gabriel Jose de Souza', apelido: '',      lotacao: 'Previmpa', conselho: 'Fiscal',       tipo: 'Suplente' },
+      { nome: 'Roger Sotoriva Piccini',       apelido: '',      lotacao: 'Previmpa', conselho: 'Deliberativo', tipo: 'Suplente' }
+    ]
+  },
+  {
+    id: 'divas',
+    nome: 'Divas da Previdência',
+    membros: [
+      { nome: 'Giordana Zimmermann Besen',      apelido: 'Giordana', lotacao: 'Previmpa', conselho: 'Deliberativo', tipo: 'Titular'  },
+      { nome: 'Carin Cecilia da Rosa Carvalho', apelido: 'Carin',    lotacao: 'Previmpa', conselho: 'Deliberativo', tipo: 'Suplente' },
+      { nome: 'Daniela Silveira Machado',       apelido: 'Daniela',  lotacao: 'Previmpa', conselho: 'Deliberativo', tipo: 'Suplente' }
+    ]
+  }
+];
+
+// Opções sem chapa/integrantes associados — ficam na mesma lista, com a
+// mesma exclusividade e o mesmo peso visual das chapas (votar em branco ou
+// nulo é uma escolha tão válida quanto votar em uma chapa).
+const OPCOES_ESPECIAIS = [
+  { id: 'branco', label: 'Branco', nome: 'Voto em branco' },
+  { id: 'nulo',   label: 'Nulo',   nome: 'Voto nulo' }
+];
+
+const TODAS_OPCOES = CHAPAS.concat(OPCOES_ESPECIAIS);
+
+var chapaSelecionada = null;
+
+function renderOpcaoHtml(opcao) {
+  return (
+    '<label class="candidato-item" data-chapa="' + opcao.id + '">' +
+      '<span class="checkbox-wrap">' +
+        '<input type="checkbox" class="candidato-checkbox" value="' + opcao.id + '">' +
+        '<span class="checkbox-visual" aria-hidden="true"></span>' +
+      '</span>' +
+      '<span class="candidato-nome">' + (opcao.label || opcao.nome) + '</span>' +
+    '</label>'
+  );
+}
+
+function renderCandidatos() {
+  var lista = document.getElementById('candidatos-list');
+  lista.innerHTML = CHAPAS.map(renderOpcaoHtml).join('') + OPCOES_ESPECIAIS.map(renderOpcaoHtml).join('');
+
+  // Checkbox, não radio: a votação não é obrigatória, então é preciso poder
+  // desmarcar a opção escolhida (abster-se). A exclusividade — só uma opção
+  // marcada por vez — é garantida aqui, desmarcando as demais manualmente.
+  lista.querySelectorAll('.candidato-checkbox').forEach(function (input) {
+    input.addEventListener('change', function () {
+      if (input.checked) {
+        lista.querySelectorAll('.candidato-checkbox').forEach(function (outro) {
+          if (outro !== input) outro.checked = false;
+        });
+        selecionarChapa(input.value);
+      } else {
+        desselecionarChapa();
+      }
+    });
+  });
+}
+
+// Lotação e conselho sempre aparecem por integrante, mesmo quando coincidem
+// entre todos — layout fixo, sem variação conforme os dados da chapa.
+function renderMembros(chapa) {
+  var card = document.getElementById('membros-conteudo');
+
+  document.getElementById('membros-body').hidden = false;
+  document.getElementById('membros-chapa-nome').textContent = ' ' + chapa.nome;
+
+  var listaHtml = chapa.membros.map(function (m) {
+    var tipoClasse = m.tipo === 'Titular' ? 'titular' : 'suplente';
+    return (
+      '<li class="membro-item">' +
+        '<div class="membro-linha">' +
+          '<span class="membro-nome">' + m.nome +
+            (m.apelido ? ' <span class="membro-apelido">(' + m.apelido + ')</span>' : '') +
+          '</span>' +
+          '<span class="badge-tipo ' + tipoClasse + '">' + m.tipo + '</span>' +
+        '</div>' +
+        '<span class="membro-meta-item">' + m.lotacao + ' &middot; Conselho ' + m.conselho + '</span>' +
+      '</li>'
+    );
+  }).join('');
+
+  card.innerHTML = '<ul class="membros-list">' + listaHtml + '</ul>';
+}
+
+// Branco/nulo não têm chapa nem integrantes — a coluna de membros some
+// inteira, em vez de mostrar um card vazio sem conteúdo útil.
+function renderSemChapa() {
+  document.getElementById('membros-body').hidden = true;
+}
+
+function selecionarChapa(id) {
+  chapaSelecionada = id;
+
+  document.querySelectorAll('.candidato-item').forEach(function (item) {
+    item.classList.toggle('selected', item.dataset.chapa === id);
+  });
+
+  var chapa = CHAPAS.filter(function (c) { return c.id === id; })[0];
+  if (chapa) {
+    renderMembros(chapa);
+  } else {
+    renderSemChapa();
+  }
+
+  document.getElementById('btn-confirmar').hidden = false;
+}
+
+function desselecionarChapa() {
+  chapaSelecionada = null;
+
+  document.querySelectorAll('.candidato-item').forEach(function (item) {
+    item.classList.remove('selected');
+  });
+
+  document.getElementById('membros-body').hidden = false;
+  document.getElementById('membros-conteudo').innerHTML =
+    '<p class="membros-vazio">Selecione uma chapa para ver os integrantes.</p>';
+  document.getElementById('membros-chapa-nome').textContent = '';
+
+  document.getElementById('btn-confirmar').hidden = true;
+}
+
+if (PERIODO_ENCERRADO) {
+  var statusBadge = document.getElementById('eleicao-status');
+  statusBadge.classList.remove('badge-andamento');
+  statusBadge.classList.add('badge-encerrada');
+  statusBadge.innerHTML = '<span class="badge-dot"></span>Votação encerrada';
+
+  document.getElementById('votacao-view').hidden = true;
+  document.getElementById('encerrado-view').hidden = false;
+} else {
+  renderCandidatos();
+}
+
+// ── Confirmação do voto ────────────────────────────────────────────────────
+
+var modalVoto      = document.getElementById('modal-confirmar-voto');
+var btnConfirmar   = document.getElementById('btn-confirmar');
+var btnVoltarVoto  = document.getElementById('btn-voltar-voto');
+var btnConfirmarVoto = document.getElementById('btn-confirmar-voto');
+
+btnConfirmar.addEventListener('click', function () {
+  if (!chapaSelecionada) return;
+  var opcao = TODAS_OPCOES.filter(function (o) { return o.id === chapaSelecionada; })[0];
+  document.getElementById('modal-voto-chapa').textContent = opcao.nome;
+  modalVoto.classList.add('open');
+  btnVoltarVoto.focus();
+});
+
+function fecharModalVoto() {
+  modalVoto.classList.remove('open');
+  btnConfirmar.focus();
+}
+
+function focosDoModal() {
+  return Array.prototype.slice.call(
+    modalVoto.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+  );
+}
+
+btnVoltarVoto.addEventListener('click', fecharModalVoto);
+modalVoto.addEventListener('click', function (e) {
+  if (e.target === modalVoto) fecharModalVoto();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (!modalVoto.classList.contains('open')) return;
+
+  if (e.key === 'Escape') {
+    fecharModalVoto();
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    var focaveis = focosDoModal();
+    if (!focaveis.length) return;
+    var primeiro = focaveis[0];
+    var ultimo = focaveis[focaveis.length - 1];
+    if (e.shiftKey && document.activeElement === primeiro) {
+      e.preventDefault();
+      ultimo.focus();
+    } else if (!e.shiftKey && document.activeElement === ultimo) {
+      e.preventDefault();
+      primeiro.focus();
+    }
+  }
+});
+
+btnConfirmarVoto.addEventListener('click', function () {
+  var opcao = TODAS_OPCOES.filter(function (o) { return o.id === chapaSelecionada; })[0];
+  modalVoto.classList.remove('open');
+
+  document.getElementById('comp-eleicao').textContent = ELEICAO_NOME;
+  document.getElementById('comp-voto').textContent = opcao.nome;
+  document.getElementById('comp-cpf').textContent = CPF_ELEITOR;
+  document.getElementById('comp-data').textContent = new Date().toLocaleString('pt-BR');
+
+  document.getElementById('votacao-view').hidden = true;
+  document.getElementById('comprovante-view').hidden = false;
+});
+
+document.getElementById('btn-imprimir').addEventListener('click', function () {
+  window.print();
+});
+</script>
+</body>
+</html>

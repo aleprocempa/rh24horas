@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: 'Cartão ponto',              href: 'cartao_ponto_2.html' },
     { label: 'Férias e licenças',         href: 'frequencia.html' },
     { group: 'Institucional' },
-    { label: 'Eleições',                  href: '#' },
-    { label: 'Doações',                   href: '#', muted: true },
+    { label: 'Eleições',                  href: 'eleicoes.html' },
+    { label: 'Doações',                   href: 'doacoes_funcrianca.html' },
   ];
 
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';

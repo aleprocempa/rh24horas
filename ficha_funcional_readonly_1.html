@@ -380,8 +380,8 @@
       badge.className = 'badge ' + (ativo ? 'badge-success' : 'badge-neutral');
       badge.innerHTML = '<span class="badge-dot"></span>' + esc(v.situacao);
       badge.style.background = ativo ? '' : 'var(--neutral-background)';
-      badge.style.color = ativo ? '' : 'var(--neutral-base)';
-      badge.style.borderColor = ativo ? '' : 'var(--neutral-light)';
+      badge.style.color = ativo ? '' : 'var(--neutral-dark)';
+      badge.style.borderRadius = '4px';
       var dot = badge.querySelector('.badge-dot');
       if (dot && !ativo) dot.style.background = 'var(--neutral-muted)';
     }
