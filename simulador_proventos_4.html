@@ -42,6 +42,19 @@
           <div class="resultado-card-stats" id="meta-art43"></div>
         </div>
       </div>
+
+      <div id="avisos-simulacao" class="aviso warning" style="display:none">
+        <ol style="margin:0;padding-left:1.1rem;line-height:1.6">
+          <li>O valor ora apresentado trata-se de simulação para aposentadorias voluntárias, não refletindo o valor exato do provento por ocasião da concessão do benefício da aposentadoria, uma vez que está sujeito a revisão.</li>
+          <li>O PREVIMPA NÃO se responsabiliza por valores de salários de contribuição lançados pelo servidor.</li>
+          <li>O valor calculado reflete os dados existentes na data da simulação.</li>
+          <li>O resultado do cálculo da média apresentado no Art. 40 CF não está proporcionalizado pelo tempo de contribuição. Caso deseje proporcionalizar o valor da média aqui demonstrado, por ocasião de aposentadoria proporcional ao tempo de contribuição, deve se proceder ao seguinte cálculo:<br>
+            HOMEM = valor da média x total de dias trabalhados / 12775 dias<br>
+            MULHER = valor da média x total de dias trabalhados / 10950 dias
+          </li>
+          <li>O resultado do cálculo da média apresentado no Art. 43 LOM não está proporcionalizado pelo tempo de contribuição. Caso deseje proporcionalizar o valor da média aqui demonstrado, pelo cálculo da proporção da média, deverá se proceder o seguinte cálculo: 60% + 2 pontos percentuais para cada ano que exceder 20 anos de contribuição.</li>
+        </ol>
+      </div>
     </div>
 
     <!-- BARRA CALCULAR -->
@@ -58,7 +71,7 @@
     <div class="tabela-section">
       <div class="tabela-header">
         <div class="section-title">Contribuições por competência</div>
-        <button class="btn-expandir" id="btn-expandir" onclick="toggleExpandir()">Ver todas as 244 competências ↓</button>
+        <button class="btn-expandir" id="btn-expandir" onclick="toggleExpandir()">Ver todas as competências ↓</button>
       </div>
 
       <table class="contrib" id="tabela-contrib">
@@ -78,7 +91,7 @@
       </table>
 
       <div class="nota-expandir" id="nota-expandir">
-        Exibindo os últimos 12 meses. <button class="btn-expandir" onclick="toggleExpandir()">Ver todas as 244 competências ↓</button>
+        Exibindo os últimos 12 meses. <button class="btn-expandir" onclick="toggleExpandir()">Ver todas as competências ↓</button>
       </div>
 
     
@@ -143,13 +156,15 @@ const DADOS_BRUTOS = [
   {c:'01/2022', vo:4881.94, ic:1.112100, vc:5429.35}
 ];
 
-// Completa com competências sem valor (mais antigas)
-for (let i = 51; i < 244; i++) {
-  const ano = 2022 - Math.floor((i - 50) / 12);
-  const mes = 12 - ((i - 50) % 12);
+// Completa com competências sem valor (mais antigas), recuando mês a mês
+// até 07/1994 (início da série do Índice de atualização das contribuições)
+let mesAnt = 1, anoAnt = 2022;
+while (!(anoAnt === 1994 && mesAnt === 7)) {
+  mesAnt--;
+  if (mesAnt === 0) { mesAnt = 12; anoAnt--; }
   DADOS_BRUTOS.push({
-    c: (mes < 10 ? '0' + mes : mes) + '/' + ano,
-    vo: 0, ic: 1.1 + (i * 0.005), vc: 0, editavel: true
+    c: (mesAnt < 10 ? '0' + mesAnt : mesAnt) + '/' + anoAnt,
+    vo: 0, ic: 0, vc: 0, editavel: true
   });
 }
 
@@ -191,7 +206,7 @@ function renderTabela() {
 
     let valorOriginalCell;
     if (comp.editavel) {
-      valorOriginalCell = `<td class="editavel"><input class="val-input" data-idx="${comp.idx}" value="${comp.vo > 0 ? comp.vo : ''}" placeholder="Informar" onchange="atualizarValor(${comp.idx}, this.value)"></td>`;
+      valorOriginalCell = `<td class="editavel"><input class="val-input" inputmode="decimal" data-idx="${comp.idx}" value="${comp.vo > 0 ? fmt(comp.vo) : ''}" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,'')" onblur="atualizarValor(${comp.idx}, this)"></td>`;
     } else {
       valorOriginalCell = `<td style="text-align:right">${fmt(comp.vo)}</td>`;
     }
@@ -210,17 +225,19 @@ function renderTabela() {
   document.getElementById('nota-expandir').style.display = expandido ? 'none' : 'block';
 }
 
-function atualizarValor(idx, valorStr) {
-  let v = parseFloat(valorStr.replace('.', '').replace(',', '.')) || 0;
+function atualizarValor(idx, input) {
+  const v = parseFloat(input.value.replace(/\./g, '').replace(',', '.')) || 0;
   competencias[idx].vo = v;
   competencias[idx].vc = v > 0 ? parseFloat((v * competencias[idx].ic).toFixed(2)) : 0;
+  input.value = v > 0 ? fmt(v) : '';
 }
 
 function toggleExpandir() {
   expandido = !expandido;
-  document.getElementById('btn-expandir').textContent = expandido
+  const textoExpandir = expandido
     ? 'Ver apenas os últimos 12 meses ↑'
-    : 'Ver todas as 244 competências ↓';
+    : `Ver todas as ${competencias.length} competências ↓`;
+  document.querySelectorAll('.btn-expandir').forEach(btn => btn.textContent = textoExpandir);
   renderTabela();
   window.scrollTo({top: document.getElementById('tabela-contrib').offsetTop - 80, behavior: 'smooth'});
 }
@@ -261,6 +278,7 @@ function calcular() {
 
   document.getElementById('resultado-placeholder').style.display = 'none';
   document.getElementById('resultado-cards').style.display = 'grid';
+  document.getElementById('avisos-simulacao').style.display = 'block';
   document.getElementById('btn-outline').style.display = 'flex';
   document.getElementById('btn-limpar').classList.add('visible');
 
@@ -273,6 +291,7 @@ function calcular() {
 function limpar() {
   competencias.forEach(c => { c.art40 = false; c.art43 = false; });
   document.getElementById('resultado-cards').style.display = 'none';
+  document.getElementById('avisos-simulacao').style.display = 'none';
   document.getElementById('resultado-placeholder').style.display = 'block';
   document.getElementById('btn-outline').style.display = 'none';
   document.getElementById('btn-limpar').classList.remove('visible');
@@ -285,6 +304,7 @@ function limpar() {
 }
 
 // Init
+document.querySelectorAll('.btn-expandir').forEach(btn => btn.textContent = `Ver todas as ${competencias.length} competências ↓`);
 renderTabela();
 
 // Dropdown
