@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: 'Férias e licenças',         href: 'frequencia.html' },
     { group: 'Institucional' },
     { label: 'Eleições',                  href: 'eleicoes.html' },
-    { label: 'Doações',                   href: 'doacoes_funcrianca.html' },
+    { label: 'Doações',                   href: 'doacoes_v7.html' },
   ];
 
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';

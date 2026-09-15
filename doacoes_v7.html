@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doações v7 — RH24Horas</title>
+<script src="components.js"></script>
+<link rel="stylesheet" href="rh24horas.css">
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+  <div class="content doacoes-v7">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Doações</h1>
+        <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+      </div>
+    </div>
+
+    <!-- ANO-BASE + STATUS -->
+    <div class="periodo-compacto" style="display: none;">
+      <div class="periodo-ano-group">
+        <span class="toolbar-label" id="label-ano">Ano-base</span>
+        <select class="ano" id="select-ano" aria-labelledby="label-ano" onchange="renderAno()">
+          <option value="2025" selected>2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+        </select>
+      </div>
+
+      <div class="periodo-status">
+        <span class="periodo-status-badge" id="periodo-badge">Período aberto</span>
+        <span class="periodo-texto" id="periodo-texto">22 a 30 de dezembro de 2025</span>
+      </div>
+    </div>
+
+    <!-- SEM DADOS -->
+    <div id="sem-dados" class="resultado-placeholder" style="display:none"></div>
+
+    <div id="conteudo-ano">
+
+      <div class="top-grid">
+
+      <div class="coluna-principal">
+
+      <p class="intro-texto">Destine parte do seu Imposto de Renda ao FUNCRIANÇA e ao FUNDOIDOSO. O valor de referência é calculado com base nos seus rendimentos e nas deduções da declaração. Por isso, confira as informações apresentadas no <span class="quadro-referencia-lado">quadro ao lado</span><span class="quadro-referencia-abaixo">quadro abaixo</span> e inclua outras deduções, se necessário, para atualizar o limite disponível.
+
+
+      <a href="#" id="link-entenda" onclick="abrirModalInfo(event)">Entenda como funciona</a>.</p>
+
+      <!-- CARD DE LIMITE TOTAL + REGISTRO — leitura e ação num único card -->
+      <section class="limite-card" id="resultado-section" aria-labelledby="limite-titulo">
+        <h2 class="limite-titulo" id="limite-titulo">Valor de referência para doação</h2>
+        <div class="limite-valor" id="card-limite-total">R$ 0,00</div>
+        <p class="limite-sublabel">até 6% do imposto devido — até 3% para o FUNCRIANÇA e até 3% para o FUNDOIDOSO</p>
+
+        <div class="limite-dirty" id="limite-dirty" role="status" aria-live="polite" style="display:none">
+          <strong>Há alterações ainda não recalculadas.</strong>
+          Recalcule para atualizar seus limites antes de registrar uma destinação.
+        </div>
+
+        <!-- REGISTRAR DESTINAÇÃO — direto no mesmo card, sem modal -->
+        <div class="registro-inline" id="registro-section" aria-labelledby="registro-titulo">
+          <h3 class="registro-subtitulo" id="registro-titulo">Registrar destinação</h3>
+          <p class="registro-intro">Informe quanto deseja destinar para cada fundo.</p>
+
+          <div class="registro-colunas">
+            <div class="modal-fundo-grupo">
+              <span class="modal-fundo-nome">FUNCRIANÇA</span>
+              <div class="campo-valor-registrar">
+                <label for="input-valor-child">Valor a destinar</label>
+                <div class="input-prefixo">
+                  <span class="input-prefixo-simbolo">R$</span>
+                  <input class="val-input" id="input-valor-child" inputmode="decimal" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,''); atualizarResumoRegistro();" onblur="formatarInputRegistro(this)">
+                </div>
+                <span class="campo-valor-registrar-ref" id="registrar-disponivel-child">Disponível com dedução: R$ 0,00</span>
+              </div>
+              <p class="campo-aviso-inline" id="aviso-excesso-child" style="display:none"></p>
+            </div>
+
+            <div class="modal-fundo-grupo">
+              <span class="modal-fundo-nome">FUNDOIDOSO</span>
+              <div class="campo-valor-registrar">
+                <label for="input-valor-elderly">Valor a destinar</label>
+                <div class="input-prefixo">
+                  <span class="input-prefixo-simbolo">R$</span>
+                  <input class="val-input" id="input-valor-elderly" inputmode="decimal" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,''); atualizarResumoRegistro();" onblur="formatarInputRegistro(this)">
+                </div>
+                <span class="campo-valor-registrar-ref" id="registrar-disponivel-elderly">Disponível com dedução: R$ 0,00</span>
+              </div>
+              <p class="campo-aviso-inline" id="aviso-excesso-elderly" style="display:none"></p>
+            </div>
+          </div>
+
+          <div class="modal-resumo-destinacao">
+            <div class="modal-resumo-linha destaque">
+              <span>Total desta destinação</span>
+              <span id="resumo-total">R$ 0,00</span>
+            </div>
+            <div class="modal-resumo-linha">
+              <span>Dentro do limite de dedução</span>
+              <span id="resumo-dentro-limite">R$ 0,00</span>
+            </div>
+            <div class="modal-resumo-linha excesso" id="resumo-acima-limite-row" style="display:none">
+              <span>Acima do limite</span>
+              <span id="resumo-acima-limite">R$ 0,00</span>
+            </div>
+            <div class="modal-resumo-linha disponivel" id="resumo-disponivel">
+              <span>Ainda disponível</span>
+              <span id="resumo-disponivel-valor">R$ 0,00</span>
+            </div>
+          </div>
+
+          <div class="registro-acoes">
+            <button type="button" class="btn-calcular" id="btn-confirmar-registro" onclick="confirmarRegistro()" aria-describedby="motivo-desabilitado">Registrar destinação</button>
+            <span class="sr-only" id="motivo-desabilitado" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <!-- RESUMO DA DESTINAÇÃO JÁ REGISTRADA — substitui o formulário; registro é único por ano-base -->
+        <section class="fundos-grid" id="resumo-destinacao-section" aria-label="Sua destinação registrada" style="display:none">
+          <div class="fundo-card">
+            <h3 class="fundo-card-nome">FUNCRIANÇA</h3>
+            <div class="fundo-card-stats">
+              <div class="fundo-stat-row">
+                <span class="fundo-stat-label">Destinado</span>
+                <span class="fundo-stat-valor" id="resumo-child-destinado">R$ 0,00</span>
+              </div>
+              <div class="fundo-stat-row">
+                <span class="fundo-stat-label">Dedutível no Imposto de Renda</span>
+                <span class="fundo-stat-valor" id="resumo-child-dedutivel">R$ 0,00</span>
+              </div>
+              <div class="fundo-stat-row excedente" id="resumo-child-excedente-row" style="display:none">
+                <span class="fundo-stat-label">Acima do limite (não dedutível)</span>
+                <span class="fundo-stat-valor" id="resumo-child-excedente">R$ 0,00</span>
+              </div>
+            </div>
+          </div>
+          <div class="fundo-card">
+            <h3 class="fundo-card-nome">FUNDOIDOSO</h3>
+            <div class="fundo-card-stats">
+              <div class="fundo-stat-row">
+                <span class="fundo-stat-label">Destinado</span>
+                <span class="fundo-stat-valor" id="resumo-elderly-destinado">R$ 0,00</span>
+              </div>
+              <div class="fundo-stat-row">
+                <span class="fundo-stat-label">Dedutível no Imposto de Renda</span>
+                <span class="fundo-stat-valor" id="resumo-elderly-dedutivel">R$ 0,00</span>
+              </div>
+              <div class="fundo-stat-row excedente" id="resumo-elderly-excedente-row" style="display:none">
+                <span class="fundo-stat-label">Acima do limite (não dedutível)</span>
+                <span class="fundo-stat-valor" id="resumo-elderly-excedente">R$ 0,00</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <div class="aviso success" id="feedback-registro" role="status" aria-live="polite" style="display:none"></div>
+        <div class="aviso success" id="feedback-recalculo" role="status" aria-live="polite" style="display:none"></div>
+      </section>
+
+      </div>
+
+      <!-- COMO CALCULAMOS SEU LIMITE -->
+      <section class="calculo-section" id="tabela-section" aria-labelledby="calculo-titulo">
+        <h2 class="calculo-titulo" id="calculo-titulo">Como calculamos seu valor de referência</h2>
+        <p class="calculo-intro" id="calculo-intro">Confira os dados abaixo. Se alterar alguma dedução, recalcule para atualizar seus limites antes de registrar uma destinação.</p>
+
+        <div class="aviso info locked-aviso" id="locked-aviso" style="display:none">
+          <strong>Dados do cálculo bloqueados.</strong>
+          Você já registrou sua destinação em <span id="locked-ano">2025</span>. Como o registro é único por ano-base, os dados utilizados no cálculo não podem mais ser alterados.
+        </div>
+
+        <div class="calculo-colunas">
+          <div>
+            <div class="calculo-grupo">
+              <h3 class="calculo-grupo-titulo">Informado pelo sistema</h3>
+              <dl class="calculo-lista">
+                <div class="calculo-linha">
+                  <dt>Rendimentos tributáveis</dt>
+                  <dd id="cel-rendimentos">0,00</dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt>Previdência oficial</dt>
+                  <dd id="cel-previdencia-oficial">0,00</dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt>Dependentes</dt>
+                  <dd id="cel-dependente">0,00</dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt>Pensão alimentícia judicial</dt>
+                  <dd id="cel-pensao-judicial">0,00</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="calculo-grupo calculo-grupo-deducoes" id="grupo-deducoes">
+              <h3 class="calculo-grupo-titulo">Deduções adicionais</h3>
+              <dl class="calculo-lista">
+                <div class="calculo-linha">
+                  <dt>
+                    <label for="input-previdenciaPrivada">Previdência privada</label>
+                  </dt>
+                  <dd id="cel-previdenciaPrivada"></dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt>
+                    <label for="input-dependenteInformado">Dependente adicional</label>
+                  </dt>
+                  <dd id="cel-dependenteInformado"></dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt><label for="input-despesaInstrucao">Despesa com instrução</label></dt>
+                  <dd id="cel-despesaInstrucao"></dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt><label for="input-despesaMedica">Despesa médica</label></dt>
+                  <dd id="cel-despesaMedica"></dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt>
+                    <label for="input-pensaoInformada">Pensão alimentícia complementar</label>
+                  </dt>
+                  <dd id="cel-pensaoInformada"></dd>
+                </div>
+                <div class="calculo-linha">
+                  <dt><label for="input-outras">Outras deduções</label></dt>
+                  <dd id="cel-outras"></dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="calculo-grupo calculo-grupo-resultado">
+            <h3 class="calculo-grupo-titulo">Resultado do cálculo</h3>
+            <dl class="calculo-lista">
+              <div class="calculo-linha">
+                <dt>Total de deduções</dt>
+                <dd id="cel-total-deducoes">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Base de cálculo</dt>
+                <dd id="cel-base-calculo">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Imposto devido</dt>
+                <dd id="cel-imposto-devido">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Limite potencial total (6%)</dt>
+                <dd id="cel-limite-total">0,00</dd>
+              </div>
+            </dl>
+
+            <div class="calculo-acoes" id="calcular-bar">
+              <span class="recalculo-pendente-tag" id="recalculo-pendente-tag" style="display:none">Alterações pendentes —</span>
+              <button type="button" class="btn-outline" id="btn-recalcular" onclick="recalcular()">Recalcular limites</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: COMO FUNCIONA A DESTINAÇÃO -->
+<div class="modal-overlay" id="modal-info">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-info-titulo">
+    <div class="modal-header">
+      <span class="modal-titulo" id="modal-info-titulo">Como funciona a destinação</span>
+      <button type="button" class="modal-close" id="btn-fechar-modal-info" aria-label="Fechar" onclick="fecharModalInfo()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <ol class="como-funciona-lista">
+        <li><strong>1. Consulte seu limite</strong>Calculamos uma estimativa com base no seu Imposto de Renda devido no ano-base, considerando rendimentos e deduções.</li>
+        <li><strong>2. Distribua entre os fundos</strong>Até 3% do imposto devido pode ser destinado ao FUNCRIANÇA e até 3% ao FUNDOIDOSO — até 6% no total. Esse é o limite de destinação dedutível no Imposto de Renda Pessoa Física, não o valor máximo que você pode doar.</li>
+        <li><strong>3. Registre sua destinação</strong>Informe quanto deseja destinar para cada fundo. Você pode preencher só um deles, os dois, ou valores acima do limite estimado. Esse registro é único por ano-base — depois de confirmado, não é possível alterar ou complementar.</li>
+        <li><strong>4. Rever!!!</strong>A PMPA adianta o valor. A devolução por você é prevista entre setembro e outubro do ano seguinte.</li>
+        <li><strong>5. Informe na declaração de IR</strong>A destinação deverá ser informada na sua Declaração de Imposto de Renda, no Modelo Completo, com o código de cada fundo.</li>
+      </ol>
+     
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-fechar" onclick="fecharModalInfo()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRMAR REGISTRO — passo extra porque o registro é único e definitivo -->
+<div class="modal-overlay" id="modal-confirmar">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-titulo">
+    <div class="modal-header">
+      <span class="modal-titulo" id="modal-confirmar-titulo">Confirmar destinação</span>
+      <button type="button" class="modal-close" id="btn-fechar-modal-confirmar" aria-label="Fechar" onclick="fecharModalConfirmar()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal-confirmar-texto"></p>
+      <p class="modal-texto-secundario"><strong>Atenção:</strong> essa é a sua única destinação para este ano-base. Depois de confirmar, os valores não poderão mais ser alterados nem complementados.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-fechar" onclick="fecharModalConfirmar()">Cancelar</button>
+      <button type="button" class="btn-calcular" id="btn-confirmar-registro-final" onclick="confirmarRegistroFinal()">Confirmar registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Ano-base aberto: único ano em que dados podem ser editados/recalculados ──
+const ANO_ABERTO = '2025';
+
+// ── Dados de origem por ano-base. O cálculo de IR é único por ano — não existe
+//    "cálculo do FUNCRIANÇA" e "cálculo do FUNDOIDOSO" separados. ────────────
+const BASE = {
+  '2022': { disponivel: false },
+  '2023': {
+    disponivel: true, encerrado: true,
+    rendimentos: 7613551, previdenciaOficial: 932807, dependente: 0, pensaoJudicial: 0,
+    editaveisFixos: { previdenciaPrivada: 0, dependenteInformado: 0, despesaInstrucao: 0, despesaMedica: 0, pensaoInformada: 0, outras: 0 },
+    calculoFixo: { totalDeducoes: 932807, baseCalculo: 6680744, impostoDevido: 781492 }
+  },
+  '2024': {
+    disponivel: true, encerrado: true,
+    rendimentos: 7391103, previdenciaOficial: 955023, dependente: 0, pensaoJudicial: 0,
+    editaveisFixos: { previdenciaPrivada: 0, dependenteInformado: 0, despesaInstrucao: 0, despesaMedica: 0, pensaoInformada: 0, outras: 0 },
+    calculoFixo: { totalDeducoes: 955023, baseCalculo: 6436080, impostoDevido: 695824 },
+    doacoesIniciais: { child: 30000, elderly: 15000 }
+  },
+  '2025': {
+    disponivel: true, encerrado: false,
+    rendimentos: 8264765, previdenciaOficial: 1033061, dependente: 0, pensaoJudicial: 0,
+    editaveisIniciais: { previdenciaPrivada: 0, dependenteInformado: 0, despesaInstrucao: 0, despesaMedica: 0, pensaoInformada: 0, outras: 0 }
+  }
+};
+
+// Taxa efetiva de imposto sobre a base de cálculo, derivada do cenário de referência.
+const TAXA_EFETIVA = 903341 / 7231704;
+
+const CAMPOS_EDITAVEIS = [
+  { campo: 'previdenciaPrivada',  label: 'Previdência privada' },
+  { campo: 'dependenteInformado', label: 'Dependente adicional' },
+  { campo: 'despesaInstrucao',    label: 'Despesa com instrução' },
+  { campo: 'despesaMedica',       label: 'Despesa médica' },
+  { campo: 'pensaoInformada',     label: 'Pensão alimentícia complementar' },
+  { campo: 'outras',              label: 'Outras deduções' }
+];
+
+// Estado em memória, construído a partir de BASE. donations e editaveis são
+// mutáveis; locked é derivado (existe destinação => bloqueado).
+let estado = {};
+
+function inicializarEstado() {
+  Object.keys(BASE).forEach(function (ano) {
+    const base = BASE[ano];
+    if (!base.disponivel) { estado[ano] = { disponivel: false }; return; }
+
+    const donations = base.doacoesIniciais ? { child: base.doacoesIniciais.child, elderly: base.doacoesIniciais.elderly } : { child: 0, elderly: 0 };
+    const editaveis = base.encerrado ? Object.assign({}, base.editaveisFixos) : Object.assign({}, base.editaveisIniciais);
+
+    estado[ano] = {
+      disponivel: true,
+      encerrado: !!base.encerrado,
+      rendimentos: base.rendimentos,
+      previdenciaOficial: base.previdenciaOficial,
+      dependente: base.dependente,
+      pensaoJudicial: base.pensaoJudicial,
+      editaveis: editaveis,
+      calculoFixo: base.calculoFixo || null,
+      donations: donations
+    };
+  });
+}
+
+// ── Dinheiro em centavos (inteiros) para evitar erro de ponto flutuante ─────
+function fmtCents(cents) {
+  return (cents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function reais(cents) {
+  return 'R$ ' + fmtCents(cents);
+}
+
+function parseCents(v) {
+  const f = parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
+  return isNaN(f) ? 0 : Math.round(f * 100);
+}
+
+function formatarInput(input) {
+  const v = parseCents(input.value);
+  input.value = v > 0 ? fmtCents(v) : '';
+}
+
+// ── Avisos de sucesso dispensáveis: fecham no X ou sozinhos depois de um tempo ──
+const avisoTimers = {};
+
+function mostrarAviso(id, mensagem, duracaoMs) {
+  const el = document.getElementById(id);
+  el.innerHTML = '<span>' + mensagem + '</span><button type="button" class="aviso-fechar" aria-label="Fechar aviso" onclick="fecharAviso(\'' + id + '\')">&times;</button>';
+  el.style.display = 'flex';
+  if (avisoTimers[id]) clearTimeout(avisoTimers[id]);
+  avisoTimers[id] = setTimeout(function () { fecharAviso(id); }, duracaoMs);
+}
+
+function fecharAviso(id) {
+  document.getElementById(id).style.display = 'none';
+  if (avisoTimers[id]) {
+    clearTimeout(avisoTimers[id]);
+    delete avisoTimers[id];
+  }
+}
+
+// ── Regras fiscais centralizadas ─────────────────────────────────────────────
+function calcularIR(ano) {
+  const r = estado[ano];
+  if (r.encerrado) return r.calculoFixo;
+
+  const somaEditaveis = CAMPOS_EDITAVEIS.reduce(function (soma, item) { return soma + r.editaveis[item.campo]; }, 0);
+  const totalDeducoes = r.previdenciaOficial + r.dependente + r.pensaoJudicial + somaEditaveis;
+  const baseCalculo = Math.max(0, r.rendimentos - totalDeducoes);
+  const impostoDevido = Math.round(baseCalculo * TAXA_EFETIVA);
+  return { totalDeducoes: totalDeducoes, baseCalculo: baseCalculo, impostoDevido: impostoDevido };
+}
+
+// Limite de cada fundo = até 3% do imposto devido. O limite potencial total
+// (6%) é a SOMA dos dois limites — nunca um "saldo livre" único.
+function calcularLimites(calculo) {
+  const child = Math.floor(calculo.impostoDevido * 3 / 100);
+  const elderly = child;
+  return { child: child, elderly: elderly, total: child + elderly };
+}
+
+// Saldo dedutível, disponível e excedente são calculados POR FUNDO. O
+// excedente de um fundo nunca consome o limite ainda disponível do outro.
+function calcularFundo(limite, doado) {
+  return {
+    limite: limite,
+    doado: doado,
+    dedutivelUsado: Math.min(doado, limite),
+    disponivel: Math.max(limite - doado, 0),
+    excedente: Math.max(doado - limite, 0)
+  };
+}
+
+function calcularConsolidado(child, elderly) {
+  return {
+    totalLimite: child.limite + elderly.limite,
+    totalDoado: child.doado + elderly.doado,
+    totalDisponivel: child.disponivel + elderly.disponivel,
+    totalExcedente: child.excedente + elderly.excedente
+  };
+}
+
+function estaSujo(ano) {
+  const r = estado[ano];
+  if (r.encerrado || estaBloqueado(ano)) return false;
+  return CAMPOS_EDITAVEIS.some(function (item) {
+    const input = document.getElementById('input-' + item.campo);
+    if (!input) return false;
+    return parseCents(input.value) !== r.editaveis[item.campo];
+  });
+}
+
+function estaBloqueado(ano) {
+  const r = estado[ano];
+  return r.disponivel && (r.donations.child > 0 || r.donations.elderly > 0);
+}
+
+// ── Renderização ──────────────────────────────────────────────────────────
+function anoSelecionado() {
+  return document.getElementById('select-ano').value;
+}
+
+function renderAno() {
+  const ano = anoSelecionado();
+  const r = estado[ano];
+  const aberto = ano === ANO_ABERTO;
+
+  const badge = document.getElementById('periodo-badge');
+  badge.textContent = aberto ? 'Período aberto' : 'Encerrado — somente consulta';
+  badge.classList.toggle('encerrado', !aberto);
+  document.getElementById('periodo-texto').textContent = aberto
+    ? '22 a 30 de dezembro de 2025'
+    : 'Já encerrado em ' + ano;
+
+  const semDados = !r.disponivel;
+  const semDadosEl = document.getElementById('sem-dados');
+  semDadosEl.style.display = semDados ? 'block' : 'none';
+  semDadosEl.textContent = semDados
+    ? 'Não encontramos informações de Imposto de Renda para calcular o limite de destinação em ' + ano + '.'
+    : '';
+  document.getElementById('conteudo-ano').style.display = semDados ? 'none' : 'block';
+
+  fecharAviso('feedback-recalculo');
+  fecharAviso('feedback-registro');
+
+  if (semDados) return;
+
+  const bloqueado = estaBloqueado(ano);
+
+  document.getElementById('locked-aviso').style.display = (aberto && bloqueado) ? 'block' : 'none';
+  document.getElementById('locked-ano').textContent = ano;
+  document.getElementById('calcular-bar').style.display = (aberto && !bloqueado) ? 'flex' : 'none';
+  document.getElementById('limite-dirty').style.display = 'none';
+  document.getElementById('recalculo-pendente-tag').style.display = 'none';
+  document.getElementById('btn-recalcular').classList.remove('pendente');
+  document.getElementById('card-limite-total').classList.remove('desatualizado');
+
+  renderDeducoes(ano, aberto, bloqueado);
+  atualizarTotais();
+
+  document.getElementById('registro-section').style.display = (aberto && !bloqueado) ? 'block' : 'none';
+  document.getElementById('resumo-destinacao-section').style.display = (aberto && bloqueado) ? 'grid' : 'none';
+  if (aberto && !bloqueado) prepararRegistro();
+  if (aberto && bloqueado) renderResumoDestinacao(ano);
+}
+
+function renderDeducoes(ano, aberto, bloqueado) {
+  const r = estado[ano];
+  const editavel = aberto && !bloqueado;
+
+  document.getElementById('grupo-deducoes').classList.toggle('deducoes-editavel', editavel);
+
+  CAMPOS_EDITAVEIS.forEach(function (item) {
+    const cel = document.getElementById('cel-' + item.campo);
+    if (editavel) {
+      const valorAtual = r.editaveis[item.campo];
+      cel.innerHTML = '<div class="input-prefixo"><span class="input-prefixo-simbolo">R$</span><input class="val-input" id="input-' + item.campo + '" inputmode="decimal" aria-label="' + item.label + '" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,\'\'); aoEditarCampo();" onblur="formatarInput(this)"></div>';
+      document.getElementById('input-' + item.campo).value = valorAtual > 0 ? fmtCents(valorAtual) : '';
+    } else {
+      cel.textContent = reais(r.editaveis[item.campo]);
+    }
+  });
+
+  document.getElementById('cel-rendimentos').textContent = reais(r.rendimentos);
+  document.getElementById('cel-previdencia-oficial').textContent = reais(r.previdenciaOficial);
+  document.getElementById('cel-dependente').textContent = reais(r.dependente);
+  document.getElementById('cel-pensao-judicial').textContent = reais(r.pensaoJudicial);
+}
+
+function aoEditarCampo() {
+  const ano = anoSelecionado();
+  const sujo = estaSujo(ano);
+
+  document.getElementById('limite-dirty').style.display = sujo ? 'block' : 'none';
+  document.getElementById('card-limite-total').classList.toggle('desatualizado', sujo);
+  document.getElementById('recalculo-pendente-tag').style.display = sujo ? 'inline' : 'none';
+  document.getElementById('btn-recalcular').classList.toggle('pendente', sujo);
+  document.getElementById('feedback-recalculo').style.display = 'none';
+
+  atualizarResumoRegistro();
+}
+
+// Recalcula: aplica os valores digitados ao estado e atualiza limites/saldos.
+function recalcular() {
+  const btn = document.getElementById('btn-recalcular');
+  if (btn.disabled) return;
+
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.setAttribute('aria-busy', 'true');
+  btn.textContent = 'Recalculando…';
+
+  setTimeout(function () {
+    const ano = anoSelecionado();
+    const r = estado[ano];
+
+    CAMPOS_EDITAVEIS.forEach(function (item) {
+      const input = document.getElementById('input-' + item.campo);
+      if (input) r.editaveis[item.campo] = parseCents(input.value);
+    });
+
+    atualizarTotais();
+
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    btn.textContent = textoOriginal;
+    btn.classList.remove('pendente');
+
+    document.getElementById('recalculo-pendente-tag').style.display = 'none';
+    document.getElementById('limite-dirty').style.display = 'none';
+    document.getElementById('card-limite-total').classList.remove('desatualizado');
+    mostrarAviso('feedback-recalculo', 'Limite recalculado com sucesso.', 6000);
+
+    atualizarResumoRegistro();
+  }, 300);
+}
+
+// Recalcula todos os valores exibidos (cartão de limite e resultado do
+// cálculo) a partir do estado atual.
+function atualizarTotais() {
+  const ano = anoSelecionado();
+  const r = estado[ano];
+
+  const calculo = calcularIR(ano);
+  const limites = calcularLimites(calculo);
+  const child = calcularFundo(limites.child, r.donations.child);
+  const elderly = calcularFundo(limites.elderly, r.donations.elderly);
+  const consolidado = calcularConsolidado(child, elderly);
+
+  document.getElementById('card-limite-total').textContent = reais(consolidado.totalLimite);
+
+  document.getElementById('cel-total-deducoes').textContent = reais(calculo.totalDeducoes);
+  document.getElementById('cel-base-calculo').textContent = reais(calculo.baseCalculo);
+  document.getElementById('cel-imposto-devido').textContent = reais(calculo.impostoDevido);
+  document.getElementById('cel-limite-total').textContent = reais(limites.total);
+}
+
+// ── Registrar destinação: seção fixa no corpo da página (não é mais modal) ──
+// O registro é único por ano-base: some assim que existir uma destinação
+// (ver estaBloqueado) e dá lugar ao resumo em renderResumoDestinacao(). Até
+// lá, fica desabilitado enquanto o cálculo estiver desatualizado ou os
+// campos vazios.
+function prepararRegistro() {
+  document.getElementById('input-valor-child').value = '';
+  document.getElementById('input-valor-elderly').value = '';
+  atualizarResumoRegistro();
+}
+
+function formatarInputRegistro(input) {
+  formatarInput(input);
+  atualizarResumoRegistro();
+}
+
+// Cálculo dinâmico, enquanto o usuário digita: quanto de cada fundo entra
+// dentro do limite ainda disponível, e quanto excede — sem bloquear.
+function atualizarResumoRegistro() {
+  const ano = anoSelecionado();
+  const r = estado[ano];
+  const sujo = estaSujo(ano);
+  const calculo = calcularIR(ano);
+  const limites = calcularLimites(calculo);
+  const child = calcularFundo(limites.child, r.donations.child);
+  const elderly = calcularFundo(limites.elderly, r.donations.elderly);
+
+  document.getElementById('registrar-disponivel-child').textContent = 'Disponível com dedução: ' + reais(child.disponivel);
+  document.getElementById('registrar-disponivel-elderly').textContent = 'Disponível com dedução: ' + reais(elderly.disponivel);
+
+  const amountChild = parseCents(document.getElementById('input-valor-child').value);
+  const amountElderly = parseCents(document.getElementById('input-valor-elderly').value);
+
+  const dedutivelChild = Math.min(amountChild, child.disponivel);
+  const dedutivelElderly = Math.min(amountElderly, elderly.disponivel);
+  const excessChild = Math.max(amountChild - child.disponivel, 0);
+  const excessElderly = Math.max(amountElderly - elderly.disponivel, 0);
+
+  const totalDonation = amountChild + amountElderly;
+  const totalDedutivel = dedutivelChild + dedutivelElderly;
+  const totalExcess = excessChild + excessElderly;
+
+  const avisoChild = document.getElementById('aviso-excesso-child');
+  avisoChild.style.display = excessChild > 0 ? 'block' : 'none';
+  avisoChild.textContent = excessChild > 0 ? reais(excessChild) + ' deste valor excedem o limite disponível do FUNCRIANÇA e não serão dedutíveis.' : '';
+
+  const avisoElderly = document.getElementById('aviso-excesso-elderly');
+  avisoElderly.style.display = excessElderly > 0 ? 'block' : 'none';
+  avisoElderly.textContent = excessElderly > 0 ? reais(excessElderly) + ' deste valor excedem o limite disponível do FUNDOIDOSO e não serão dedutíveis.' : '';
+
+  document.getElementById('resumo-total').textContent = reais(totalDonation);
+  document.getElementById('resumo-dentro-limite').textContent = reais(totalDedutivel);
+  document.getElementById('resumo-acima-limite-row').style.display = totalExcess > 0 ? 'flex' : 'none';
+  document.getElementById('resumo-acima-limite').textContent = reais(totalExcess);
+
+  const aindaDisponivel = Math.max(child.disponivel + elderly.disponivel - totalDedutivel, 0);
+  document.getElementById('resumo-disponivel-valor').textContent = reais(aindaDisponivel);
+
+  document.getElementById('motivo-desabilitado').textContent = sujo ? 'Recalcule os limites antes de registrar uma destinação.' : '';
+
+  const btnConfirmar = document.getElementById('btn-confirmar-registro');
+  btnConfirmar.disabled = sujo || totalDonation <= 0;
+  btnConfirmar.textContent = totalDonation > 0 ? 'Registrar ' + reais(totalDonation) : 'Registrar destinação';
+}
+
+// Preenche o card de resumo (somente leitura) exibido depois do único
+// registro permitido por ano-base.
+function renderResumoDestinacao(ano) {
+  const r = estado[ano];
+  const calculo = calcularIR(ano);
+  const limites = calcularLimites(calculo);
+  const child = calcularFundo(limites.child, r.donations.child);
+  const elderly = calcularFundo(limites.elderly, r.donations.elderly);
+
+  document.getElementById('resumo-child-destinado').textContent = reais(child.doado);
+  document.getElementById('resumo-child-dedutivel').textContent = reais(child.dedutivelUsado);
+  document.getElementById('resumo-child-excedente-row').style.display = child.excedente > 0 ? 'flex' : 'none';
+  document.getElementById('resumo-child-excedente').textContent = reais(child.excedente);
+
+  document.getElementById('resumo-elderly-destinado').textContent = reais(elderly.doado);
+  document.getElementById('resumo-elderly-dedutivel').textContent = reais(elderly.dedutivelUsado);
+  document.getElementById('resumo-elderly-excedente-row').style.display = elderly.excedente > 0 ? 'flex' : 'none';
+  document.getElementById('resumo-elderly-excedente').textContent = reais(elderly.excedente);
+}
+
+// Registro é único e definitivo: antes de gravar, pede confirmação explícita
+// num modal — não dá pra "corrigir depois" complementando um segundo envio.
+let pendingRegistro = null;
+
+function confirmarRegistro() {
+  const amountChild = parseCents(document.getElementById('input-valor-child').value);
+  const amountElderly = parseCents(document.getElementById('input-valor-elderly').value);
+  if (amountChild <= 0 && amountElderly <= 0) return;
+
+  pendingRegistro = { child: amountChild, elderly: amountElderly };
+
+  let texto;
+  if (amountChild > 0 && amountElderly > 0) {
+    texto = 'Você está registrando ' + reais(amountChild) + ' para o FUNCRIANÇA e ' + reais(amountElderly) + ' para o FUNDOIDOSO.';
+  } else if (amountChild > 0) {
+    texto = 'Você está registrando ' + reais(amountChild) + ' para o FUNCRIANÇA.';
+  } else {
+    texto = 'Você está registrando ' + reais(amountElderly) + ' para o FUNDOIDOSO.';
+  }
+  document.getElementById('modal-confirmar-texto').textContent = texto;
+
+  document.getElementById('modal-confirmar').classList.add('open');
+  document.getElementById('btn-fechar-modal-confirmar').focus();
+}
+
+function fecharModalConfirmar() {
+  pendingRegistro = null;
+  document.getElementById('modal-confirmar').classList.remove('open');
+  document.getElementById('btn-confirmar-registro').focus();
+}
+
+function confirmarRegistroFinal() {
+  if (!pendingRegistro) return;
+  const ano = anoSelecionado();
+  const r = estado[ano];
+
+  r.donations.child = pendingRegistro.child;
+  r.donations.elderly = pendingRegistro.elderly;
+  const amountChild = pendingRegistro.child;
+  const amountElderly = pendingRegistro.elderly;
+  pendingRegistro = null;
+
+  document.getElementById('modal-confirmar').classList.remove('open');
+  renderAno();
+
+  let mensagem;
+  if (amountChild > 0 && amountElderly > 0) {
+    mensagem = 'Destinação registrada com sucesso. ' + reais(amountChild) + ' foram destinados ao FUNCRIANÇA e ' + reais(amountElderly) + ' ao FUNDOIDOSO.';
+  } else if (amountChild > 0) {
+    mensagem = 'Destinação registrada com sucesso. ' + reais(amountChild) + ' foram destinados ao FUNCRIANÇA.';
+  } else {
+    mensagem = 'Destinação registrada com sucesso. ' + reais(amountElderly) + ' foram destinados ao FUNDOIDOSO.';
+  }
+  mostrarAviso('feedback-registro', mensagem, 6000);
+}
+
+// ── Modal: como funciona ─────────────────────────────────────────────────
+function abrirModalInfo(e) {
+  e.preventDefault();
+  document.getElementById('modal-info').classList.add('open');
+  document.getElementById('btn-fechar-modal-info').focus();
+}
+
+function fecharModalInfo() {
+  document.getElementById('modal-info').classList.remove('open');
+  document.getElementById('link-entenda').focus();
+}
+
+document.getElementById('modal-info').addEventListener('click', function (e) {
+  if (e.target === this) fecharModalInfo();
+});
+
+document.getElementById('modal-confirmar').addEventListener('click', function (e) {
+  if (e.target === this) fecharModalConfirmar();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('modal-info').classList.contains('open')) fecharModalInfo();
+  if (document.getElementById('modal-confirmar').classList.contains('open')) fecharModalConfirmar();
+});
+
+document.addEventListener('click', function () {
+  const dropdown = document.getElementById('user-dropdown');
+  if (dropdown) dropdown.classList.remove('open');
+});
+
+inicializarEstado();
+renderAno();
+</script>
+</body>
+</html>
