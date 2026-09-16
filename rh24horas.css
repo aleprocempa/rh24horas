@@ -158,6 +158,7 @@
   --spacing-scale-4xh: 36px;
   --spacing-scale-5xh: 44px;
   --header-height: 52px;
+  --nav-banner-height: 36px;
   --sidebar-width: 210px;
   --borda-padrao: 1px solid var(--neutral-light);
   --sombra-padrao: 0 3px 0px var(--neutral-lighter);
@@ -216,6 +217,45 @@ a:focus-visible {
   background: #fff;
   border-bottom: var(--borda-padrao);
   box-shadow: var(--sombra-padrao);
+}
+
+.nav-matricula-banner {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1.5rem;
+  background: #f07050;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  text-align: center;
+}
+.nav-matricula-banner strong {
+  font-weight: 700;
+}
+.nav-matricula-banner-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+body.navegando-outra-matricula .app-header {
+  top: var(--nav-banner-height);
+}
+body.navegando-outra-matricula .sidebar {
+  top: calc(var(--header-height) + var(--nav-banner-height));
+  height: calc(100vh - var(--header-height) - var(--nav-banner-height));
 }
 
 .app-logo {
@@ -571,6 +611,7 @@ a:focus-visible {
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
+  width: -moz-max-content;
   width: max-content;
   max-width: 230px;
   padding: 8px 12px;
@@ -1492,7 +1533,6 @@ table.extrato {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  margin-bottom: 0;
 }
 table.extrato thead tr th {
   padding: 6px 8px;
@@ -1531,6 +1571,9 @@ table.extrato tbody tr td.muted {
 table.extrato tbody tr:hover td {
   background: var(--primary-background);
 }
+table.extrato {
+  margin-bottom: 0;
+}
 table.extrato thead tr th {
   padding: 8px 12px;
   text-align: right;
@@ -1552,8 +1595,6 @@ table.detail {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
-  margin-bottom: 2rem;
-  text-align: right;
 }
 table.consig thead tr th,
 table.detail thead tr th {
@@ -1600,6 +1641,11 @@ table.consig tbody tr:hover td,
 table.detail tbody tr:hover td {
   background: var(--primary-background);
 }
+table.consig,
+table.detail {
+  margin-bottom: 2rem;
+  text-align: right;
+}
 table.consig tbody tr td.link-cell,
 table.detail tbody tr td.link-cell {
   color: var(--primary-interactive);
@@ -1632,7 +1678,6 @@ table.ficha {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
-  table-layout: fixed;
 }
 table.ficha thead tr th {
   padding: 6px 8px;
@@ -1670,6 +1715,9 @@ table.ficha tbody tr td.muted {
 }
 table.ficha tbody tr:hover td {
   background: var(--primary-background);
+}
+table.ficha {
+  table-layout: fixed;
 }
 table.ficha col.c-cod {
   width: 3rem;
@@ -1862,7 +1910,6 @@ table.sim {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  margin-bottom: 1.5rem;
 }
 table.sim thead tr th {
   padding: 6px 8px;
@@ -1900,6 +1947,9 @@ table.sim tbody tr td.muted {
 }
 table.sim tbody tr:hover td {
   background: var(--primary-background);
+}
+table.sim {
+  margin-bottom: 1.5rem;
 }
 table.sim tbody tr td {
   padding: 8px 12px;
@@ -2343,7 +2393,7 @@ input.filtro-date:focus {
 .modal-titulo {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--primary-headings);
 }
 
@@ -2373,8 +2423,7 @@ input.filtro-date:focus {
 }
 
 .modal-texto-secundario {
-  font-size: 13px;
-  color: var(--neutral-muted);
+  font-size: 12.25px;
 }
 
 .modal-section-title {
@@ -3224,6 +3273,12 @@ table.modal tbody tr:hover td {
   border-radius: 4px;
 }
 
+.badge-neutral {
+  background: var(--neutral-background);
+  color: var(--neutral-dark);
+  border-radius: 4px;
+}
+
 .badge-dot {
   width: 6px;
   height: 6px;
@@ -3788,7 +3843,8 @@ input.val-input:focus {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-areas: "chapas-head  ." "chapas-body  membros-body";
   align-items: start;
-  column-gap: 1.5rem;
+  -moz-column-gap: 1.5rem;
+       column-gap: 1.5rem;
   row-gap: 0;
   margin-bottom: 1.5rem;
 }
@@ -4401,6 +4457,9 @@ input.val-input:focus {
 .sidebar-overlay.open {
   display: block;
 }
+body.navegando-outra-matricula .sidebar-overlay {
+  inset: calc(var(--header-height) + var(--nav-banner-height)) 0 0;
+}
 
 @media (max-width: 1024px) {
   .app-header {
@@ -4448,6 +4507,13 @@ input.val-input:focus {
     z-index: 400;
     transition: left 0.22s ease;
     box-shadow: none;
+  }
+  body.navegando-outra-matricula .ponto-panel {
+    top: calc(var(--header-height) + var(--nav-banner-height));
+  }
+  body.navegando-outra-matricula .sidebar {
+    top: calc(var(--header-height) + var(--nav-banner-height));
+    height: calc(100vh - var(--header-height) - var(--nav-banner-height));
   }
   .sidebar.open {
     left: 0;
@@ -4632,7 +4698,8 @@ input.val-input:focus {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    column-gap: 0.5rem;
+    -moz-column-gap: 0.5rem;
+         column-gap: 0.5rem;
     padding: 0.5rem 1rem;
   }
   .item-cod {
@@ -5184,6 +5251,7 @@ input.val-input:focus {
 }
 .campo-valor-registrar input.val-input {
   width: 100%;
+  font-size: 14px;
 }
 
 .campo-valor-registrar-ref {
@@ -5308,42 +5376,6 @@ input.val-input:focus {
   display: none;
 }
 
-.doacoes-v7 .periodo-compacto {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.doacoes-v7 .periodo-ano-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.doacoes-v7 .periodo-status {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  font-size: 13px;
-  color: var(--neutral-base);
-}
-
-.doacoes-v7 .periodo-status-badge {
-  display: inline-block;
-  padding: 1px 7px;
-  font-size: 10px;
-  font-weight: 700;
-  border-radius: 4px;
-  background: var(--success-base);
-  color: #fff;
-}
-
-.doacoes-v7 .periodo-status-badge.encerrado {
-  background: var(--neutral-muted);
-}
-
 .doacoes-v7 .resultado-placeholder {
   max-width: 640px;
 }
@@ -5376,8 +5408,10 @@ input.val-input:focus {
   min-width: 300px;
   max-width: none;
   margin-bottom: 0;
-  background: var(--primary-background);
-  padding: 1.75rem 2rem;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--neutral-light);
+  padding: 0 0 0 2rem;
 }
 
 .doacoes-v7 .top-grid .calculo-colunas {
@@ -5407,7 +5441,7 @@ input.val-input:focus {
   font-family: var(--font-display);
   font-size: 40px;
   font-weight: 700;
-  color: var(--success-dark);
+  color: var(--primary-interactive);
   line-height: 1.1;
 }
 
@@ -5541,7 +5575,7 @@ input.val-input:focus {
 }
 
 .doacoes-v7 .calculo-intro {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--neutral-base);
   margin: 0 0 1.25rem;
   max-width: 70ch;
@@ -5567,8 +5601,24 @@ input.val-input:focus {
   margin: 0 0 0.5rem;
 }
 
+.doacoes-v7 .calculo-grupo-opcional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .doacoes-v7 .calculo-lista {
   margin: 0;
+}
+
+.doacoes-v7 .calculo-grupo-deducoes {
+  background: var(--primary-background);
+  margin: 0 -1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.doacoes-v7 .calculo-grupo-deducoes .calculo-linha {
+  border-bottom: none;
 }
 
 .doacoes-v7 .calculo-grupo-deducoes .val-input {
@@ -5578,14 +5628,16 @@ input.val-input:focus {
 
 .doacoes-v7 .calculo-grupo-deducoes .input-prefixo {
   width: 120px;
+  height: 24px;
 }
 
 .doacoes-v7 .calculo-grupo-deducoes.deducoes-editavel .calculo-linha {
-  padding: 0;
+  padding: 0.25rem 0;
 }
 
 .doacoes-v7 .calculo-grupo-deducoes.deducoes-editavel .calculo-linha .input-prefixo {
   border: none;
+  outline: 1px solid var(--neutral-light);
 }
 
 .doacoes-v7 .calculo-linha {
@@ -5593,8 +5645,8 @@ input.val-input:focus {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(107, 114, 128, 0.4392156863);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--neutral-light);
 }
 
 .doacoes-v7 .calculo-linha dt, .doacoes-v7 .calculo-linha dd {
@@ -5752,6 +5804,4 @@ input.val-input:focus {
   .doacoes-v7 .quadro-referencia-abaixo {
     display: inline;
   }
-}
-
-/*# sourceMappingURL=rh24horas.css.map */
+}/*# sourceMappingURL=rh24horas.css.map */

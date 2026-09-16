@@ -27,9 +27,71 @@ document.addEventListener('DOMContentLoaded', function () {
     { group: 'Institucional' },
     { label: 'Eleições',                  href: 'eleicoes.html' },
     { label: 'Doações',                   href: 'doacoes_v7_1.html' },
+    { group: 'Extras' },
+    { label: 'Outras matrículas',         href: 'outras_matriculas.html' },
   ];
 
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+  // ── Barra de navegação com outra matrícula ─────────────────────────────────
+  var NAV_MATRICULA_KEY = 'rh-navegando-matricula';
+
+  function escBanner(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function getNavegacaoMatricula() {
+    try {
+      var raw = window.localStorage.getItem(NAV_MATRICULA_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function medirAlturaBanner() {
+    var banner = document.getElementById('rh-banner-matricula');
+    var altura = banner ? banner.offsetHeight : 0;
+    document.documentElement.style.setProperty('--nav-banner-height', altura + 'px');
+  }
+
+  function renderBannerNavegacaoMatricula() {
+    var existente = document.getElementById('rh-banner-matricula');
+    if (existente) existente.remove();
+
+    var info = getNavegacaoMatricula();
+    document.body.classList.toggle('navegando-outra-matricula', !!info);
+    if (!info) {
+      document.documentElement.style.setProperty('--nav-banner-height', '0px');
+      return;
+    }
+
+    var banner = document.createElement('div');
+    banner.className = 'nav-matricula-banner';
+    banner.id = 'rh-banner-matricula';
+    banner.innerHTML =
+      '<span>Navegação para <strong>' + escBanner(info.nome) + '</strong>, matrícula <strong>' + escBanner(info.matricula) + '</strong></span>' +
+      '<button type="button" class="nav-matricula-banner-btn" id="rh-encerrar-navegacao-matricula">Encerrar navegação</button>';
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    document.getElementById('rh-encerrar-navegacao-matricula').addEventListener('click', function () {
+      window.rhSetNavegacaoMatricula(null);
+    });
+
+    medirAlturaBanner();
+    window.addEventListener('resize', medirAlturaBanner);
+  }
+
+  window.rhSetNavegacaoMatricula = function (info) {
+    try {
+      if (info) window.localStorage.setItem(NAV_MATRICULA_KEY, JSON.stringify(info));
+      else window.localStorage.removeItem(NAV_MATRICULA_KEY);
+    } catch (e) {}
+    renderBannerNavegacaoMatricula();
+  };
+  window.rhGetNavegacaoMatricula = getNavegacaoMatricula;
+
+  renderBannerNavegacaoMatricula();
 
   // fechar painel ao clicar fora
   document.addEventListener('click', function (e) {

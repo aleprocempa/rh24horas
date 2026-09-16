@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outras matrículas</title>
+<link rel="stylesheet" href="rh24horas.css">
+<script src="components.js"></script>
+<style>
+  .matricula-intro {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--neutral-body);
+    max-width: 640px;
+    margin: 0 0 1.5rem;
+  }
+  .campo-matricula label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-dark);
+    margin-bottom: 4px;
+  }
+  .matricula-input-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .matricula-input-row .input-matricula,
+  .matricula-input-row .btn-limpar,
+  .matricula-input-row .btn-solido {
+    height: 40px;
+    box-sizing: border-box;
+  }
+  .matricula-input-row .btn-limpar,
+  .matricula-input-row .btn-solido {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-matricula {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--neutral-body);
+    background: #fff;
+    border: 1px solid var(--neutral-light);
+    padding: 8px 10px;
+    width: 220px;
+    text-align: left;
+  }
+  .input-matricula:hover:not(:focus) {
+    border-color: var(--primary-interactive-area);
+    box-shadow: inset 0 0 0 2px var(--primary-interactive-area);
+  }
+  .input-matricula:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: inset 0 0 0 3px var(--focus-ring);
+  }
+  .input-matricula.erro {
+    border-color: var(--danger-dark);
+  }
+  .campo-matricula-erro {
+    font-size: 12px;
+    color: var(--danger-dark);
+    display: none;
+  }
+  .campo-matricula-erro.visible {
+    display: block;
+  }
+  #modal-confirmar-matricula .modal-card {
+    max-width: 660px;
+  }
+  #aviso-navegacao {
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+<!-- CONTENT -->
+  <div class="content">
+
+    <div class="page-header">
+      <h1 class="page-title">Navegar com outra matrícula</h1>
+    </div>
+
+    <div class="section" id="navegar-matricula">
+      <p class="matricula-intro">É possível navegar no sistema com a matrícula de outro usuário. Todas as ações realizadas permanecem associadas ao usuário autenticado.</p>
+
+      <form id="form-outra-matricula">
+        <div class="campo-matricula">
+          <label for="input-outra-matricula">Nº de matrícula</label>
+          <div class="matricula-input-row">
+            <input type="text" inputmode="numeric" id="input-outra-matricula" class="input-matricula" placeholder="0.000.000">
+            <button type="button" class="btn-limpar" id="btn-limpar-matricula">Limpar</button>
+            <button type="submit" class="btn-solido">Confirmar</button>
+          </div>
+          <span class="campo-matricula-erro" id="erro-outra-matricula">Informe o número de matrícula.</span>
+        </div>
+      </form>
+
+      <div class="aviso success" id="aviso-navegacao" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL: confirmar navegação com outra matrícula -->
+<div class="modal-overlay" id="modal-confirmar-matricula">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-matricula-titulo">
+    <h2 class="modal-card-titulo" id="modal-matricula-titulo">Navegar com esse perfil?</h2>
+    <div class="modal-card-corpo">
+      <p class="modal-card-texto-secundario">Confira os dados antes de continuar. Todas as ações realizadas permanecerão associadas ao seu usuário.</p>
+      <div class="data-grid" style="margin-top:0.5rem">
+        <div class="data-cell span-2"><span class="data-label">Nome</span><span class="data-value" id="modal-mat-nome"></span></div>
+        <div class="data-cell"><span class="data-label">Matrícula</span><span class="data-value" id="modal-mat-matricula"></span></div>
+        <div class="data-cell"><span class="data-label">Vínculo</span><span class="data-value" id="modal-mat-vinculo"></span></div>
+        <div class="data-cell"><span class="data-label">Regime</span><span class="data-value" id="modal-mat-regime"></span></div>
+        <div class="data-cell"><span class="data-label">Categoria</span><span class="data-value" id="modal-mat-categoria"></span></div>
+        <div class="data-cell"><span class="data-label">Exercício</span><span class="data-value" id="modal-mat-exercicio"></span></div>
+        <div class="data-cell"><span class="data-label">Empresa</span><span class="data-value" id="modal-mat-empresa"></span></div>
+      </div>
+    </div>
+    <div class="modal-card-acoes">
+      <button type="button" class="btn-texto" id="btn-cancelar-matricula">Cancelar</button>
+      <button type="button" class="btn-solido" id="btn-confirmar-matricula">Navegar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var form        = document.getElementById('form-outra-matricula');
+  var input       = document.getElementById('input-outra-matricula');
+  var erro        = document.getElementById('erro-outra-matricula');
+  var aviso       = document.getElementById('aviso-navegacao');
+  var modal       = document.getElementById('modal-confirmar-matricula');
+  var btnCancelar = document.getElementById('btn-cancelar-matricula');
+  var btnConfirmar= document.getElementById('btn-confirmar-matricula');
+  var btnLimpar   = document.getElementById('btn-limpar-matricula');
+
+  var primeiraConfirmacaoFeita = false;
+
+  function atualizarBtnLimpar() {
+    btnLimpar.classList.toggle('visible', primeiraConfirmacaoFeita && input.value.trim().length > 0);
+  }
+
+  // Dados de demonstração — em produção viriam de uma consulta pela matrícula informada.
+  var DADOS_DEMO = {
+    nome: 'Maria Eduarda Fontoura Ramos',
+    vinculo: '1 (Efetivo) Ativo',
+    regime: 'Estatutário',
+    categoria: 'Geral',
+    exercicio: '19/03/2012',
+    empresa: 'Município de Porto Alegre (PMPA)'
+  };
+
+  function abrirModal(matricula) {
+    document.getElementById('modal-mat-nome').textContent      = DADOS_DEMO.nome;
+    document.getElementById('modal-mat-matricula').textContent = matricula;
+    document.getElementById('modal-mat-vinculo').textContent   = DADOS_DEMO.vinculo;
+    document.getElementById('modal-mat-regime').textContent    = DADOS_DEMO.regime;
+    document.getElementById('modal-mat-categoria').textContent = DADOS_DEMO.categoria;
+    document.getElementById('modal-mat-exercicio').textContent = DADOS_DEMO.exercicio;
+    document.getElementById('modal-mat-empresa').textContent   = DADOS_DEMO.empresa;
+    modal.classList.add('open');
+    btnCancelar.focus();
+  }
+
+  function fecharModal() {
+    modal.classList.remove('open');
+    input.focus();
+  }
+
+  function focaveisDoModal() {
+    return Array.prototype.slice.call(
+      modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    );
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var matricula = input.value.trim();
+    if (!matricula) {
+      input.classList.add('erro');
+      erro.classList.add('visible');
+      input.focus();
+      return;
+    }
+    input.classList.remove('erro');
+    erro.classList.remove('visible');
+    aviso.style.display = 'none';
+    abrirModal(matricula);
+  });
+
+  input.addEventListener('input', atualizarBtnLimpar);
+
+  btnLimpar.addEventListener('click', function () {
+    input.value = '';
+    input.classList.remove('erro');
+    erro.classList.remove('visible');
+    aviso.style.display = 'none';
+    atualizarBtnLimpar();
+    input.focus();
+  });
+
+  btnCancelar.addEventListener('click', fecharModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) fecharModal();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!modal.classList.contains('open')) return;
+
+    if (e.key === 'Escape') {
+      fecharModal();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      var focaveis = focaveisDoModal();
+      if (!focaveis.length) return;
+      var primeiro = focaveis[0];
+      var ultimo = focaveis[focaveis.length - 1];
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primeiro.focus();
+      }
+    }
+  });
+
+  btnConfirmar.addEventListener('click', function () {
+    var matricula = document.getElementById('modal-mat-matricula').textContent;
+    modal.classList.remove('open');
+    window.rhSetNavegacaoMatricula({ nome: DADOS_DEMO.nome, matricula: matricula });
+    aviso.textContent = 'Você está navegando com a matrícula ' + matricula + '.';
+    aviso.style.display = 'block';
+    primeiraConfirmacaoFeita = true;
+    atualizarBtnLimpar();
+  });
+</script>
+
+</body>
+</html>
