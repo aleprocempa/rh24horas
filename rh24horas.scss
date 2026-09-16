@@ -2178,7 +2178,7 @@ input.filtro-date {
 .modal-titulo {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--primary-headings);
 }
 
@@ -2206,8 +2206,7 @@ input.filtro-date {
 }
 
 .modal-texto-secundario {
-  font-size: 13px;
-  color: var(--neutral-muted);
+  font-size: 12.25px;
 }
 
 .modal-section-title {
@@ -2991,6 +2990,12 @@ table.modal {
 .badge-success {
   background: var(--neutral-background);
   color: var(--success-dark);
+  border-radius: 4px;
+}
+
+.badge-neutral {
+  background: var(--neutral-background);
+  color: var(--neutral-dark);
   border-radius: 4px;
 }
 
@@ -4795,7 +4800,7 @@ input.val-input {
     color: var(--neutral-dark);
   }
 
-  input.val-input { width: 100%; }
+  input.val-input { width: 100%; font-size: 14px; }
 }
 
 .campo-valor-registrar-ref {
@@ -4937,37 +4942,6 @@ input.val-input {
 .doacoes-v7 .quadro-referencia-abaixo {
   display: none;
 }
-.doacoes-v7 .periodo-compacto {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem 2rem;
-  margin-bottom: 1.5rem;
-}
-.doacoes-v7 .periodo-ano-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.doacoes-v7 .periodo-status {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  font-size: 13px;
-  color: var(--neutral-base);
-}
-.doacoes-v7 .periodo-status-badge {
-  display: inline-block;
-  padding: 1px 7px;
-  font-size: 10px;
-  font-weight: 700;
-  border-radius: 4px;
-  background: var(--success-base);
-  color: #fff;
-}
-.doacoes-v7 .periodo-status-badge.encerrado {
-  background: var(--neutral-muted);
-}
 .doacoes-v7 .resultado-placeholder {
   max-width: 640px;
 }
@@ -4996,8 +4970,10 @@ input.val-input {
   min-width: 300px;
   max-width: none;
   margin-bottom: 0;
-  background: var(--primary-background);
-  padding: 1.75rem 2rem;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--neutral-light);
+  padding: 0 0 0 2rem;
 }
 .doacoes-v7 .top-grid .calculo-colunas {
   grid-template-columns: 1fr;
@@ -5023,7 +4999,7 @@ input.val-input {
   font-family: var(--font-display);
   font-size: 40px;
   font-weight: 700;
-  color: var(--success-dark);
+  color: var(--primary-interactive);
   line-height: 1.1;
 }
 .doacoes-v7 .limite-valor.desatualizado {
@@ -5136,7 +5112,7 @@ input.val-input {
   margin: 0 0 0.375rem;
 }
 .doacoes-v7 .calculo-intro {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--neutral-base);
   margin: 0 0 1.25rem;
   max-width: 70ch;
@@ -5158,8 +5134,21 @@ input.val-input {
   letter-spacing: 0.08em;
   margin: 0 0 0.5rem;
 }
+.doacoes-v7 .calculo-grupo-opcional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+}
 .doacoes-v7 .calculo-lista {
   margin: 0;
+}
+.doacoes-v7 .calculo-grupo-deducoes {
+  background: var(--primary-background);
+  margin: 0 -1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
+}
+.doacoes-v7 .calculo-grupo-deducoes .calculo-linha {
+  border-bottom: none;
 }
 .doacoes-v7 .calculo-grupo-deducoes .val-input {
   font-size: 13px;
@@ -5167,20 +5156,22 @@ input.val-input {
 }
 .doacoes-v7 .calculo-grupo-deducoes .input-prefixo {
   width: 120px;
+  height: 24px;
 }
 .doacoes-v7 .calculo-grupo-deducoes.deducoes-editavel .calculo-linha {
-  padding: 0;
+  padding: 0.25rem 0;
 }
 .doacoes-v7 .calculo-grupo-deducoes.deducoes-editavel .calculo-linha .input-prefixo {
   border: none;
+  outline: 1px solid var(--neutral-light);
 }
 .doacoes-v7 .calculo-linha {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #6b728070;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--neutral-light);
 }
 .doacoes-v7 .calculo-linha dt, .doacoes-v7 .calculo-linha dd {
   margin: 0;

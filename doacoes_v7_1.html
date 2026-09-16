@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doações v7 — RH24Horas</title>
+<title>Doações v7.1 — RH24Horas</title>
 <script src="components.js"></script>
 <link rel="stylesheet" href="rh24horas.css">
 </head>
@@ -16,28 +16,19 @@
 
     <div class="page-header">
       <div>
-        <h1 class="page-title">Doações</h1>
-        <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999</p>
+        <h1 class="page-title">Doações <span class="badge badge-success" id="periodo-badge"><span class="badge-dot"></span>Período aberto</span></h1>
+        <p class="page-subtitle" id="periodo-texto">22 a 30 de dezembro de 2025</p>
       </div>
     </div>
 
-    <!-- ANO-BASE + STATUS -->
-    <div class="periodo-compacto" style="display: none;">
-      <div class="periodo-ano-group">
-        <span class="toolbar-label" id="label-ano">Ano-base</span>
-        <select class="ano" id="select-ano" aria-labelledby="label-ano" onchange="renderAno()">
-          <option value="2025" selected>2025</option>
-          <option value="2024">2024</option>
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
-        </select>
-      </div>
-
-      <div class="periodo-status">
-        <span class="periodo-status-badge" id="periodo-badge">Período aberto</span>
-        <span class="periodo-texto" id="periodo-texto">22 a 30 de dezembro de 2025</span>
-      </div>
-    </div>
+    <!-- Seletor de ano-base: sem UI nesta versão (ano fixo, 2025), mas o JS
+         (anoSelecionado()) ainda lê o value daqui. -->
+    <select class="ano" id="select-ano" aria-hidden="true" hidden onchange="renderAno()">
+      <option value="2025" selected>2025</option>
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
+    </select>
 
     <!-- SEM DADOS -->
     <div id="sem-dados" class="resultado-placeholder" style="display:none"></div>
@@ -48,7 +39,7 @@
 
       <div class="coluna-principal">
 
-      <p class="intro-texto">Destine parte do seu Imposto de Renda ao FUNCRIANÇA e ao FUNDOIDOSO. O valor de referência é calculado com base nos seus rendimentos e nas deduções da declaração. Por isso, confira as informações apresentadas no <span class="quadro-referencia-lado">quadro ao lado</span><span class="quadro-referencia-abaixo">quadro abaixo</span> e inclua outras deduções, se necessário, para atualizar o limite disponível.
+      <p class="intro-texto">Destine parte do seu Imposto de Renda ao FUNCRIANÇA e ao FUNDOIDOSO. O valor de referência é calculado com base nos seus rendimentos e nas deduções da declaração. Por isso, confira as informações apresentadas no <span class="quadro-referencia-lado">painel ao lado</span><span class="quadro-referencia-abaixo">quadro abaixo</span> e inclua outras deduções, se necessário, para atualizar o limite disponível.
 
 
       <a href="#" id="link-entenda" onclick="abrirModalInfo(event)">Entenda como funciona</a>.</p>
@@ -58,11 +49,6 @@
         <h2 class="limite-titulo" id="limite-titulo">Valor de referência para doação</h2>
         <div class="limite-valor" id="card-limite-total">R$ 0,00</div>
         <p class="limite-sublabel">até 6% do imposto devido — até 3% para o FUNCRIANÇA e até 3% para o FUNDOIDOSO</p>
-
-        <div class="limite-dirty" id="limite-dirty" role="status" aria-live="polite" style="display:none">
-          <strong>Há alterações ainda não recalculadas.</strong>
-          Recalcule para atualizar seus limites antes de registrar uma destinação.
-        </div>
 
         <!-- REGISTRAR DESTINAÇÃO — direto no mesmo card, sem modal -->
         <div class="registro-inline" id="registro-section" aria-labelledby="registro-titulo">
@@ -170,7 +156,7 @@
       <!-- COMO CALCULAMOS SEU LIMITE -->
       <section class="calculo-section" id="tabela-section" aria-labelledby="calculo-titulo">
         <h2 class="calculo-titulo" id="calculo-titulo">Como calculamos seu valor de referência</h2>
-        <p class="calculo-intro" id="calculo-intro">Confira os dados abaixo. Se alterar alguma dedução, recalcule para atualizar seus limites antes de registrar uma destinação.</p>
+        <p class="calculo-intro" id="calculo-intro">Confira os dados abaixo. Ao alterar alguma dedução, seus limites serão atualizados automaticamente.</p>
 
         <div class="aviso info locked-aviso" id="locked-aviso" style="display:none">
           <strong>Dados do cálculo bloqueados.</strong>
@@ -178,66 +164,68 @@
         </div>
 
         <div class="calculo-colunas">
-          <div>
-            <div class="calculo-grupo">
-              <h3 class="calculo-grupo-titulo">Informado pelo sistema</h3>
-              <dl class="calculo-lista">
-                <div class="calculo-linha">
-                  <dt>Rendimentos tributáveis</dt>
-                  <dd id="cel-rendimentos">0,00</dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt>Previdência oficial</dt>
-                  <dd id="cel-previdencia-oficial">0,00</dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt>Dependentes</dt>
-                  <dd id="cel-dependente">0,00</dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt>Pensão alimentícia judicial</dt>
-                  <dd id="cel-pensao-judicial">0,00</dd>
-                </div>
-              </dl>
-            </div>
 
-            <div class="calculo-grupo calculo-grupo-deducoes" id="grupo-deducoes">
-              <h3 class="calculo-grupo-titulo">Deduções adicionais <span class="calculo-grupo-opcional">(opcional)</span></h3>
-              <dl class="calculo-lista">
-                <div class="calculo-linha">
-                  <dt>
-                    <label for="input-previdenciaPrivada">Previdência privada</label>
-                  </dt>
-                  <dd id="cel-previdenciaPrivada"></dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt>
-                    <label for="input-dependenteInformado">Dependente adicional</label>
-                  </dt>
-                  <dd id="cel-dependenteInformado"></dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt><label for="input-despesaInstrucao">Despesa com instrução</label></dt>
-                  <dd id="cel-despesaInstrucao"></dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt><label for="input-despesaMedica">Despesa médica</label></dt>
-                  <dd id="cel-despesaMedica"></dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt>
-                    <label for="input-pensaoInformada">Pensão alimentícia complementar</label>
-                  </dt>
-                  <dd id="cel-pensaoInformada"></dd>
-                </div>
-                <div class="calculo-linha">
-                  <dt><label for="input-outras">Outras deduções</label></dt>
-                  <dd id="cel-outras"></dd>
-                </div>
-              </dl>
-            </div>
+          <!-- BLOCO 1: Informado pelo sistema -->
+          <div class="calculo-grupo">
+            <h3 class="calculo-grupo-titulo">Informado pelo sistema</h3>
+            <dl class="calculo-lista">
+              <div class="calculo-linha">
+                <dt>Rendimentos tributáveis</dt>
+                <dd id="cel-rendimentos">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Previdência oficial</dt>
+                <dd id="cel-previdencia-oficial">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Dependentes</dt>
+                <dd id="cel-dependente">0,00</dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>Pensão alimentícia judicial</dt>
+                <dd id="cel-pensao-judicial">0,00</dd>
+              </div>
+            </dl>
           </div>
 
+          <!-- BLOCO 2: Deduções adicionais -->
+          <div class="calculo-grupo calculo-grupo-deducoes" id="grupo-deducoes">
+            <h3 class="calculo-grupo-titulo">Deduções adicionais <span class="calculo-grupo-opcional">(opcional)</span></h3>
+            <dl class="calculo-lista">
+              <div class="calculo-linha">
+                <dt>
+                  <label for="input-previdenciaPrivada">Previdência privada</label>
+                </dt>
+                <dd id="cel-previdenciaPrivada"></dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>
+                  <label for="input-dependenteInformado">Dependente adicional</label>
+                </dt>
+                <dd id="cel-dependenteInformado"></dd>
+              </div>
+              <div class="calculo-linha">
+                <dt><label for="input-despesaInstrucao">Despesa com instrução</label></dt>
+                <dd id="cel-despesaInstrucao"></dd>
+              </div>
+              <div class="calculo-linha">
+                <dt><label for="input-despesaMedica">Despesa médica</label></dt>
+                <dd id="cel-despesaMedica"></dd>
+              </div>
+              <div class="calculo-linha">
+                <dt>
+                  <label for="input-pensaoInformada">Pensão alimentícia complementar</label>
+                </dt>
+                <dd id="cel-pensaoInformada"></dd>
+              </div>
+              <div class="calculo-linha">
+                <dt><label for="input-outras">Outras deduções</label></dt>
+                <dd id="cel-outras"></dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- BLOCO 3: Resultado do cálculo -->
           <div class="calculo-grupo calculo-grupo-resultado">
             <h3 class="calculo-grupo-titulo">Resultado do cálculo</h3>
             <dl class="calculo-lista">
@@ -259,11 +247,9 @@
               </div>
             </dl>
 
-            <div class="calculo-acoes" id="calcular-bar">
-              <span class="recalculo-pendente-tag" id="recalculo-pendente-tag" style="display:none">Alterações pendentes —</span>
-              <button type="button" class="btn-outline" id="btn-recalcular" onclick="recalcular()">Recalcular limites</button>
-            </div>
+            <p class="campo-ajuda-texto">Os limites são recalculados automaticamente ao sair de um campo de dedução.</p>
           </div>
+
         </div>
       </section>
 
@@ -460,16 +446,6 @@ function calcularConsolidado(child, elderly) {
   };
 }
 
-function estaSujo(ano) {
-  const r = estado[ano];
-  if (r.encerrado || estaBloqueado(ano)) return false;
-  return CAMPOS_EDITAVEIS.some(function (item) {
-    const input = document.getElementById('input-' + item.campo);
-    if (!input) return false;
-    return parseCents(input.value) !== r.editaveis[item.campo];
-  });
-}
-
 function estaBloqueado(ano) {
   const r = estado[ano];
   return r.disponivel && (r.donations.child > 0 || r.donations.elderly > 0);
@@ -486,8 +462,8 @@ function renderAno() {
   const aberto = ano === ANO_ABERTO;
 
   const badge = document.getElementById('periodo-badge');
-  badge.textContent = aberto ? 'Período aberto' : 'Encerrado — somente consulta';
-  badge.classList.toggle('encerrado', !aberto);
+  badge.innerHTML = '<span class="badge-dot"></span>' + (aberto ? 'Período aberto' : 'Encerrado — somente consulta');
+  badge.className = 'badge ' + (aberto ? 'badge-success' : 'badge-neutral');
   document.getElementById('periodo-texto').textContent = aberto
     ? '22 a 30 de dezembro de 2025'
     : 'Já encerrado em ' + ano;
@@ -509,11 +485,6 @@ function renderAno() {
 
   document.getElementById('locked-aviso').style.display = (aberto && bloqueado) ? 'block' : 'none';
   document.getElementById('locked-ano').textContent = ano;
-  document.getElementById('calcular-bar').style.display = (aberto && !bloqueado) ? 'flex' : 'none';
-  document.getElementById('limite-dirty').style.display = 'none';
-  document.getElementById('recalculo-pendente-tag').style.display = 'none';
-  document.getElementById('btn-recalcular').classList.remove('pendente');
-  document.getElementById('card-limite-total').classList.remove('desatualizado');
 
   renderDeducoes(ano, aberto, bloqueado);
   atualizarTotais();
@@ -534,7 +505,7 @@ function renderDeducoes(ano, aberto, bloqueado) {
     const cel = document.getElementById('cel-' + item.campo);
     if (editavel) {
       const valorAtual = r.editaveis[item.campo];
-      cel.innerHTML = '<div class="input-prefixo"><span class="input-prefixo-simbolo">R$</span><input class="val-input" id="input-' + item.campo + '" inputmode="decimal" aria-label="' + item.label + '" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,\'\'); aoEditarCampo();" onblur="formatarInput(this)"></div>';
+      cel.innerHTML = '<div class="input-prefixo"><span class="input-prefixo-simbolo">R$</span><input class="val-input" id="input-' + item.campo + '" inputmode="decimal" aria-label="' + item.label + '" placeholder="0,00" oninput="this.value=this.value.replace(/[^0-9,]/g,\'\');" onblur="formatarInput(this); recalcularAutomatico(\'' + item.campo + '\');"></div>';
       document.getElementById('input-' + item.campo).value = valorAtual > 0 ? fmtCents(valorAtual) : '';
     } else {
       cel.textContent = reais(r.editaveis[item.campo]);
@@ -547,52 +518,23 @@ function renderDeducoes(ano, aberto, bloqueado) {
   document.getElementById('cel-pensao-judicial').textContent = reais(r.pensaoJudicial);
 }
 
-function aoEditarCampo() {
+// v7.1: recalcula automaticamente ao sair do campo (onblur) — sem botão
+// manual de "Recalcular limites". Só o campo que perdeu o foco é commitado
+// (os demais, ainda em edição, continuam com o valor anterior até seu blur).
+function recalcularAutomatico(campo) {
   const ano = anoSelecionado();
-  const sujo = estaSujo(ano);
+  const r = estado[ano];
+  const input = document.getElementById('input-' + campo);
+  if (!input) return;
 
-  document.getElementById('limite-dirty').style.display = sujo ? 'block' : 'none';
-  document.getElementById('card-limite-total').classList.toggle('desatualizado', sujo);
-  document.getElementById('recalculo-pendente-tag').style.display = sujo ? 'inline' : 'none';
-  document.getElementById('btn-recalcular').classList.toggle('pendente', sujo);
-  document.getElementById('feedback-recalculo').style.display = 'none';
+  const valorNovo = parseCents(input.value);
+  const mudou = valorNovo !== r.editaveis[campo];
+  r.editaveis[campo] = valorNovo;
 
+  atualizarTotais();
   atualizarResumoRegistro();
-}
 
-// Recalcula: aplica os valores digitados ao estado e atualiza limites/saldos.
-function recalcular() {
-  const btn = document.getElementById('btn-recalcular');
-  if (btn.disabled) return;
-
-  const textoOriginal = btn.textContent;
-  btn.disabled = true;
-  btn.setAttribute('aria-busy', 'true');
-  btn.textContent = 'Recalculando…';
-
-  setTimeout(function () {
-    const ano = anoSelecionado();
-    const r = estado[ano];
-
-    CAMPOS_EDITAVEIS.forEach(function (item) {
-      const input = document.getElementById('input-' + item.campo);
-      if (input) r.editaveis[item.campo] = parseCents(input.value);
-    });
-
-    atualizarTotais();
-
-    btn.disabled = false;
-    btn.removeAttribute('aria-busy');
-    btn.textContent = textoOriginal;
-    btn.classList.remove('pendente');
-
-    document.getElementById('recalculo-pendente-tag').style.display = 'none';
-    document.getElementById('limite-dirty').style.display = 'none';
-    document.getElementById('card-limite-total').classList.remove('desatualizado');
-    mostrarAviso('feedback-recalculo', 'Limite recalculado com sucesso.', 6000);
-
-    atualizarResumoRegistro();
-  }, 300);
+  if (mudou) mostrarAviso('feedback-recalculo', 'Limites atualizados automaticamente.', 3000);
 }
 
 // Recalcula todos os valores exibidos (cartão de limite e resultado do
@@ -618,8 +560,8 @@ function atualizarTotais() {
 // ── Registrar destinação: seção fixa no corpo da página (não é mais modal) ──
 // O registro é único por ano-base: some assim que existir uma destinação
 // (ver estaBloqueado) e dá lugar ao resumo em renderResumoDestinacao(). Até
-// lá, fica desabilitado enquanto o cálculo estiver desatualizado ou os
-// campos vazios.
+// lá, fica desabilitado só enquanto os dois campos estiverem vazios (o
+// cálculo dos limites é automático — ver recalcularAutomatico()).
 function prepararRegistro() {
   document.getElementById('input-valor-child').value = '';
   document.getElementById('input-valor-elderly').value = '';
@@ -636,7 +578,6 @@ function formatarInputRegistro(input) {
 function atualizarResumoRegistro() {
   const ano = anoSelecionado();
   const r = estado[ano];
-  const sujo = estaSujo(ano);
   const calculo = calcularIR(ano);
   const limites = calcularLimites(calculo);
   const child = calcularFundo(limites.child, r.donations.child);
@@ -673,10 +614,8 @@ function atualizarResumoRegistro() {
   const aindaDisponivel = Math.max(child.disponivel + elderly.disponivel - totalDedutivel, 0);
   document.getElementById('resumo-disponivel-valor').textContent = reais(aindaDisponivel);
 
-  document.getElementById('motivo-desabilitado').textContent = sujo ? 'Recalcule os limites antes de registrar uma destinação.' : '';
-
   const btnConfirmar = document.getElementById('btn-confirmar-registro');
-  btnConfirmar.disabled = sujo || totalDonation <= 0;
+  btnConfirmar.disabled = totalDonation <= 0;
   btnConfirmar.textContent = totalDonation > 0 ? 'Registrar ' + reais(totalDonation) : 'Registrar destinação';
 }
 
@@ -713,11 +652,11 @@ function confirmarRegistro() {
 
   let texto;
   if (amountChild > 0 && amountElderly > 0) {
-    texto = 'Você está registrando ' + reais(amountChild) + ' para o FUNCRIANÇA e ' + reais(amountElderly) + ' para o FUNDOIDOSO.';
+    texto = 'Confirma o registro de doação de ' + reais(amountChild) + ' para o FUNCRIANÇA e ' + reais(amountElderly) + ' para o FUNDOIDOSO?';
   } else if (amountChild > 0) {
-    texto = 'Você está registrando ' + reais(amountChild) + ' para o FUNCRIANÇA.';
+    texto = 'Confirma o registro de doação de ' + reais(amountChild) + ' para o FUNCRIANÇA?';
   } else {
-    texto = 'Você está registrando ' + reais(amountElderly) + ' para o FUNDOIDOSO.';
+    texto = 'Confirma o registro de doação de ' + reais(amountElderly) + ' para o FUNDOIDOSO?';
   }
   document.getElementById('modal-confirmar-texto').textContent = texto;
 
