@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Código ProConsig — RH24Horas</title>
+<link rel="stylesheet" href="rh24horas.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
+<script src="components.js"></script>
+<style>
+  .proconsig-intro {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--neutral-body);
+    max-width: 640px;
+    margin: 0 0 1.5rem;
+  }
+  .proconsig-passos {
+    margin: 0 0 2rem;
+    padding-left: 1.25rem;
+    max-width: 640px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--neutral-body);
+  }
+
+  /* Cartão do código vigente */
+  .proconsig-card {
+    max-width: 640px;
+    background: #fff;
+    border: 1px solid var(--neutral-light);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .proconsig-card-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-dark);
+    margin: 0 0 0.5rem;
+  }
+  .proconsig-codigo {
+    font-family: var(--font-mono);
+    font-size: 2.25rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--primary-headings);
+    line-height: 1.2;
+    margin: 0;
+  }
+  .proconsig-codigo-linha {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0 0 0.75rem;
+  }
+  .btn-copiar-icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: var(--neutral-muted);
+    background: none;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.15s;
+  }
+  .btn-copiar-icone:hover { color: var(--primary-interactive); }
+  .btn-copiar-icone.copiado { color: var(--success-base); }
+  .btn-copiar-icone .icone-ok { display: none; }
+  .btn-copiar-icone.copiado .icone-copiar { display: none; }
+  .btn-copiar-icone.copiado .icone-ok { display: block; }
+  .btn-copiar-icone { position: relative; }
+
+  /* Tooltip — mesmo visual do .registrar-tooltip do painel de ponto */
+  .copiar-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    padding: 6px 10px;
+    background: var(--primary-headings);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: normal;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms linear;
+    z-index: 5;
+  }
+  .copiar-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--primary-headings);
+  }
+  .btn-copiar-icone:hover .copiar-tooltip,
+  .btn-copiar-icone:focus-visible .copiar-tooltip { opacity: 1; }
+  /* Depois de copiar, o feedback ao lado já informa — some com o tooltip. */
+  .btn-copiar-icone.copiado .copiar-tooltip { opacity: 0; }
+  .proconsig-validade {
+    font-size: 14px;
+    color: var(--neutral-body);
+    margin: 0 0 0.25rem;
+  }
+  .proconsig-validade strong { color: var(--primary-headings); }
+  .proconsig-restante {
+    font-size: 13px;
+    color: var(--neutral-muted);
+    margin: 0;
+  }
+  .proconsig-restante-sep { margin: 0 0.5rem; }
+  /* Link discreto — sem destaque frente ao código */
+  .btn-gerar-novamente {
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--primary-interactive);
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-gerar-novamente:hover { color: var(--primary-dark); }
+  .proconsig-feedback {
+    font-size: 13px;
+    color: var(--success-dark);
+    min-height: 1em;
+  }
+  .proconsig-card .aviso { margin: 1.5rem 0 0; }
+
+
+  @media (max-width: 600px) {
+    .proconsig-card { padding: 1.25rem; }
+    .proconsig-codigo { font-size: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="rh-header"></div>
+<div class="layout">
+  <nav class="sidebar" id="rh-sidebar"></nav>
+  <div class="content">
+
+    <div class="page-header">
+      <h1 class="page-title">Código de consulta ProConsig</h1>
+      <p class="page-subtitle">José Antônio Pereira &mdash; Matrícula 9.999.999 &mdash; PMPA</p>
+    </div>
+
+    <p class="proconsig-intro">Ao solicitar um empréstimo consignado, a instituição financeira pedirá um código para consultar sua margem consignável.  </p>
+
+    <ol class="proconsig-passos">
+      <li>Gere o código nesta página. <small>(Válido por <strong id="txt-validade">1 hora</strong> a partir da geração)</small></li>
+      <li>Informe o código à instituição financeira.</li>
+    </ol>
+
+    <!-- Estado: sem código vigente -->
+    <div id="bloco-sem-codigo">
+      <button type="button" class="btn-solido" id="btn-gerar">Gerar código</button>
+    </div>
+
+    <!-- Estado: código vigente -->
+    <section class="proconsig-card" id="bloco-codigo" aria-labelledby="label-codigo" style="display:none">
+      <p class="proconsig-card-label" id="label-codigo">Código vigente</p>
+      <div class="proconsig-codigo-linha">
+        <p class="proconsig-codigo" id="txt-codigo"></p>
+        <button type="button" class="btn-copiar-icone" id="btn-copiar" aria-label="Copiar código">
+          <span class="copiar-tooltip" aria-hidden="true">Copiar código</span>
+          <i class="fa-solid fa-copy icone-copiar" aria-hidden="true"></i>
+          <i class="fa-solid fa-check icone-ok" aria-hidden="true"></i>
+        </button>
+        <span class="proconsig-feedback" id="txt-feedback" aria-live="polite"></span>
+      </div>
+      <p class="proconsig-validade">Válido até <strong id="txt-valido-ate"></strong></p>
+      <p class="proconsig-restante"><span id="txt-restante"></span><span class="proconsig-restante-sep" aria-hidden="true">·</span><button type="button" class="btn-gerar-novamente" id="btn-gerar-novamente">Gerar novamente</button></p>
+      
+    </section>
+
+
+  </div>
+</div>
+
+<script>
+(function () {
+  // Regras de negócio do protótipo — ajustar quando definidas.
+  var VALIDADE_MIN = 60;
+  var STORAGE_KEY  = 'rh_proconsig_codigo';
+  // Sem 0/O, 1/I/L para evitar erro ao ditar o código por telefone/balcão.
+  var ALFABETO = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+  var el = function (id) { return document.getElementById(id); };
+  var blocoSem    = el('bloco-sem-codigo');
+  var blocoCodigo = el('bloco-codigo');
+  var feedbackTimer = null;
+
+  // ── Persistência ──────────────────────────────────────────────────────────
+  function carregar() {
+    try {
+      var c = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (c && c.validoAte > Date.now()) return c;
+    } catch (e) {}
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+
+  // ── Geração ───────────────────────────────────────────────────────────────
+  function novoCodigo() {
+    var bytes = new Uint32Array(8);
+    window.crypto.getRandomValues(bytes);
+    var s = '';
+    for (var i = 0; i < 8; i++) {
+      if (i === 4) s += '-';
+      s += ALFABETO[bytes[i] % ALFABETO.length];
+    }
+    return s;
+  }
+
+  // ── Formatação ────────────────────────────────────────────────────────────
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function fmtData(ts) {
+    var d = new Date(ts);
+    return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() +
+           ' às ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  function fmtRestante(ms) {
+    var min = Math.max(1, Math.ceil(ms / 60000));
+    return min === 1 ? 'Expira em menos de 1 min' : 'Expira em ' + min + ' min';
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  function render() {
+    var atual = carregar();
+    if (atual) {
+      blocoSem.style.display = 'none';
+      blocoCodigo.style.display = 'block';
+      el('txt-codigo').textContent = atual.codigo;
+      el('txt-valido-ate').textContent = fmtData(atual.validoAte);
+      el('txt-restante').textContent = fmtRestante(atual.validoAte - Date.now());
+    } else {
+      blocoCodigo.style.display = 'none';
+      blocoSem.style.display = 'block';
+    }
+  }
+
+  function mostrarFeedback(texto) {
+    var f = el('txt-feedback');
+    f.textContent = texto;
+    clearTimeout(feedbackTimer);
+    feedbackTimer = setTimeout(function () {
+      f.textContent = '';
+      el('btn-copiar').classList.remove('copiado');
+    }, 3000);
+  }
+
+  // ── Ações ─────────────────────────────────────────────────────────────────
+  // Gera um código novo; o anterior deixa de valer (só um vigente por vez).
+  function gerar(msg) {
+    var agora = Date.now();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      codigo: novoCodigo(),
+      geradoEm: agora,
+      validoAte: agora + VALIDADE_MIN * 60000
+    }));
+    render();
+    el('btn-copiar').classList.remove('copiado');
+    mostrarFeedback(msg);
+    el('btn-copiar').focus();
+  }
+
+  el('btn-gerar').addEventListener('click', function () { gerar('Código gerado.'); });
+  el('btn-gerar-novamente').addEventListener('click', function () { gerar('Novo código gerado.'); });
+
+  // Copia via seleção de um textarea temporário.
+  function copiarViaSelecao(texto) {
+    var ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    el('btn-copiar').focus();
+    return ok;
+  }
+
+  el('btn-copiar').addEventListener('click', function () {
+    var codigo = el('txt-codigo').textContent;
+    var sucesso = function () {
+      el('btn-copiar').classList.add('copiado');
+      mostrarFeedback('Código copiado.');
+    };
+    var falha = function () {
+      mostrarFeedback('Não foi possível copiar. Selecione o código manualmente.');
+    };
+    // Cópia síncrona primeiro: responde na hora dentro do clique. A Clipboard
+    // API pode ficar pendente (aguardando permissão) em alguns contextos.
+    if (copiarViaSelecao(codigo)) {
+      sucesso();
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(codigo).then(sucesso, falha);
+    } else {
+      falha();
+    }
+  });
+
+  render();
+  // Atualiza a contagem regressiva e expira o código sem recarregar a página.
+  setInterval(render, 15000);
+})();
+</script>
+
+</body>
+</html>

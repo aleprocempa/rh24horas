@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: 'Doações',                   href: 'doacoes_v7_1.html' },
     { group: 'Extras' },
     { label: 'Outras matrículas',         href: 'outras_matriculas.html' },
+    { label: 'Código ProConsig',          href: 'codigo_proconsig.html' },
   ];
 
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';
