@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: 'Férias e licenças',         href: 'frequencia.html' },
     { group: 'Institucional' },
     { label: 'Eleições',                  href: 'eleicoes.html' },
-    { label: 'Doações',                   href: 'doacoes_v7_1.html' },
+    { label: 'Doações',                   href: 'doacoes_v7_2.html' },
     { group: 'Extras' },
     { label: 'Outras matrículas',         href: 'outras_matriculas.html' },
     { label: 'Código ProConsig',          href: 'codigo_proconsig.html' },
