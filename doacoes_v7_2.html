@@ -282,7 +282,11 @@
       <button type="button" class="modal-close" id="btn-fechar-modal-historico" aria-label="Fechar" onclick="fecharModalHistorico()">&times;</button>
     </div>
     <div class="modal-body">
-      <p class="historico-vazio" id="historico-vazio" style="display:none">Nenhuma doação realizada neste ano-base.</p>
+      <div class="filtro-group historico-filtro" id="historico-filtro" style="display:none">
+        <label class="filtro-label" for="select-historico-ano">Ano</label>
+        <select class="filtro" id="select-historico-ano" onchange="renderHistorico()"></select>
+      </div>
+      <p class="historico-vazio" id="historico-vazio" style="display:none"></p>
       <table class="historico-doacoes" id="historico-tabela" style="display:none">
         <thead>
           <tr>
@@ -293,13 +297,6 @@
           </tr>
         </thead>
         <tbody id="historico-corpo"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2">Total doado</td>
-            <td class="valor" id="historico-total">R$ 0,00</td>
-            <td></td>
-          </tr>
-        </tfoot>
       </table>
     </div>
     <div class="modal-footer">
@@ -784,55 +781,134 @@ function confirmarRegistroFinal() {
 }
 
 // ── Modal: histórico de doações ──────────────────────────────────────────
+// Doações de anos anteriores: DADOS FICTÍCIOS, só para ilustrar o histórico
+// agrupado por ano (valores em centavos).
+const HISTORICO_ANTERIOR = [
+  { ano: '2024', data: '23/12/2024', fundo: 'child',   nome: 'Manutenção dos atendimentos à PCDs',                       valor: 50000 },
+  { ano: '2024', data: '23/12/2024', fundo: 'elderly', nome: 'Projeto de exemplo — FUNDOIDOSO 1',                         valor: 20000 },
+  { ano: '2024', data: '26/12/2024', fundo: 'child',   nome: 'Qualificando ACM Cruzeiro do Sul III',                      valor: 10000 },
+  { ano: '2024', data: '26/12/2024', fundo: 'child',   nome: 'QUALIFICANDO O SABER NA INCLUSÃO',                          valor: 10000 },
+  { ano: '2024', data: '27/12/2024', fundo: 'elderly', nome: 'Projeto de exemplo — FUNDOIDOSO 2',                         valor: 15000 },
+  { ano: '2024', data: '28/12/2024', fundo: 'child',   nome: 'Uma Casa, Muitas Vidas Salvas II',                          valor: 100000 },
+  { ano: '2024', data: '30/12/2024', fundo: 'child',   nome: 'Manutenção dos atendimentos à PCDs',                        valor: 25000 },
+  { ano: '2023', data: '22/12/2023', fundo: 'child',   nome: 'Aurora Capacitação: Desenvolvimento Integral e Educação Inclusiva na Primeira Infância', valor: 80000 },
+  { ano: '2023', data: '22/12/2023', fundo: 'elderly', nome: 'Projeto de exemplo — FUNDOIDOSO 1',                         valor: 30000 },
+  { ano: '2023', data: '27/12/2023', fundo: 'child',   nome: 'Qualificando ACM Cruzeiro do Sul III',                      valor: 12000 },
+  { ano: '2023', data: '28/12/2023', fundo: 'child',   nome: 'QUALIFICANDO O SABER NA INCLUSÃO',                          valor: 5000 },
+  { ano: '2023', data: '29/12/2023', fundo: 'elderly', nome: 'Projeto de exemplo — FUNDOIDOSO 2',                         valor: 18000 },
+  { ano: '2023', data: '30/12/2023', fundo: 'child',   nome: 'Uma Casa, Muitas Vidas Salvas II',                          valor: 60000 },
+  { ano: '2022', data: '23/12/2022', fundo: 'child',   nome: 'Manutenção dos atendimentos à PCDs',                        valor: 40000 },
+  { ano: '2022', data: '27/12/2022', fundo: 'elderly', nome: 'Projeto de exemplo — FUNDOIDOSO 1',                         valor: 25000 },
+  { ano: '2022', data: '29/12/2022', fundo: 'child',   nome: 'Qualificando ACM Cruzeiro do Sul III',                      valor: 15000 },
+  { ano: '2022', data: '30/12/2022', fundo: 'child',   nome: 'Uma Casa, Muitas Vidas Salvas II',                          valor: 35000 }
+];
+
+// Acima desse número de linhas, o histórico ganha um filtro por ano.
+const LIMITE_LINHAS_FILTRO_HISTORICO = 15;
+
+function linhasHistorico() {
+  const anoAtual = anoSelecionado();
+  const atuais = estado[anoAtual].historico.map(function (h) {
+    return { ano: anoAtual, data: h.data, fundo: h.fundo, nome: h.nome, valor: h.valor };
+  });
+  return HISTORICO_ANTERIOR.concat(atuais);
+}
+
+function anosHistorico(linhas) {
+  const anos = [anoSelecionado()];
+  linhas.forEach(function (l) { if (anos.indexOf(l.ano) === -1) anos.push(l.ano); });
+  return anos.sort().reverse();
+}
+
 function abrirModalHistorico(e) {
   e.preventDefault();
-  const r = estado[anoSelecionado()];
-  const corpo = document.getElementById('historico-corpo');
-  corpo.innerHTML = '';
+  const linhas = linhasHistorico();
 
-  let total = 0;
-  r.historico.forEach(function (h) {
-    total += h.valor;
-    const tr = document.createElement('tr');
-
-    const tdData = document.createElement('td');
-    tdData.textContent = h.data;
-
-    const tdProjeto = document.createElement('td');
-    tdProjeto.className = 'left';
-    const nome = document.createElement('div');
-    nome.textContent = h.nome;
-    const fundo = document.createElement('div');
-    fundo.className = 'historico-fundo';
-    fundo.textContent = NOME_FUNDO[h.fundo];
-    tdProjeto.appendChild(nome);
-    tdProjeto.appendChild(fundo);
-
-    const tdValor = document.createElement('td');
-    tdValor.className = 'valor';
-    tdValor.textContent = reais(h.valor);
-
-    const tdRecibo = document.createElement('td');
-    const link = document.createElement('a');
-    link.href = '#';
-    link.textContent = 'Imprimir';
-    link.addEventListener('click', function (ev) { ev.preventDefault(); });
-    tdRecibo.appendChild(link);
-
-    tr.appendChild(tdData);
-    tr.appendChild(tdProjeto);
-    tr.appendChild(tdValor);
-    tr.appendChild(tdRecibo);
-    corpo.appendChild(tr);
+  const select = document.getElementById('select-historico-ano');
+  select.innerHTML = '<option value="todos">Todos os anos</option>';
+  anosHistorico(linhas).forEach(function (ano) {
+    const opt = document.createElement('option');
+    opt.value = ano;
+    opt.textContent = ano;
+    select.appendChild(opt);
   });
+  select.value = 'todos';
+  document.getElementById('historico-filtro').style.display = linhas.length > LIMITE_LINHAS_FILTRO_HISTORICO ? 'flex' : 'none';
 
-  const vazio = r.historico.length === 0;
-  document.getElementById('historico-vazio').style.display = vazio ? 'block' : 'none';
-  document.getElementById('historico-tabela').style.display = vazio ? 'none' : 'table';
-  document.getElementById('historico-total').textContent = reais(total);
+  renderHistorico();
 
   document.getElementById('modal-historico').classList.add('open');
   document.getElementById('btn-fechar-modal-historico').focus();
+}
+
+function renderHistorico() {
+  const linhas = linhasHistorico();
+  const filtro = document.getElementById('select-historico-ano').value;
+  const anos = filtro === 'todos' ? anosHistorico(linhas) : [filtro];
+  const corpo = document.getElementById('historico-corpo');
+  corpo.innerHTML = '';
+
+  let exibidas = 0;
+  anos.forEach(function (ano) {
+    const doAno = linhas.filter(function (l) { return l.ano === ano; });
+    if (doAno.length === 0) return;
+
+    const total = doAno.reduce(function (soma, l) { return soma + l.valor; }, 0);
+    const trAno = document.createElement('tr');
+    trAno.className = 'historico-ano';
+    const tdAno = document.createElement('td');
+    tdAno.colSpan = 2;
+    tdAno.textContent = ano;
+    const tdTotal = document.createElement('td');
+    tdTotal.className = 'valor';
+    tdTotal.textContent = reais(total);
+    const tdVazio = document.createElement('td');
+    trAno.appendChild(tdAno);
+    trAno.appendChild(tdTotal);
+    trAno.appendChild(tdVazio);
+    corpo.appendChild(trAno);
+
+    doAno.forEach(function (h) {
+      exibidas++;
+      const tr = document.createElement('tr');
+
+      const tdData = document.createElement('td');
+      tdData.textContent = h.data;
+
+      const tdProjeto = document.createElement('td');
+      tdProjeto.className = 'left';
+      const nome = document.createElement('div');
+      nome.textContent = h.nome;
+      const fundo = document.createElement('div');
+      fundo.className = 'historico-fundo';
+      fundo.textContent = NOME_FUNDO[h.fundo];
+      tdProjeto.appendChild(nome);
+      tdProjeto.appendChild(fundo);
+
+      const tdValor = document.createElement('td');
+      tdValor.className = 'valor';
+      tdValor.textContent = reais(h.valor);
+
+      const tdRecibo = document.createElement('td');
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = 'Imprimir';
+      link.addEventListener('click', function (ev) { ev.preventDefault(); });
+      tdRecibo.appendChild(link);
+
+      tr.appendChild(tdData);
+      tr.appendChild(tdProjeto);
+      tr.appendChild(tdValor);
+      tr.appendChild(tdRecibo);
+      corpo.appendChild(tr);
+    });
+  });
+
+  const vazio = exibidas === 0;
+  const msg = document.getElementById('historico-vazio');
+  msg.style.display = vazio ? 'block' : 'none';
+  msg.textContent = filtro === 'todos' ? 'Nenhuma doação realizada.' : 'Nenhuma doação realizada em ' + filtro + '.';
+  document.getElementById('historico-tabela').style.display = vazio ? 'none' : 'table';
 }
 
 function fecharModalHistorico() {

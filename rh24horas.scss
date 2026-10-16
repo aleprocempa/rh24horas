@@ -4932,20 +4932,24 @@ table.historico-doacoes {
   tbody tr td.left { text-align: left; }
   tbody tr td.valor, thead tr th.valor { text-align: right; white-space: nowrap; }
 
-  tfoot tr td {
-    padding: 7px 8px;
-    border: 1px solid var(--neutral-light);
+  // Linha-título de cada ano, com o total doado no ano.
+  tbody tr.historico-ano td,
+  tbody tr.historico-ano:hover td {
     background: var(--neutral-background);
     font-weight: 700;
-    color: var(--neutral-dark);
-
-    &.valor { text-align: right; }
+    color: var(--primary-headings);
+    text-align: left;
   }
+  tbody tr.historico-ano td.valor { text-align: right; }
 
   .historico-fundo {
     font-size: 11px;
     color: var(--neutral-muted);
   }
+}
+
+#modal-historico .historico-filtro {
+  align-self: flex-start;
 }
 
 

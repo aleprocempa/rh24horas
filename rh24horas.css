@@ -5356,19 +5356,23 @@ table.historico-doacoes tbody tr td.valor, table.historico-doacoes thead tr th.v
   text-align: right;
   white-space: nowrap;
 }
-table.historico-doacoes tfoot tr td {
-  padding: 7px 8px;
-  border: 1px solid var(--neutral-light);
+table.historico-doacoes tbody tr.historico-ano td,
+table.historico-doacoes tbody tr.historico-ano:hover td {
   background: var(--neutral-background);
   font-weight: 700;
-  color: var(--neutral-dark);
+  color: var(--primary-headings);
+  text-align: left;
 }
-table.historico-doacoes tfoot tr td.valor {
+table.historico-doacoes tbody tr.historico-ano td.valor {
   text-align: right;
 }
 table.historico-doacoes .historico-fundo {
   font-size: 11px;
   color: var(--neutral-muted);
+}
+
+#modal-historico .historico-filtro {
+  align-self: flex-start;
 }
 
 .doacoes-v7 .intro-texto {
